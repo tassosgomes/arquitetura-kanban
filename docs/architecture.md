@@ -282,7 +282,7 @@ Server Actions retornam um resultado discriminado (`{ ok: true, data } | { ok: f
 
 ## 8. Autenticação e identidade
 
-Detalhe: [ADR-015](adr/ADR-015-auth-js-oidc.md). Contrato OIDC e política: T03. Implementação: T07.
+Detalhe: [ADR-015](adr/ADR-015-auth-js-oidc.md). Contrato de identidade e política: [identity.md](identity.md) (T03). Guia dos IdPs: [guides/oidc.md](guides/oidc.md). Implementação: T07.
 
 ### 8.1 Adapter
 
@@ -327,7 +327,7 @@ T03 define a política completa (incluindo usuário autenticado no IdP mas não 
 
 ## 9. Realtime (hub conceitual)
 
-Implementação e prova: **T04** e **T21**. Aqui só o contrato que T05/T06 precisam respeitar.
+Implementação e prova: **T04** e **T21**. Aqui só o contrato que T05/T06 precisam respeitar. Detalhe fechado em T04: [realtime.md](realtime.md). Guia de prova por ambiente: [guides/realtime-validation.md](guides/realtime-validation.md).
 
 ```text
 Command (transação)
