@@ -1,0 +1,19 @@
+// T05 — schema mínimo para o app bootar e o Prisma Migrate funcionar.
+// T06 substitui este arquivo pelo modelo relacional completo (User, Area, Domain,
+// Project, Activity, AuditEvent, RealtimeEvent, version, UNIQUE(oidcIssuer, oidcSubject), etc.).
+// Não modele domínio de produto aqui.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Placeholder de saúde do schema. T06 deve remover este model e a migration correspondente.
+model SchemaHealth {
+  id        String   @id @default(uuid()) @db.Uuid
+  checkedAt DateTime @default(now()) @db.Timestamptz(6)
+}

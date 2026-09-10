@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.cursor
+.env
+.env.local
+.env*.local
+src/generated
+coverage
+spikes
+*.md
+!docs/guides/local-development.md
+npm-debug.log*
+Dockerfile
+.dockerignore
