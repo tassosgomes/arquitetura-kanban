@@ -190,7 +190,7 @@ O Prisma Client é criado com o driver adapter oficial da linha 7 (`@prisma/adap
 - Cada alteração de esquema (T06 em diante) gera migration versionada em `prisma/migrations`.
 - Seeds idempotentes (domínios iniciais do PRD) em `prisma/seed.ts`.
 - Homologação e produção **não** usam `db push` como fluxo padrão.
-- T10 documenta o momento de aplicar migrations no deploy Vercel; T29 no Kubernetes.
+- T10: o CI aplica `migrate deploy` só no Postgres **de serviço**; homologação Vercel aplica `migrate deploy` no **build** (`npm run vercel-build`). Recuperação e risco: [guides/homologation.md](guides/homologation.md). T29 no Kubernetes.
 
 ### 4.2 Transações
 
@@ -479,8 +479,9 @@ Scripts npm (T05 cria os executáveis). Homólogos pnpm: `pnpm <script>`.
 | `db:migrate:dev` | `prisma migrate dev` | criar/aplicar no local |
 | `db:seed` | `prisma db seed` | seeds idempotentes |
 | `db:studio` | `prisma studio` | inspeção local opcional |
+| `vercel-build` | `prisma migrate deploy && prisma db seed && next build` | build da Vercel (homologação); não usar no laptop no lugar de `build` |
 
-CI (T10) deve falhar o PR se `lint`, `typecheck`, `test` ou `build` falharem.
+CI (T10) deve falhar o PR se `lint`, `typecheck`, `test` ou `build` falharem. Jobs: `verify` (Postgres 17 + migrate + as três verificações) e `build` (`needs: verify`). Dummy OIDC/AUTH; ver [guides/homologation.md](guides/homologation.md).
 
 Ambiente local previsto (T05): `docker compose up` com `app` + `postgres`. Autenticação contra Logto Cloud.
 

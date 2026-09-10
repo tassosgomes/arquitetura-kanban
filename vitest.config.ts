@@ -5,6 +5,7 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],
+    setupFiles: ["./src/infrastructure/db/vitest-ci-postgres.ts"],
   },
   resolve: {
     alias: {

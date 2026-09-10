@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import "dotenv/config";
 import { ForbiddenError, UnauthorizedError } from "@/domain/errors";
 import type { PrismaClient } from "@/generated/prisma/client";
-import { createPrismaClient } from "@/infrastructure/db/create-prisma-client";
+import { connectPostgresForTests } from "@/infrastructure/db/connect-postgres-for-tests";
 import { requireActiveUserFrom } from "./active-user-guard";
 
 describe("requireActiveUserFrom", () => {
@@ -76,17 +76,7 @@ describe("requireActiveUserFrom (postgres)", () => {
   let prisma: PrismaClient | undefined;
 
   beforeAll(async () => {
-    const url = process.env.DATABASE_URL;
-    if (!url) {
-      return;
-    }
-    const client = createPrismaClient(url);
-    try {
-      await client.$queryRaw`SELECT 1`;
-      prisma = client;
-    } catch {
-      await client.$disconnect().catch(() => undefined);
-    }
+    prisma = await connectPostgresForTests();
   });
 
   afterAll(async () => {

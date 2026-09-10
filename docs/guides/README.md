@@ -5,7 +5,7 @@
 | [oidc.md](oidc.md) | T03 | Escrito | Logto (DEV/TEST) e CyberArk (PROD): aplicações, issuer/discovery, callbacks, logout, scopes, claims, restrição de usuários, variáveis, segredos, validação |
 | [realtime-validation.md](realtime-validation.md) | T04 | Escrito | Prova de SSE + LISTEN/NOTIFY por ambiente; acessos, proxy, evidências, limites de runtime |
 | [local-development.md](local-development.md) | T05 | Escrito | Pré-requisitos, Compose (`app` + PostgreSQL), variáveis, migrations/seeds, Logto externo, diagnóstico |
-| [homologation.md](homologation.md) | T10 | Pendente | Vercel, PostgreSQL, GitHub Actions, migrations, callbacks, recuperação de deploy |
+| [homologation.md](homologation.md) | T10 | Escrito | Vercel, PostgreSQL de homologação, GitHub Actions, migrations no build, callbacks Logto, SSE degradado, recuperação de deploy. **Deploy real pendente de contas.** |
 | [production.md](production.md) | T29 | Pendente | Kubernetes, ingress/SSE, CyberArk, CronJob de retenção, rollout/rollback |
 | [backup-restore.md](backup-restore.md) | T29 | Pendente | Responsabilidade de backup, exercício de restore, o que não apagar (auditoria) |
 | [adoption.md](adoption.md) | T30 | Pendente | Mapeamento da planilha, carga assistida, limites do histórico, roteiro dos cinco usuários |

@@ -2,24 +2,14 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import "dotenv/config";
 import type { PrismaClient } from "@/generated/prisma/client";
-import { createPrismaClient } from "@/infrastructure/db/create-prisma-client";
+import { connectPostgresForTests } from "@/infrastructure/db/connect-postgres-for-tests";
 import { provisionLocalUser } from "./provision-local-user";
 
 describe("provisionLocalUser (postgres)", () => {
   let prisma: PrismaClient | undefined;
 
   beforeAll(async () => {
-    const url = process.env.DATABASE_URL;
-    if (!url) {
-      return;
-    }
-    const client = createPrismaClient(url);
-    try {
-      await client.$queryRaw`SELECT 1`;
-      prisma = client;
-    } catch {
-      await client.$disconnect().catch(() => undefined);
-    }
+    prisma = await connectPostgresForTests();
   });
 
   afterAll(async () => {

@@ -2,30 +2,21 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import "dotenv/config";
 import type { PrismaClient } from "@/generated/prisma/client";
-import { createPrismaClient } from "@/infrastructure/db/create-prisma-client";
+import { connectPostgresForTests } from "@/infrastructure/db/connect-postgres-for-tests";
 import { seedArchitectureDomains } from "@/infrastructure/db/seed-architecture-domains";
 import { ARCHITECTURE_DOMAIN_NAMES } from "@/domain/catalog/architecture-domains";
 import { normalizeCatalogName } from "@/domain/catalog/normalize-catalog-name";
 
 /**
  * Invariantes que exigem PostgreSQL. Sem banco alcançável, os casos são ignorados
- * (os testes unitários de nameNormalized / vínculo tipo-projeto ainda rodam).
+ * no laptop (os testes unitários de nameNormalized / vínculo tipo-projeto ainda rodam).
+ * No CI (`CI=true`) o Postgres é obrigatório: a suíte falha em vez de pular.
  */
 describe("relational invariants (postgres)", () => {
   let prisma: PrismaClient | undefined;
 
   beforeAll(async () => {
-    const url = process.env.DATABASE_URL;
-    if (!url) {
-      return;
-    }
-    const client = createPrismaClient(url);
-    try {
-      await client.$queryRaw`SELECT 1`;
-      prisma = client;
-    } catch {
-      await client.$disconnect().catch(() => undefined);
-    }
+    prisma = await connectPostgresForTests();
   });
 
   afterAll(async () => {

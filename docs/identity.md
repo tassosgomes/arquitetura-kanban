@@ -317,7 +317,7 @@ Não usar `AUTH_LOGTO_*`, `AUTH_CYBERARK_*`, nem `NEXTAUTH_URL` como contrato (T
 | Ambiente | Onde configurar | O que **não** fazer |
 | --- | --- | --- |
 | Local | arquivo `.env` / `.env.local` fora do git (T05) | commit, wiki, issue, PR, `docs/` |
-| Testes / Homologação Vercel | Environment Variables do projeto Vercel (Production/Preview conforme T10) | `.env` no repositório, dashboard público |
+| Testes / Homologação Vercel | Environment Variables do projeto Vercel (**Production** = homologação; Preview sem SSO — [homologation.md](guides/homologation.md)) | `.env` no repositório, dashboard público |
 | Produção | Secret do Kubernetes (T29) | ConfigMap, imagem, manifesto com valor literal |
 
 Versionar no máximo um `.env.example` com placeholders `CHANGEME` (T05). Este contrato não contém valores reais.
@@ -336,7 +336,7 @@ Versionar no máximo um `.env.example` com placeholders `CHANGEME` (T05). Este c
 
 Mesma implementação. Só mudam issuer, client, secret, `APP_URL` e, se o discovery falhar, endpoints manuais.
 
-Previews Vercel com host `*.vercel.app` **não** reutilizam o callback de homologação sem registro explícito. T10 define se o MVP usa URL estável de homologação (recomendado) ou proxy de redirect do Auth.js. T03 não marca preview como ambiente de SSO.
+Previews Vercel com host `*.vercel.app` **não** reutilizam o callback de homologação sem registro explícito. T10: SSO **somente** na URL estável de homologação; `AUTH_REDIRECT_PROXY_URL` **não** entra no MVP. Detalhe: [guides/homologation.md](guides/homologation.md). T03 não marca preview como ambiente de SSO.
 
 ---
 

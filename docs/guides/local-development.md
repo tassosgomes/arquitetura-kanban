@@ -166,6 +166,6 @@ Banco persistente: após `docker compose down` e `docker compose up`, os dados e
 | --- | --- |
 | T06 | [data-model.md](../data-model.md) — schema, migration, seeds dos seis domínios |
 | T07 | login Auth.js; validar callbacks com [oidc.md](oidc.md); provisionar `User` por issuer+subject |
-| T10 | não copiar o `.env` local para a Vercel |
+| T10 | [homologation.md](homologation.md) — não copiar o `.env` local para a Vercel |
 
 Contrato de identidade: [identity.md](../identity.md).

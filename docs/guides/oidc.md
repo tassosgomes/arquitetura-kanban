@@ -238,10 +238,7 @@ Substitua `<app-homolog>.vercel.app` pelo host **estável** de homologação (do
 
 HTTPS obrigatório. Não misture a URI de localhost nesta app.
 
-**Previews** `*-<time>.vercel.app` mudam a cada PR. **Não** cadastre curingas (Logto/OIDC não devem aceitar `*`). Opções:
-
-- SSO só na URL estável de homologação (recomendado neste MVP);
-- ou, em T10, avaliar `AUTH_REDIRECT_PROXY_URL` do Auth.js — **não** faz parte das variáveis normativas da Tech Spec; só se T10 decidir.
+**Previews** `*-<time>.vercel.app` mudam a cada PR. **Não** cadastre curingas (Logto/OIDC não devem aceitar `*`). Decisão T10: SSO **somente** na URL estável de homologação; `AUTH_REDIRECT_PROXY_URL` **não** entra no MVP. Detalhe: [homologation.md](homologation.md).
 
 ### 3.4 Scopes, claims e restrição
 
@@ -480,7 +477,7 @@ Não habilite debug que imprima ID Token em log.
 | T06 | `UNIQUE(oidcIssuer, oidcSubject)` — não precisa das credenciais |
 | T07 | adapter + guard; login real só com §2 preenchida |
 | T09 / T13 | usuários ativos como opções; inativos sem nova atribuição |
-| T10 | copiar §3 para env Vercel e retestar callbacks |
+| T10 | [homologation.md](homologation.md): copiar §3 para env Vercel e retestar callbacks |
 | T29 | copiar §4 para secrets e DNS de produção |
 
 Contrato normativo: [docs/identity.md](../identity.md).
