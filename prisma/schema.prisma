@@ -1,7 +1,8 @@
-// T05 — schema mínimo para o app bootar e o Prisma Migrate funcionar.
-// T06 substitui este arquivo pelo modelo relacional completo (User, Area, Domain,
-// Project, Activity, AuditEvent, RealtimeEvent, version, UNIQUE(oidcIssuer, oidcSubject), etc.).
-// Não modele domínio de produto aqui.
+// T06 — modelo relacional do MVP (Gestão de Atividades de Arquitetura).
+// Restrições que o Prisma não expressa (UNIQUE parciais, CHECKs) ficam na
+// migration `t06_relational_model`. Ver docs/data-model.md.
+//
+// SchemaHealth (T05) foi removido: não há mais placeholder de saúde do schema.
 
 generator client {
   provider = "prisma-client"
@@ -12,8 +13,387 @@ datasource db {
   provider = "postgresql"
 }
 
-/// Placeholder de saúde do schema. T06 deve remover este model e a migration correspondente.
-model SchemaHealth {
-  id        String   @id @default(uuid()) @db.Uuid
-  checkedAt DateTime @default(now()) @db.Timestamptz(6)
+// ---------------------------------------------------------------------------
+// Enums (valores persistidos). Rótulos de domínio em português nos comentários.
+// ---------------------------------------------------------------------------
+
+/// Natureza da iniciativa. PRD: Estratégico / Operacional (atividade: Estratégica / Operacional).
+enum Nature {
+  STRATEGIC
+  OPERATIONAL
+
+  @@map("nature")
+}
+
+/// Papel da Arquitetura. PRD: Responsável / Contribuidor.
+enum ArchitectureRole {
+  RESPONSIBLE
+  CONTRIBUTOR
+
+  @@map("architecture_role")
+}
+
+/// Status do projeto (RN-11: independente do status das atividades).
+enum ProjectStatus {
+  /// Planejado
+  PLANNED
+  /// Em andamento
+  IN_PROGRESS
+  /// Concluído
+  COMPLETED
+  /// Cancelado (terminal no cadastro; não é DELETE)
+  CANCELLED
+
+  @@map("project_status")
+}
+
+/// Tipo da atividade (card). PROJECT exige projectId; AD_HOC exige projectId NULL.
+enum ActivityType {
+  /// Projeto
+  PROJECT
+  /// Ad hoc
+  AD_HOC
+
+  @@map("activity_type")
+}
+
+/// Status do Kanban. Cancelado não ocupa coluna padrão (RN-10).
+enum ActivityStatus {
+  /// Backlog
+  BACKLOG
+  /// A fazer
+  TODO
+  /// Em andamento
+  IN_PROGRESS
+  /// Aguardando retorno
+  WAITING
+  /// Bloqueado
+  BLOCKED
+  /// Concluído
+  DONE
+  /// Cancelado (terminal; acessível por filtro/histórico)
+  CANCELLED
+
+  @@map("activity_status")
+}
+
+/// Prioridade. PRD: Baixa / Média / Alta / Crítica.
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@map("priority")
+}
+
+/// Esforço P/M/G (opcional na atividade).
+enum Effort {
+  P
+  M
+  G
+
+  @@map("effort")
+}
+
+/// Entidade alvo de um AuditEvent (T12). Domain = ArchitectureDomain.
+enum AuditEntityKind {
+  User
+  Area
+  Domain
+  Project
+  Activity
+  ActivityTask
+  ValueDelivery
+
+  @@map("audit_entity_kind")
+}
+
+// ---------------------------------------------------------------------------
+// Identity
+// ---------------------------------------------------------------------------
+
+/// Usuário local provisionado no primeiro login OIDC (T07). Identidade = issuer + subject.
+/// E-mail não é único e não identifica. Sem tabelas de sessão Auth.js (JWT).
+model User {
+  id          String    @id @default(uuid()) @db.Uuid
+  oidcIssuer  String
+  oidcSubject String
+  email       String?
+  displayName String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
+  lastLoginAt DateTime? @db.Timestamptz(6)
+
+  projectsOwned         Project[]             @relation("ProjectArchitectureOwner")
+  projectsCreated       Project[]             @relation("ProjectCreatedBy")
+  projectsUpdated       Project[]             @relation("ProjectUpdatedBy")
+  projectParticipations ProjectParticipant[]
+
+  activitiesOwned        Activity[]            @relation("ActivityOwner")
+  activitiesCreated      Activity[]            @relation("ActivityCreatedBy")
+  activitiesUpdated      Activity[]            @relation("ActivityUpdatedBy")
+  activityParticipations ActivityParticipant[]
+
+  valueDeliveriesAuthored ValueDelivery[] @relation("ValueDeliveryAuthor")
+  auditEventsActed        AuditEvent[]    @relation("AuditEventActor")
+
+  @@unique([oidcIssuer, oidcSubject])
+  @@index([isActive])
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// Catalogs (inativar; nunca DELETE físico no fluxo da aplicação)
+// ---------------------------------------------------------------------------
+
+/// Área da empresa. Unicidade ativa: UNIQUE(nameNormalized) WHERE isActive (SQL na migration).
+model Area {
+  id             String   @id @default(uuid()) @db.Uuid
+  name           String
+  /// lower(trim(name)) — gravar com normalizeCatalogName. DE-14.
+  nameNormalized String
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+
+  projectsResponsible  Project[]
+  activitiesRequesting Activity[]            @relation("ActivityRequestingArea")
+  activityInvolvements ActivityInvolvedArea[]
+
+  @@index([isActive])
+  @@map("areas")
+}
+
+/// Domínio de arquitetura (tabela architecture_domains). Mesmo ciclo de vida de Area.
+model ArchitectureDomain {
+  id             String   @id @default(uuid()) @db.Uuid
+  name           String
+  nameNormalized String
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+
+  activities Activity[]
+
+  @@index([isActive])
+  @@map("architecture_domains")
+}
+
+// ---------------------------------------------------------------------------
+// Projects
+// ---------------------------------------------------------------------------
+
+/// Iniciativa. Status independente das atividades (RN-11). Cancelar em vez de excluir.
+/// Unicidade ativa: UNIQUE(nameNormalized) WHERE status <> CANCELLED (SQL na migration).
+model Project {
+  id                  String            @id @default(uuid()) @db.Uuid
+  name                String
+  nameNormalized      String
+  description         String?
+  responsibleAreaId   String            @db.Uuid
+  externalResponsible String?
+  architectureOwnerId String            @db.Uuid
+  nature              Nature
+  architectureRole    ArchitectureRole
+  startDate           DateTime?         @db.Date
+  expectedEndDate     DateTime?         @db.Date
+  status              ProjectStatus
+  /// Optimistic lock (T12). Começa em 1.
+  version             Int               @default(1)
+  createdById         String            @db.Uuid
+  updatedById         String            @db.Uuid
+  createdAt           DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime          @updatedAt @db.Timestamptz(6)
+
+  responsibleArea   Area                 @relation(fields: [responsibleAreaId], references: [id], onDelete: Restrict)
+  architectureOwner User                 @relation("ProjectArchitectureOwner", fields: [architectureOwnerId], references: [id], onDelete: Restrict)
+  createdBy         User                 @relation("ProjectCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  updatedBy         User                 @relation("ProjectUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict)
+  participants      ProjectParticipant[]
+  activities        Activity[]
+  valueDeliveries   ValueDelivery[]
+  auditEvents       AuditEvent[]
+
+  @@index([status])
+  @@map("projects")
+}
+
+model ProjectParticipant {
+  projectId String @db.Uuid
+  userId    String @db.Uuid
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@id([projectId, userId])
+  @@index([userId])
+  @@map("project_participants")
+}
+
+// ---------------------------------------------------------------------------
+// Activities (card do Kanban) e checklist
+// ---------------------------------------------------------------------------
+
+/// Unidade de trabalho / card. Nunca DELETE; cancelar (RN-10).
+/// CHECK type/projectId e datas de intervalo: SQL na migration.
+model Activity {
+  id               String           @id @default(uuid()) @db.Uuid
+  title            String
+  description      String?
+  type             ActivityType
+  /// Obrigatório se PROJECT; NULL se AD_HOC (CHECK na migration).
+  projectId        String?          @db.Uuid
+  requestingAreaId String           @db.Uuid
+  nature           Nature
+  domainId         String           @db.Uuid
+  architectureRole ArchitectureRole
+  /// Responsável principal (RN-04).
+  ownerId          String           @db.Uuid
+  priority         Priority
+  effort           Effort?
+  status           ActivityStatus
+  /// dataInicio (DATE civil SP).
+  startDate        DateTime?        @db.Date
+  /// previsaoTermino — não encerra execução (T02).
+  expectedEndDate  DateTime?        @db.Date
+  /// dataConclusao.
+  completedDate    DateTime?        @db.Date
+  /// dataCancelamento (DE-10).
+  cancelledDate    DateTime?        @db.Date
+  observations     String?
+  createdById      String           @db.Uuid
+  updatedById      String           @db.Uuid
+  createdAt        DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime         @updatedAt @db.Timestamptz(6)
+  /// Optimistic lock do aggregate. T15 incrementa esta version ao mudar o checklist; ActivityTask não tem version própria.
+  version          Int              @default(1)
+
+  project        Project?              @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  requestingArea Area                  @relation("ActivityRequestingArea", fields: [requestingAreaId], references: [id], onDelete: Restrict)
+  domain         ArchitectureDomain    @relation(fields: [domainId], references: [id], onDelete: Restrict)
+  owner          User                  @relation("ActivityOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  createdBy      User                  @relation("ActivityCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  updatedBy      User                  @relation("ActivityUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict)
+  involvedAreas  ActivityInvolvedArea[]
+  participants   ActivityParticipant[]
+  tasks          ActivityTask[]
+  auditEvents    AuditEvent[]
+
+  @@index([status])
+  @@index([ownerId])
+  @@index([projectId])
+  @@index([domainId])
+  @@index([requestingAreaId])
+  @@index([startDate])
+  @@index([completedDate])
+  @@map("activities")
+}
+
+model ActivityInvolvedArea {
+  activityId String @db.Uuid
+  areaId     String @db.Uuid
+
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Restrict)
+  area     Area     @relation(fields: [areaId], references: [id], onDelete: Restrict)
+
+  @@id([activityId, areaId])
+  @@index([areaId])
+  @@map("activity_involved_areas")
+}
+
+model ActivityParticipant {
+  activityId String @db.Uuid
+  userId     String @db.Uuid
+
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Restrict)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@id([activityId, userId])
+  @@index([userId])
+  @@map("activity_participants")
+}
+
+/// Checklist da atividade (RN-07). Sem workflow próprio. Sem version: T15 atualiza Activity.version.
+model ActivityTask {
+  id          String   @id @default(uuid()) @db.Uuid
+  activityId  String   @db.Uuid
+  description String
+  isDone      Boolean  @default(false)
+  sortOrder   Int
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Restrict)
+
+  @@index([activityId, sortOrder])
+  @@map("activity_tasks")
+}
+
+// ---------------------------------------------------------------------------
+// Value delivery (RN-16: um único projeto)
+// ---------------------------------------------------------------------------
+
+model ValueDelivery {
+  id              String   @id @default(uuid()) @db.Uuid
+  projectId       String   @db.Uuid
+  title           String
+  contentMarkdown String
+  referenceDate   DateTime @db.Date
+  authorId        String   @db.Uuid
+  /// Optimistic lock (T12 / T23).
+  version         Int      @default(1)
+  createdAt       DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @db.Timestamptz(6)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  author  User    @relation("ValueDeliveryAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@map("value_deliveries")
+}
+
+// ---------------------------------------------------------------------------
+// Audit (T12 grava; T06 só o modelo). Imutável: sem updatedAt.
+// ---------------------------------------------------------------------------
+
+/// Retrato histórico. Ordenação DE-20: empate de occurredAt vence maior `sequence` (não o UUID).
+model AuditEvent {
+  id          String          @id @default(uuid()) @db.Uuid
+  sequence    BigInt          @unique @default(autoincrement())
+  occurredAt  DateTime        @default(now()) @db.Timestamptz(6)
+  actorUserId String          @db.Uuid
+  entityKind  AuditEntityKind
+  entityId    String          @db.Uuid
+  /// Ação estável (created, status_changed, field_changed, …). String, não enum Prisma.
+  action      String
+  /// Preencher na timeline da atividade mesmo quando entityKind = ActivityTask.
+  activityId  String?         @db.Uuid
+  projectId   String?         @db.Uuid
+  /// Snapshot / antes-depois das dimensões do retrato (T02 §10.2). Incluir estado inicial na criação.
+  changes     Json            @db.JsonB
+
+  actor    User      @relation("AuditEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  activity Activity? @relation(fields: [activityId], references: [id], onDelete: Restrict)
+  project  Project?  @relation(fields: [projectId], references: [id], onDelete: Restrict)
+
+  @@index([entityKind, entityId, occurredAt])
+  @@index([activityId, occurredAt])
+  @@index([occurredAt, sequence])
+  @@map("audit_events")
+}
+
+// ---------------------------------------------------------------------------
+// Realtime (T21). Não é AuditEvent. Sem FK. Cleanup 7 dias não toca auditoria.
+// ---------------------------------------------------------------------------
+
+model RealtimeEvent {
+  id        BigInt   @id @default(autoincrement())
+  /// Nome estável do sinal (activity.updated, …). Sem enum Prisma — T21 pode acrescentar tipos.
+  type      String
+  payload   Json     @db.JsonB
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([createdAt])
+  @@map("realtime_event")
 }

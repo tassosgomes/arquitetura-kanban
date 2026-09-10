@@ -1,4 +1,20 @@
-/**
- * T05: seed no-op. T06 adiciona seeds idempotentes (domínios iniciais do PRD).
- */
-console.info("T05 seed is a no-op. T06 will load idempotent catalog seeds.");
+import "dotenv/config";
+import { createPrismaClient } from "../src/infrastructure/db/create-prisma-client";
+import { seedArchitectureDomains } from "../src/infrastructure/db/seed-architecture-domains";
+
+async function main(): Promise<void> {
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL is required to seed");
+  }
+
+  const prisma = createPrismaClient(databaseUrl);
+  try {
+    await seedArchitectureDomains(prisma);
+    console.info("Seeded architecture domains (idempotent, 6 PRD names).");
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+void main();

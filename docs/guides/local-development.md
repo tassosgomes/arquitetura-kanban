@@ -70,7 +70,7 @@ A app escuta em **http://localhost:3000**. O container alcança o Logto Cloud na
 docker compose up --build
 ```
 
-Na primeira subida o entrypoint gera o client Prisma, aplica migrations (`prisma migrate deploy`) e o seed (hoje no-op). Pare com `Ctrl+C` ou `docker compose down`. **Não** use `-v` se quiser manter o banco.
+Na primeira subida o entrypoint gera o client Prisma, aplica migrations (`prisma migrate deploy`) e o seed idempotente dos seis domínios do PRD. Pare com `Ctrl+C` ou `docker compose down`. **Não** use `-v` se quiser manter o banco.
 
 Se as dependências npm mudarem, reconstrua a imagem:
 
@@ -81,16 +81,16 @@ docker compose up
 
 ---
 
-## 4. Migrations e seeds (T05 mínimo; T06 completa)
+## 4. Migrations e seeds
 
-O schema em `prisma/schema.prisma` é **placeholder** (`SchemaHealth`) só para o Prisma 7 bootar. **T06 substitui** o schema, gera a migration de domínio e seeds idempotentes (seis domínios do PRD, etc.).
+O schema em `prisma/schema.prisma` é o modelo relacional do MVP (T06). A migration `20260910200000_t05_schema_health` criou o placeholder `SchemaHealth`; `20260910223000_t06_relational_model` **remove** essa tabela e cria o modelo completo. Não reescreva a T05. Diagrama e restrições: [data-model.md](../data-model.md).
 
 | Script | Uso |
 | --- | --- |
-| `npm run db:generate` | `prisma generate` (também no `postinstall`) |
-| `npm run db:migrate` | `prisma migrate deploy` (CI / Compose / homolog) |
-| `npm run db:migrate:dev` | `prisma migrate dev` (criar migration no local) |
-| `npm run db:seed` | seed; T05 só registra no-op |
+| `npm run db:generate` | `prisma generate` (também no `postinstall`; client em `src/generated/prisma`) |
+| `npm run db:migrate` | `prisma migrate deploy` (CI / Compose / homolog / volume local já existente) |
+| `npm run db:migrate:dev` | `prisma migrate dev` (criar **nova** migration no local; T06 já está versionada) |
+| `npm run db:seed` | upsert idempotente dos seis domínios do PRD; não inventa áreas/projetos/usuários |
 
 Com o Postgres do Compose no ar e `DATABASE_URL` apontando para `localhost`:
 
@@ -99,7 +99,9 @@ npm run db:migrate
 npm run db:seed
 ```
 
-Não use `prisma db push` como fluxo padrão.
+Checkout que já aplicou só a T05: `db:migrate` aplica apenas a T06. UNIQUE parciais e CHECKs vivem no SQL da T06; se `migrate diff` sugerir dropá-los, **não** aceite.
+
+Não use `prisma db push` como fluxo padrão. Ignore o aviso da CLI para `prisma@latest` (8 RC); o MVP permanece em **7.10.x**.
 
 ---
 
@@ -128,7 +130,7 @@ npm run db:migrate
 npm run dev
 ```
 
-`npm run dev` publica em `0.0.0.0:3000` (também acessível em `http://localhost:3000`).
+`npm run dev` publica em `0.0.0.0:3000` (também acessível em `http://localhost:3000`). Depois de `db:migrate`, rode `npm run db:seed` se ainda não tiver os seis domínios.
 
 Verificações da ferramenta (sem Docker):
 
@@ -162,8 +164,8 @@ Banco persistente: após `docker compose down` e `docker compose up`, os dados e
 
 | Task | Uso deste guia |
 | --- | --- |
-| T06 | substituir `schema.prisma`, migration inicial real, seeds |
-| T07 | login Auth.js; validar callbacks com [oidc.md](oidc.md) |
+| T06 | [data-model.md](../data-model.md) — schema, migration, seeds dos seis domínios |
+| T07 | login Auth.js; validar callbacks com [oidc.md](oidc.md); provisionar `User` por issuer+subject |
 | T10 | não copiar o `.env` local para a Vercel |
 
 Contrato de identidade: [identity.md](../identity.md).
