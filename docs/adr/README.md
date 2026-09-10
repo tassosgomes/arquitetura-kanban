@@ -2,11 +2,13 @@
 
 Numeração em continuidade com a Tech Spec:
 
-- ADR-012 e ADR-013 permanecem na [Tech Spec](../techspec.md) (IdP agnóstico via OIDC; Logto Cloud fora do Compose).
+- ADR-012 e ADR-013 foram extraídos fielmente da [Tech Spec](../techspec.md) v1.0 para arquivos próprios. O conteúdo original permanece na Tech Spec (não alterada).
 - ADR-014 em diante foram registrados em T01.
 
 | ADR | Título | Status |
 | --- | --- | --- |
+| [ADR-012](ADR-012-idp-agnostico-oidc.md) | Identity Provider agnóstico via OIDC | Aceito |
+| [ADR-013](ADR-013-logto-cloud-nao-produtivo.md) | Logto Cloud nos ambientes não produtivos | Aceito |
 | [ADR-014](ADR-014-orm-prisma.md) | ORM Prisma 7 + PostgreSQL | Aceito |
 | [ADR-015](ADR-015-auth-js-oidc.md) | Auth.js v5 com OIDC genérico | Aceito |
 | [ADR-016](ADR-016-dnd-kit.md) | Drag and drop com @dnd-kit | Aceito |
