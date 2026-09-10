@@ -1,4 +1,6 @@
 import { signInWithSso } from "@/app/actions/auth";
+import { getAuthErrorMessage } from "@/app/(auth)/login/auth-errors";
+import { PrimaryButton } from "@/ui/forms/PrimaryButton";
 
 export default async function LoginPage({
   searchParams,
@@ -6,6 +8,7 @@ export default async function LoginPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
+  const errorMessage = getAuthErrorMessage(error);
 
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-16">
@@ -17,19 +20,13 @@ export default async function LoginPage({
         <p className="text-lg leading-7 text-zinc-700">
           Entre com a identidade corporativa (SSO) para continuar.
         </p>
-        {error ? (
-          <p className="text-sm leading-6 text-red-700" role="alert">
-            Não foi possível iniciar o SSO. Confira issuer, client e secret OIDC no ambiente
-            (guia operacional). O build não depende do discovery — ele ocorre no login.
+        {errorMessage ? (
+          <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-800" role="alert">
+            {errorMessage}
           </p>
         ) : null}
         <form action={signInWithSso}>
-          <button
-            type="submit"
-            className="rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800"
-          >
-            Entrar com SSO
-          </button>
+          <PrimaryButton type="submit">Entrar com SSO</PrimaryButton>
         </form>
       </section>
     </main>

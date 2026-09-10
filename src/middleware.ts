@@ -37,7 +37,7 @@ export function middleware(request: NextRequest) {
   }
 
   if (signedIn && pathname === "/login") {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/kanban", request.url));
   }
 
   return NextResponse.next();

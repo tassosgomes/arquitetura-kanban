@@ -8,7 +8,7 @@ import { signOutFromApp } from "@/infrastructure/auth/logout";
 
 export async function signInWithSso() {
   try {
-    await signIn(AUTH_PROVIDER_ID, { redirectTo: "/" });
+    await signIn(AUTH_PROVIDER_ID, { redirectTo: "/kanban" });
   } catch (error) {
     if (error instanceof AuthError) {
       redirect("/login?error=sso");
