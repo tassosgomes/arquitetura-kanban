@@ -24,6 +24,7 @@ import {
 } from "@/infrastructure/composition";
 import { EmptyState } from "@/ui/feedback/EmptyState";
 import { ErrorState } from "@/ui/feedback/ErrorState";
+import { InfoTooltip } from "@/ui/feedback/InfoTooltip";
 import { DashboardFilters } from "@/ui/dashboard/DashboardFilters";
 import { ReportActivityTable, AssociatedProjectsList } from "@/ui/reports/ReportActivityTable";
 import { ReportPagination } from "@/ui/reports/ReportPagination";
@@ -116,12 +117,19 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
   return (
     <div className="flex flex-col gap-space-lg">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-1.5">
           <h1 className="text-headline-lg text-on-surface">Relatórios</h1>
-          <p className="max-w-3xl text-body-md leading-6 text-on-surface-variant">
-            O que fizemos no recorte. O resumo usa os mesmos indicadores do dashboard; a lista e o
-            CSV usam o retrato no encerramento, não o estado atual do Kanban.
-          </p>
+          <InfoTooltip label="Como os Relatórios funcionam">
+            <p>
+              O que fizemos no recorte. O resumo usa os mesmos indicadores do dashboard; a lista
+              e o CSV usam o retrato no encerramento, não o estado atual do Kanban.
+            </p>
+            <p className="mt-2">
+              Filtros de área, responsável, projeto e demais dimensões usam o retrato no
+              encerramento, não o estado atual do Kanban. Canceladas entram no total quando
+              pertencem ao recorte.
+            </p>
+          </InfoTooltip>
         </div>
         {csvHref ? (
           <a

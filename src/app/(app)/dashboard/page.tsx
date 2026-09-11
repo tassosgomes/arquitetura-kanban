@@ -21,6 +21,7 @@ import {
 import { systemClock } from "@/application/ports/clock";
 import { EmptyState } from "@/ui/feedback/EmptyState";
 import { ErrorState } from "@/ui/feedback/ErrorState";
+import { InfoTooltip } from "@/ui/feedback/InfoTooltip";
 import { DashboardFilters } from "@/ui/dashboard/DashboardFilters";
 import { DashboardPeriodBanner } from "@/ui/dashboard/DashboardPeriodBanner";
 import { DistributionBars } from "@/ui/dashboard/DistributionBars";
@@ -110,13 +111,20 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   return (
     <div className="flex flex-col gap-space-lg">
-      <header className="flex flex-col gap-2">
+      <header className="flex items-center gap-1.5">
         <h1 className="text-headline-lg text-on-surface">Dashboard</h1>
-        <p className="max-w-3xl text-body-md leading-6 text-on-surface-variant">
-          Quanto estamos fazendo, onde estamos atuando e em que situação estava o trabalho no
-          encerramento do recorte. Totais vêm das agregações gerenciais; o Kanban continua mostrando
-          o estado atual.
-        </p>
+        <InfoTooltip label="Como o Dashboard funciona">
+          <p>
+            Quanto estamos fazendo, onde estamos atuando e em que situação estava o trabalho no
+            encerramento do recorte. Totais vêm das agregações gerenciais; o Kanban continua
+            mostrando o estado atual.
+          </p>
+          <p className="mt-2">
+            Filtros de área, responsável, projeto e demais dimensões usam o retrato no
+            encerramento, não o estado atual do Kanban. Canceladas entram no total quando
+            pertencem ao recorte.
+          </p>
+        </InfoTooltip>
       </header>
 
       <DashboardFilters
