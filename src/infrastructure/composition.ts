@@ -8,6 +8,7 @@ import { createPrismaDomainRepository } from "@/infrastructure/db/repositories/p
 import { createPrismaProjectRepository } from "@/infrastructure/db/repositories/prisma-project-repository";
 import { createPrismaActivityRepository } from "@/infrastructure/db/repositories/prisma-activity-repository";
 import { createPrismaValueDeliveryRepository } from "@/infrastructure/db/repositories/prisma-value-delivery-repository";
+import { createPrismaAuditRepository } from "@/infrastructure/db/repositories/prisma-audit-repository";
 import { runAuditedMutation } from "@/infrastructure/db/audited-transaction";
 
 const areaRepository = createPrismaAreaRepository(prisma);
@@ -16,9 +17,11 @@ const catalogUserRepository = createPrismaCatalogUserRepository(prisma);
 const projectRepository = createPrismaProjectRepository(prisma);
 const activityRepository = createPrismaActivityRepository(prisma);
 const valueDeliveryRepository = createPrismaValueDeliveryRepository(prisma);
+const auditRepository = createPrismaAuditRepository(prisma);
 
 export {
   activityRepository,
+  auditRepository,
   areaRepository,
   catalogUserRepository,
   domainRepository,

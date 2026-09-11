@@ -19,12 +19,19 @@ import {
   updateActivitySchema,
   updateActivityTask,
   updateActivityTaskSchema,
+  listActivityHistory,
 } from "@/application/activities";
-import type { ActivityChecklistResult, ActivityRecord } from "@/application/activities";
+import type {
+  ActivityChecklistResult,
+  ActivityHistoryPage,
+  ActivityRecord,
+} from "@/application/activities";
+import { z } from "zod";
 import { runAction, type ActionResult } from "@/app/actions/action-result";
 import {
   activityRepository,
   areaRepository,
+  auditRepository,
   catalogUserRepository,
   domainRepository,
   prisma,
@@ -42,6 +49,22 @@ function activityDeps() {
     prisma,
   };
 }
+
+function historyDeps() {
+  return {
+    activities: activityRepository,
+    audit: auditRepository,
+    users: catalogUserRepository,
+    areas: areaRepository,
+    domains: domainRepository,
+    projects: projectRepository,
+  };
+}
+
+const loadActivityHistorySchema = z.object({
+  activityId: z.string().uuid(),
+  beforeSequence: z.string().regex(/^\d+$/).optional(),
+});
 
 function revalidateActivity(activity: { id: string; project: { id: string } | null }) {
   revalidatePath("/kanban");
@@ -188,6 +211,20 @@ export async function removeActivityTaskAction(
     const result = await removeActivityTask(actor, parsed.data, checklistDeps());
     revalidateChecklist(result);
     return result;
+  });
+}
+
+export async function loadActivityHistoryAction(
+  input: unknown,
+): Promise<ActionResult<ActivityHistoryPage>> {
+  const parsed = loadActivityHistorySchema.safeParse(input);
+  if (!parsed.success) {
+    return zodFailure(parsed.error);
+  }
+
+  return runAction(async () => {
+    const actor = await requireActiveUser();
+    return listActivityHistory(actor, parsed.data, historyDeps());
   });
 }
 

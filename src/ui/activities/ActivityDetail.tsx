@@ -13,7 +13,9 @@ import { formatCivilDatePtBr, formatUserLabel } from "@/ui/projects/project-type
 import { ActivityStatusBadge } from "@/ui/activities/ActivityStatusBadge";
 import { ActivityStatusControls } from "@/ui/activities/ActivityStatusControls";
 import { ActivityChecklist } from "@/ui/activities/ActivityChecklist";
+import { ActivityHistory } from "@/ui/activities/ActivityHistory";
 import { changeActivityStatusAction } from "@/app/actions/activities";
+import type { ActivityHistoryPage } from "@/application/activities/activity-history-types";
 
 function formatInstant(value: Date): string {
   return new Intl.DateTimeFormat("pt-BR", {
@@ -32,7 +34,13 @@ function Item({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-export function ActivityDetail({ activity }: { activity: ActivityRecord }) {
+export function ActivityDetail({
+  activity,
+  history,
+}: {
+  activity: ActivityRecord;
+  history: ActivityHistoryPage;
+}) {
   const editable = canEditActivity(activity.status);
 
   return (
@@ -153,6 +161,8 @@ export function ActivityDetail({ activity }: { activity: ActivityRecord }) {
         status={activity.status}
         tasks={activity.tasks}
       />
+
+      <ActivityHistory activityId={activity.id} initialPage={history} />
 
       {editable ? null : (
         <p className="text-sm text-zinc-600">
