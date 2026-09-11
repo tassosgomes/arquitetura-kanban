@@ -39,7 +39,7 @@ export default async function EditValueDeliveryPage({ params }: EditValueDeliver
         action={
           <Link
             href={`/projects/${project.id}/value-deliveries/${delivery.id}`}
-            className="text-sm font-medium text-zinc-900 underline"
+            className="text-label-md font-semibold text-primary underline"
           >
             Voltar à entrega
           </Link>
@@ -50,15 +50,15 @@ export default async function EditValueDeliveryPage({ params }: EditValueDeliver
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm">
+      <p className="font-mono text-code-sm">
         <Link
           href={`/projects/${project.id}/value-deliveries/${delivery.id}`}
-          className="font-medium text-zinc-700 underline hover:text-zinc-900"
+          className="font-semibold text-primary hover:underline"
         >
           {delivery.title}
         </Link>
       </p>
-      <h2 className="text-xl font-semibold tracking-tight text-zinc-900">Editar entrega de valor</h2>
+      <h2 className="text-headline-lg text-on-surface">Editar entrega de valor</h2>
       <ValueDeliveryForm
         mode="edit"
         projectId={project.id}

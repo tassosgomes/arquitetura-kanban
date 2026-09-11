@@ -44,12 +44,12 @@ export function CancelProjectButton({ projectId, version, action }: CancelProjec
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md px-2 py-1 text-sm font-medium text-red-800 underline hover:text-red-900 disabled:opacity-50"
+        className="inline-flex w-fit rounded-xl bg-error-container px-space-md py-2 text-label-md font-semibold text-on-error-container transition-opacity hover:opacity-90 disabled:opacity-50"
       >
         {pending ? "Cancelando…" : "Cancelar projeto"}
       </button>
       {state && !state.ok ? (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-body-sm text-error" role="alert">
           {state.error.message}
         </p>
       ) : null}

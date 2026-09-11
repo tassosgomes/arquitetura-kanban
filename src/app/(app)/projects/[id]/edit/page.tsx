@@ -50,7 +50,7 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
         title="Projeto cancelado"
         message="Projetos cancelados não podem ser editados. O registro permanece visível na consulta."
         action={
-          <Link href={`/projects/${project.id}`} className="text-sm font-medium text-zinc-900 underline">
+          <Link href={`/projects/${project.id}`} className="text-label-md font-semibold text-primary underline">
             Voltar ao projeto
           </Link>
         }

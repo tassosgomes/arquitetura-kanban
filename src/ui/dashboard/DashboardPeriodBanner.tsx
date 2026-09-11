@@ -7,15 +7,20 @@ type DashboardPeriodBannerProps = {
 export function DashboardPeriodBanner({ view }: DashboardPeriodBannerProps) {
   return (
     <section
-      className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3"
+      className="flex flex-col gap-1.5 rounded-xl bg-primary-container/10 px-space-md py-space-sm"
       aria-labelledby="dashboard-periodo"
     >
-      <h2 id="dashboard-periodo" className="text-sm font-semibold text-zinc-900">
-        {view.periodLabel}
-      </h2>
-      <p className="text-sm leading-6 text-zinc-700">{view.periodDatesText}</p>
-      <p className="text-sm leading-6 text-zinc-700">{view.closingText}</p>
-      <p className="text-sm leading-6 text-zinc-600">{view.semanticsText}</p>
+      <div className="flex items-center gap-1.5">
+        <span className="material-symbols-outlined text-[18px] text-primary" aria-hidden="true">
+          event_available
+        </span>
+        <h2 id="dashboard-periodo" className="text-label-md font-semibold text-on-surface">
+          {view.periodLabel}
+        </h2>
+      </div>
+      <p className="text-body-sm leading-6 text-on-surface-variant">{view.periodDatesText}</p>
+      <p className="text-body-sm leading-6 text-on-surface-variant">{view.closingText}</p>
+      <p className="text-body-sm leading-6 text-outline">{view.semanticsText}</p>
     </section>
   );
 }

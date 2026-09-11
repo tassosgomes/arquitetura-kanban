@@ -7,7 +7,7 @@ export default function ActivityNotFound() {
       title="Atividade não encontrada"
       message="Esta atividade não existe ou não está mais disponível."
       action={
-        <Link href="/kanban" className="text-sm font-medium text-zinc-900 underline">
+        <Link href="/kanban" className="text-label-md font-semibold text-primary underline">
           Voltar ao Kanban
         </Link>
       }

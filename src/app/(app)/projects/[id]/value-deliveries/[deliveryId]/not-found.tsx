@@ -7,7 +7,7 @@ export default function ValueDeliveryNotFound() {
       title="Entrega de valor não encontrada"
       message="Esta entrega não existe neste projeto ou não está mais disponível."
       action={
-        <Link href="/projects" className="text-sm font-medium text-zinc-900 underline">
+        <Link href="/projects" className="text-label-md font-semibold text-primary underline">
           Voltar aos projetos
         </Link>
       }

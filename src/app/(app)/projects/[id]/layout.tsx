@@ -24,23 +24,23 @@ export default async function ProjectSectionLayout({ children, params }: Project
   const editable = canEditProject(project.status);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-space-lg">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
-          <p className="text-sm">
-            <Link href="/projects" className="font-medium text-zinc-700 underline hover:text-zinc-900">
+          <p className="font-mono text-code-sm">
+            <Link href="/projects" className="font-semibold text-primary hover:underline">
               Projetos
             </Link>
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{project.name}</h1>
+            <h1 className="text-headline-lg text-on-surface">{project.name}</h1>
             <ProjectStatusBadge status={project.status} />
           </div>
         </div>
         {editable ? (
           <Link
             href={`/projects/${project.id}/edit`}
-            className="inline-flex shrink-0 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="inline-flex shrink-0 rounded-xl bg-primary-container px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Editar
           </Link>

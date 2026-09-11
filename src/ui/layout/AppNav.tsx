@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 type NavItem = {
   href: string;
   label: string;
+  icon: string;
   isActive: (pathname: string) => boolean;
 };
 
@@ -13,36 +14,42 @@ const NAV_ITEMS: NavItem[] = [
   {
     href: "/kanban",
     label: "Kanban",
+    icon: "view_kanban",
     isActive: (pathname) => pathname === "/" || pathname.startsWith("/kanban"),
   },
   {
     href: "/projects",
     label: "Projetos",
+    icon: "folder_special",
     isActive: (pathname) => pathname.startsWith("/projects"),
   },
   {
     href: "/dashboard",
     label: "Dashboard",
+    icon: "monitoring",
     isActive: (pathname) => pathname.startsWith("/dashboard"),
   },
   {
     href: "/reports",
     label: "Relatórios",
+    icon: "analytics",
     isActive: (pathname) => pathname.startsWith("/reports"),
   },
   {
     href: "/catalogs",
     label: "Cadastros",
+    icon: "app_registration",
     isActive: (pathname) => pathname.startsWith("/catalogs"),
   },
 ];
 
-export function AppNav() {
+export function AppNav({ orientation = "vertical" }: { orientation?: "vertical" | "horizontal" }) {
   const pathname = usePathname();
+  const isHorizontal = orientation === "horizontal";
 
   return (
-    <nav aria-label="Principal" className="border-b border-zinc-200 bg-white lg:border-b-0 lg:border-r">
-      <ul className="flex flex-wrap gap-1 px-4 py-3 lg:flex-col lg:gap-0.5 lg:px-3 lg:py-4">
+    <nav aria-label="Principal">
+      <ul className={isHorizontal ? "flex flex-wrap gap-1 px-space-sm py-space-sm" : "flex flex-col gap-1"}>
         {NAV_ITEMS.map((item) => {
           const active = item.isActive(pathname);
 
@@ -51,13 +58,16 @@ export function AppNav() {
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`block rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 ${
+                className={`group flex items-center gap-space-md rounded-xl px-space-md py-2.5 text-label-md font-medium transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                   active
-                    ? "bg-zinc-900 text-white"
-                    : "text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900"
+                    ? "bg-primary-container text-on-primary shadow-sm"
+                    : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
                 }`}
               >
-                {item.label}
+                <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
+                  {item.icon}
+                </span>
+                <span className="flex-1">{item.label}</span>
               </Link>
             </li>
           );

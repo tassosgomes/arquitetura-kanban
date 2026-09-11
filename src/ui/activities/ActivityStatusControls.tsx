@@ -86,7 +86,7 @@ export function ActivityStatusControls({
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
         <label className="flex min-w-0 flex-1 flex-col gap-1.5" htmlFor="activity-status-move">
-          <span className="text-sm font-medium text-zinc-900">Mover para</span>
+          <span className="text-label-sm text-on-surface-variant">Mover para</span>
           <select
             id="activity-status-move"
             name="status"
@@ -106,8 +106,11 @@ export function ActivityStatusControls({
           name="intent"
           value="move"
           disabled={pending}
-          className="inline-flex shrink-0 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:bg-zinc-400"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-sm transition-all hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:bg-outline-variant disabled:text-outline"
         >
+          <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
+            arrow_forward
+          </span>
           {pending ? "Movendo…" : "Mover"}
         </button>
       </div>
@@ -119,7 +122,7 @@ export function ActivityStatusControls({
             name="intent"
             value="reopen"
             disabled={pending}
-            className="rounded-md px-2 py-1 text-sm font-medium text-zinc-800 underline hover:text-zinc-950 disabled:opacity-50"
+            className="rounded-md px-2 py-1 text-label-md font-semibold text-primary hover:underline disabled:opacity-50"
           >
             Reabrir
           </button>
@@ -129,14 +132,14 @@ export function ActivityStatusControls({
           name="intent"
           value="cancel"
           disabled={pending}
-          className="rounded-md px-2 py-1 text-sm font-medium text-red-800 underline hover:text-red-900 disabled:opacity-50"
+          className="rounded-xl bg-error-container px-3 py-1.5 text-label-md font-semibold text-on-error-container transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           Cancelar
         </button>
       </div>
 
       {state && !state.ok ? (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-body-sm text-error" role="alert">
           {state.error.message}
         </p>
       ) : null}

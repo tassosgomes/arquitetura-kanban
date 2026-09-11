@@ -95,7 +95,7 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
         action={
           <Link
             href={retryHref(rawParams)}
-            className="inline-flex rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="inline-flex rounded-xl bg-primary px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Tentar de novo
           </Link>
@@ -114,11 +114,11 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
   const csvHref = parsed.error ? null : reportsCsvHref(parsed.query);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-space-lg">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Relatórios</h1>
-          <p className="max-w-3xl text-sm leading-6 text-zinc-600">
+          <h1 className="text-headline-lg text-on-surface">Relatórios</h1>
+          <p className="max-w-3xl text-body-md leading-6 text-on-surface-variant">
             O que fizemos no recorte. O resumo usa os mesmos indicadores do dashboard; a lista e o
             CSV usam o retrato no encerramento, não o estado atual do Kanban.
           </p>
@@ -126,8 +126,11 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
         {csvHref ? (
           <a
             href={csvHref}
-            className="inline-flex shrink-0 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary-container px-space-md py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
+            <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+              file_download
+            </span>
             Exportar CSV
           </a>
         ) : null}
@@ -160,7 +163,7 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
 
       {parsed.error ? (
         <p
-          className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950"
+          className="rounded-xl border border-secondary-container/40 bg-secondary-container/10 px-3 py-2 text-body-sm text-on-surface"
           role="alert"
         >
           {parsed.error} O relatório não foi gerado.
@@ -175,10 +178,10 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
           <AssociatedProjectsList projects={report.associatedProjects} />
           <section className="flex flex-col gap-3" aria-labelledby="relatorio-atividades">
             <div className="flex flex-col gap-1">
-              <h2 id="relatorio-atividades" className="text-lg font-semibold text-zinc-900">
+              <h2 id="relatorio-atividades" className="text-headline-md text-on-surface">
                 Atividades
               </h2>
-              <p className="text-sm text-zinc-600">
+              <p className="text-body-sm text-on-surface-variant">
                 {pageSlice.total === 0
                   ? filtersActive
                     ? "Nenhuma atividade corresponde aos filtros e ao período selecionados."
@@ -198,14 +201,14 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
                   filtersActive ? (
                     <Link
                       href="/reports"
-                      className="inline-flex rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+                      className="inline-flex rounded-xl bg-primary px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       Limpar filtros
                     </Link>
                   ) : (
                     <Link
                       href="/kanban"
-                      className="inline-flex rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+                      className="inline-flex rounded-xl bg-primary px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       Ir ao Kanban
                     </Link>

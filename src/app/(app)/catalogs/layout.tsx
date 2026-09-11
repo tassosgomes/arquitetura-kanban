@@ -6,10 +6,10 @@ export default function CatalogsLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-space-lg">
       <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Cadastros</h1>
-        <p className="max-w-2xl text-sm leading-6 text-zinc-600">
+        <h1 className="text-headline-lg text-on-surface">Cadastros</h1>
+        <p className="max-w-2xl text-body-md leading-6 text-on-surface-variant">
           Gerencie áreas e domínios de arquitetura. Registros inativos permanecem legíveis, mas não
           entram em novas associações.
         </p>

@@ -31,7 +31,7 @@ export function ActivityList({
           createHref ? (
             <Link
               href={createHref}
-              className="inline-flex rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+              className="inline-flex rounded-xl bg-primary-container px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               {createLabel}
             </Link>
@@ -42,40 +42,40 @@ export function ActivityList({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
-      <table className="min-w-full text-left text-sm">
+    <div className="overflow-x-auto rounded-xl bg-surface-container-lowest shadow-sm">
+      <table className="min-w-full text-left text-body-sm">
         <caption className="sr-only">Lista de atividades</caption>
-        <thead className="border-b border-zinc-200 bg-zinc-50 text-zinc-700">
+        <thead className="bg-surface-container-low text-on-surface-variant">
           <tr>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Título
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Status
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Tipo
             </th>
             {showProject ? (
-              <th scope="col" className="px-4 py-3 font-medium">
+              <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
                 Projeto
               </th>
             ) : null}
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Responsável
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               <span className="sr-only">Ações</span>
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-zinc-100">
+        <tbody className="divide-y divide-outline-variant/40">
           {activities.map((activity) => (
-            <tr key={activity.id}>
+            <tr key={activity.id} className="transition-colors hover:bg-primary-container/5">
               <td className="px-4 py-3">
                 <Link
                   href={`/activities/${activity.id}`}
-                  className="font-medium text-zinc-900 underline hover:text-zinc-700"
+                  className="font-semibold text-on-surface hover:text-primary"
                 >
                   {activity.title}
                 </Link>
@@ -83,13 +83,13 @@ export function ActivityList({
               <td className="px-4 py-3">
                 <ActivityStatusBadge status={activity.status} />
               </td>
-              <td className="px-4 py-3 text-zinc-700">{ACTIVITY_TYPE_LABELS[activity.type]}</td>
+              <td className="px-4 py-3 text-on-surface-variant">{ACTIVITY_TYPE_LABELS[activity.type]}</td>
               {showProject ? (
-                <td className="px-4 py-3 text-zinc-700">
+                <td className="px-4 py-3 text-on-surface-variant">
                   {activity.project ? (
                     <Link
                       href={`/projects/${activity.project.id}`}
-                      className="underline hover:text-zinc-900"
+                      className="hover:text-primary hover:underline"
                     >
                       {activity.project.name}
                     </Link>
@@ -98,22 +98,22 @@ export function ActivityList({
                   )}
                 </td>
               ) : null}
-              <td className="px-4 py-3 text-zinc-700">
+              <td className="px-4 py-3 text-on-surface-variant">
                 {formatUserLabel(activity.owner)}
                 {activity.owner.isActive ? null : " (inativo)"}
               </td>
               <td className="px-4 py-3">
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1">
                   <Link
                     href={`/activities/${activity.id}`}
-                    className="rounded-md px-2 py-1 text-sm font-medium text-zinc-900 underline hover:text-zinc-700"
+                    className="rounded-md px-2 py-1 text-label-sm font-semibold text-primary hover:underline"
                   >
                     Ver
                   </Link>
                   {canEditActivity(activity.status) ? (
                     <Link
                       href={`/activities/${activity.id}/edit`}
-                      className="rounded-md px-2 py-1 text-sm font-medium text-zinc-900 underline hover:text-zinc-700"
+                      className="rounded-md px-2 py-1 text-label-sm font-semibold text-primary hover:underline"
                     >
                       Editar
                     </Link>

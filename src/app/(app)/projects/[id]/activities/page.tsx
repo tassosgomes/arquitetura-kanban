@@ -36,13 +36,13 @@ export default async function ProjectActivitiesPage({ params }: ProjectActivitie
         <div className="flex justify-end">
           <Link
             href={`/activities/new?projectId=${project.id}`}
-            className="inline-flex rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="inline-flex rounded-xl bg-primary-container px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Nova atividade vinculada
           </Link>
         </div>
       ) : (
-        <p className="text-sm text-zinc-600">
+        <p className="text-body-sm text-on-surface-variant">
           Projeto cancelado: novas atividades não podem ser vinculadas a ele.
         </p>
       )}

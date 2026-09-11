@@ -9,6 +9,11 @@ type ActivityHistoryProps = {
   initialPage: ActivityHistoryPage;
 };
 
+function initials(label: string): string {
+  const parts = label.trim().split(/\s+/).filter(Boolean);
+  return parts.slice(0, 2).map((part) => part[0]?.toUpperCase() ?? "").join("") || "?";
+}
+
 export function ActivityHistory({ activityId, initialPage }: ActivityHistoryProps) {
   const [items, setItems] = useState(initialPage.items);
   const [hasMore, setHasMore] = useState(initialPage.hasMore);
@@ -40,9 +45,9 @@ export function ActivityHistory({ activityId, initialPage }: ActivityHistoryProp
   }
 
   return (
-    <section className="flex max-w-3xl flex-col gap-4" aria-labelledby="activity-history-heading">
+    <section className="flex max-w-3xl flex-col gap-space-md" aria-labelledby="activity-history-heading">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="activity-history-heading" className="text-lg font-semibold text-zinc-900">
+        <h2 id="activity-history-heading" className="text-headline-md text-on-surface">
           Histórico
         </h2>
         {hasMore ? (
@@ -50,7 +55,7 @@ export function ActivityHistory({ activityId, initialPage }: ActivityHistoryProp
             type="button"
             onClick={loadMore}
             disabled={pending}
-            className="rounded-md px-2 py-1 text-sm font-medium text-zinc-700 underline hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:text-zinc-400 disabled:no-underline"
+            className="rounded-md px-2 py-1 text-label-md font-semibold text-primary hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-outline disabled:no-underline"
           >
             {pending ? "Carregando…" : "Carregar mais"}
           </button>
@@ -58,26 +63,29 @@ export function ActivityHistory({ activityId, initialPage }: ActivityHistoryProp
       </div>
 
       {error ? (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-body-sm text-error" role="alert">
           {error}
         </p>
       ) : null}
 
       {items.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50 px-4 py-6 text-sm text-zinc-600">
+        <p className="rounded-xl border border-dashed border-outline-variant bg-surface-container-low px-4 py-6 text-body-sm text-on-surface-variant">
           Nenhum evento registrado para esta atividade.
         </p>
       ) : (
-        <ol className="flex flex-col gap-3 rounded-lg border border-zinc-200 bg-white p-5">
+        <ol className="flex flex-col gap-3 rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
           {items.map((item) => (
-            <li
-              key={item.sequence}
-              className="border-b border-zinc-100 pb-3 last:border-b-0 last:pb-0"
-            >
-              <p className="text-sm text-zinc-900">{item.summary}</p>
-              <p className="mt-1 text-xs text-zinc-600">
-                {item.occurredAt} · {item.actorLabel}
-              </p>
+            <li key={item.sequence} className="flex items-start gap-2.5">
+              <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-secondary text-[10px] font-bold text-on-secondary">
+                {initials(item.actorLabel)}
+              </div>
+              <div className="flex-1 rounded-xl bg-surface-container-low p-2.5">
+                <div className="mb-1 flex items-center justify-between gap-2">
+                  <span className="text-label-sm font-semibold text-on-surface">{item.actorLabel}</span>
+                  <span className="font-mono text-code-sm text-outline">{item.occurredAt}</span>
+                </div>
+                <p className="text-body-sm text-on-surface">{item.summary}</p>
+              </div>
             </li>
           ))}
         </ol>

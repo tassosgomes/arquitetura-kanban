@@ -9,16 +9,16 @@ export function LoadingState({
 }: LoadingStateProps) {
   return (
     <section
-      className="flex max-w-xl flex-col gap-4"
+      className="flex max-w-xl flex-col gap-space-sm"
       aria-busy="true"
       aria-live="polite"
       role="status"
     >
-      <p className="text-sm font-medium tracking-wide text-zinc-500 uppercase">Aguarde</p>
-      <h1 className="text-3xl font-semibold tracking-tight text-zinc-950">{title}</h1>
-      <p className="text-lg leading-7 text-zinc-700">{message}</p>
-      <div className="h-1.5 w-48 overflow-hidden rounded-full bg-zinc-200">
-        <div className="h-full w-1/3 animate-pulse rounded-full bg-zinc-400" />
+      <p className="text-label-sm text-outline uppercase tracking-wider">Aguarde</p>
+      <h1 className="text-headline-lg text-on-surface">{title}</h1>
+      <p className="text-body-lg text-on-surface-variant">{message}</p>
+      <div className="h-1.5 w-48 overflow-hidden rounded-full bg-surface-container-high">
+        <div className="h-full w-1/3 animate-pulse rounded-full bg-primary-container" />
       </div>
     </section>
   );

@@ -25,12 +25,12 @@ export default async function CatalogsPage() {
   const users = await listUsers(actor, catalogUserRepository);
 
   return (
-    <section aria-labelledby="catalog-users-title" className="flex flex-col gap-4">
+    <section aria-labelledby="catalog-users-title" className="flex flex-col gap-space-md">
       <div>
-        <h2 id="catalog-users-title" className="text-lg font-semibold text-zinc-900">
+        <h2 id="catalog-users-title" className="text-headline-md text-on-surface">
           Usuários autorizados
         </h2>
-        <p className="mt-1 text-sm leading-6 text-zinc-600">
+        <p className="mt-1 text-body-sm leading-6 text-on-surface-variant">
           Referência para responsáveis e participantes. A gestão de permissões permanece no provedor
           de identidade; apenas usuários ativos entram em novas atribuições.
         </p>

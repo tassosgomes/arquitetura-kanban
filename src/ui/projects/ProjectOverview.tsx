@@ -22,8 +22,8 @@ function formatInstant(value: Date): string {
 function Item({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="grid gap-1 sm:grid-cols-[12rem_1fr] sm:gap-4">
-      <dt className="text-sm font-medium text-zinc-600">{label}</dt>
-      <dd className="text-sm text-zinc-900">{children}</dd>
+      <dt className="text-label-sm uppercase tracking-wider text-outline">{label}</dt>
+      <dd className="text-body-md text-on-surface">{children}</dd>
     </div>
   );
 }
@@ -33,7 +33,7 @@ export function ProjectOverview({ project }: { project: ProjectRecord }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <dl className="flex max-w-3xl flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-5">
+      <dl className="flex max-w-3xl flex-col gap-space-md rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
         <Item label="Status">
           <ProjectStatusBadge status={project.status} />
         </Item>
@@ -80,7 +80,7 @@ export function ProjectOverview({ project }: { project: ProjectRecord }) {
           action={cancelProjectAction}
         />
       ) : (
-        <p className="text-sm text-zinc-600">
+        <p className="text-body-sm text-on-surface-variant">
           Projeto cancelado: o registro foi preservado e não pode ser editado.
         </p>
       )}

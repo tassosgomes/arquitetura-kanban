@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'tertiary-fixed': '#6ffbbe', 'tertiary-container': '#00885d', 'on-primary-fixed-variant': '#2f2ebe', 'on-secondary': '#003640', 'on-secondary-fixed-variant': '#004e5c', 'on-secondary-fixed': '#001f26', 'secondary-container': '#03b5d3', 'secondary': '#4cd7f6', 'status-success': '#10b981', 'primary': '#c0c1ff', 'on-tertiary-container': '#000703', 'error-container': '#93000a', 'inverse-surface': '#dce2f7', 'outline': '#908fa0', 'on-surface': '#dce2f7', 'border-subtle': '#1f2937', 'on-secondary-container': '#00424e', 'border-prominent': '#374151', 'surface-container-low': '#141b2b', 'inverse-on-surface': '#293040', 'secondary-fixed': '#acedff', 'on-surface-variant': '#c7c4d7', 'on-tertiary-fixed': '#002113', 'text-muted': '#9ca3af', 'primary-fixed-dim': '#c0c1ff', 'on-primary-fixed': '#07006c', 'secondary-fixed-dim': '#4cd7f6', 'text-primary': '#f9fafb', 'surface-container-high': '#232a3a', 'text-dim': '#6b7280', 'surface': '#0c1322', 'inverse-primary': '#494bd6', 'accent-electric': '#818cf8', 'surface-overlay': '#374151', 'surface-container': '#191f2f', 'on-primary-container': '#0d0096', 'primary-container': '#8083ff', 'surface-variant': '#2e3545', 'outline-variant': '#464554', 'primary-fixed': '#e1e0ff', 'on-error': '#690005', 'on-tertiary-fixed-variant': '#005236', 'on-background': '#dce2f7', 'canvas-base': '#0b0f19', 'on-error-container': '#ffdad6', 'text-secondary': '#e5e7eb', 'error': '#ffb4ab', 'tag-technical': '#06b6d4', 'status-critical': '#f43f5e', 'tertiary': '#4edea3', 'surface-bright': '#323949', 'on-tertiary': '#003824', 'background': '#0c1322', 'status-warning': '#f59e0b', 'surface-card': '#111827', 'on-primary': '#1000a9', 'surface-dim': '#0c1322', 'surface-container-highest': '#2e3545', 'surface-elevated': '#1f2937', 'tertiary-fixed-dim': '#4edea3', 'surface-container-lowest': '#070e1d', 'surface-tint': '#c0c1ff' }, borderRadius: { 'DEFAULT': '0.125rem', 'lg': '0.25rem', 'xl': '0.5rem', 'full': '0.75rem' }, spacing: { 'margin-lg': '2rem', 'space-md': '0.75rem', 'space-sm': '0.5rem', 'space-lg': '1.25rem', 'gutter-lg': '1.5rem', 'margin': '1.5rem', 'gutter': '1rem', 'space-xl': '2rem', 'margin-sm': '1rem', 'gutter-sm': '0.75rem', 'space-xs': '0.25rem' }, fontFamily: { 'headline-lg': ['Plus Jakarta Sans'], 'code-sm': ['JetBrains Mono'], 'label-md': ['Plus Jakarta Sans'], 'body-lg': ['Plus Jakarta Sans'], 'body-md': ['Plus Jakarta Sans'], 'headline-sm': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'label-sm': ['Plus Jakarta Sans'], 'headline-lg-mobile': ['Plus Jakarta Sans'], 'code-md': ['JetBrains Mono'], 'headline-xl': ['Plus Jakarta Sans'], 'headline-md': ['Plus Jakarta Sans'] }, fontSize: { 'headline-lg': ['24px', { lineHeight: '32px', letterSpacing: '-0.02em', fontWeight: '600' }], 'code-sm': ['11px', { lineHeight: '14px', letterSpacing: '0', fontWeight: '500' }], 'label-md': ['13px', { lineHeight: '18px', fontWeight: '500' }], 'body-lg': ['15px', { lineHeight: '24px', fontWeight: '400' }], 'body-md': ['13px', { lineHeight: '20px', fontWeight: '400' }], 'headline-sm': ['15px', { lineHeight: '22px', letterSpacing: '-0.01em', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '18px', fontWeight: '400' }], 'label-sm': ['11px', { lineHeight: '16px', letterSpacing: '0.02em', fontWeight: '600' }], 'headline-lg-mobile': ['20px', { lineHeight: '28px', letterSpacing: '-0.015em', fontWeight: '600' }], 'code-md': ['12px', { lineHeight: '16px', letterSpacing: '0', fontWeight: '500' }], 'headline-xl': ['32px', { lineHeight: '40px', letterSpacing: '-0.025em', fontWeight: '700' }], 'headline-md': ['18px', { lineHeight: '26px', letterSpacing: '-0.015em', fontWeight: '600' }] } } } };</script></head><body class="bg-canvas-base font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-card border-r border-border-subtle z-50 flex flex-col justify-between"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center gap-space-sm border-b border-border-subtle"><img alt="Brand logo. - Primary color: #4f46e5
+- Font: plusJakartaSans
+- Mode: light
+- Roundness: rounded-sm
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UzELy5HBQOj0kWDAWKaJAGFSXUnrm7Ig1h2WgWVFSu1Ju1XrJHHvn9tXD2iGQgRx1vYG-UjiqV1AuQLP6gDXejWIJoJFO-h30y6V4IVTefFP9njK3XMTEjLq-32aV8bjVRUjcGN3eaSPKOG6uRHFXMUEi6AVuwOi721QsAbSOdwqpnSwsy0LlyJAI12Y0VTj1APbezl-lQmLGagwkLNLL6BOIShhkFSVMYjgd4ey-D4wyLto8WASh6BOEF"/><div class="flex flex-col overflow-hidden"><span class="font-headline-sm text-headline-sm text-text-primary truncate tracking-tight">Enterprise Core</span><span class="font-code-sm text-code-sm text-accent-electric tracking-wide uppercase">Architecture OS</span></div></div><div class="px-space-md py-space-sm"><span class="px-space-sm font-label-sm text-label-sm text-text-dim uppercase tracking-wider">Workspace</span></div><nav class="flex flex-col gap-space-xs px-space-sm" data-active-classes="bg-surface-elevated text-text-primary font-headline-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-elevated hover:text-on-surface transition-colors" data-path="kanban" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px] text-text-muted">view_kanban</span><span class="font-label-md text-label-md">Kanban</span></div><span class="px-space-sm py-0.5 rounded-full bg-surface-container-high border border-border-prominent font-code-sm text-code-sm text-accent-electric">14</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-elevated hover:text-on-surface transition-colors" data-path="projetos" href="#"><span class="material-symbols-outlined text-[20px] text-text-muted">account_tree</span><span class="font-label-md text-label-md">Projetos</span></a><a aria-current="page" class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl transition-colors bg-surface-elevated text-text-primary font-headline-sm" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px] text-text-muted">analytics</span><span class="font-label-md text-label-md">Dashboard</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-elevated hover:text-on-surface transition-colors" data-path="relatorios" href="#"><span class="material-symbols-outlined text-[20px] text-text-muted">description</span><span class="font-label-md text-label-md">Relatórios</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl text-on-surface-variant hover:bg-surface-elevated hover:text-on-surface transition-colors" data-path="cadastros" href="#"><span class="material-symbols-outlined text-[20px] text-text-muted">domain_verification</span><span class="font-label-md text-label-md">Cadastros</span></a></nav></div><div class="p-space-sm border-t border-border-subtle bg-surface-card"><div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container hover:bg-surface-elevated transition-colors"><div class="flex items-center gap-space-sm min-w-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex flex-col min-w-0"><span class="font-headline-sm text-headline-sm text-text-primary truncate">Teste</span><span class="font-code-sm text-code-sm text-text-muted truncate">teste@tasso.dev.br</span></div></div><button class="p-1.5 text-text-muted hover:text-status-critical transition-colors rounded-lg" title="Logout" type="button"><span class="material-symbols-outlined text-[20px]">logout</span></button></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-card/90 backdrop-blur-xl border-b border-border-subtle z-40 px-gutter-lg flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-md flex-1 max-w-xl"><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-text-dim">search</span><input class="w-full pl-9 pr-4 py-1.5 bg-surface-container rounded-xl border border-border-prominent font-body-sm text-body-sm text-text-primary placeholder:text-text-dim focus:outline-none focus:border-accent-electric focus:ring-1 focus:ring-accent-electric/30 transition-all" placeholder="Buscar atividades, projetos, tags..." type="text"/></div></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-1.5 p-1 bg-surface-container rounded-xl border border-border-subtle"><button class="px-space-sm py-1 rounded-lg font-label-sm text-label-sm text-text-primary bg-surface-elevated transition-colors" type="button">Minha semana</button><button class="px-space-sm py-1 rounded-lg font-label-sm text-label-sm text-text-muted hover:text-text-primary transition-colors" type="button">Este mês</button><button class="px-space-sm py-1 rounded-lg font-label-sm text-label-sm text-text-muted hover:text-text-primary transition-colors" type="button">Trimestre</button></div><button class="flex items-center gap-space-xs px-space-md py-2 bg-gradient-to-r from-inverse-primary to-accent-electric hover:opacity-95 text-text-primary font-headline-sm text-headline-sm rounded-xl shadow-[0_0_16px_rgba(99,102,241,0.35)] transition-all" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>Nova Atividade</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 ring-1 ring-border-prominent"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 bg-canvas-base min-h-screen px-gutter-lg py-gutter"><div class="flex flex-col w-full gap-space-lg">
+<!-- Header Executivo -->
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="inline-flex items-center gap-1.5 px-space-sm py-0.5 rounded-full bg-tertiary-container/30 text-tertiary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-status-success animate-pulse"></span>
+          GOVERNANÇA ATIVA • SLA Médio: 4.2 dias
+        </span>
+<span class="font-code-sm text-code-sm text-text-dim">ID: EA-EXEC-2026.Q3</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-text-primary tracking-tight">Dashboard Executivo de Arquitetura</h1>
+<p class="font-body-md text-body-md text-text-muted">Indicadores de entrega, capacidade, atendimento a projetos e distribuição de esforço no recorte selecionado.</p>
+</div>
+<div class="flex items-center gap-space-sm self-start lg:self-auto">
+<button class="inline-flex items-center gap-1.5 px-space-md py-2 rounded-xl bg-surface-container hover:bg-surface-elevated text-text-secondary hover:text-text-primary font-headline-sm text-headline-sm transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+<span>Exportar PDF</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-space-md py-2 rounded-xl bg-gradient-to-r from-inverse-primary to-accent-electric text-text-primary font-headline-sm text-headline-sm shadow-[0_0_16px_rgba(99,102,241,0.35)] hover:opacity-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>Atualizar Dados</span>
+</button>
+</div>
+</div>
+<!-- Banner de Snapshot Histórico -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container p-space-md shadow-sm">
+<div class="absolute -right-10 -bottom-10 w-64 h-64 bg-accent-electric/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-xl bg-surface-elevated flex items-center justify-center flex-shrink-0 text-accent-electric">
+<span class="material-symbols-outlined text-[22px]">history_toggle_off</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-sm text-headline-sm text-text-primary truncate">Snapshot Histórico Consolidado</span>
+<span class="px-2 py-0.5 rounded-full bg-status-success/15 text-status-success font-code-sm text-code-sm uppercase tracking-wider">Fechamento Ativo</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-dim">Auditoria de rastreabilidade e governança corporativa de arquitetura</span>
+</div>
+</div>
+<div class="flex items-center gap-space-lg flex-wrap">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-text-dim uppercase tracking-wider">Recorte de Medição</span>
+<span class="font-code-md text-code-md text-text-primary font-medium">01/09/2026 a 30/09/2026</span>
+</div>
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-text-dim uppercase tracking-wider">Registro de Auditoria</span>
+<span class="font-code-md text-code-md text-accent-electric font-medium">#EA-9082</span>
+</div>
+<button class="p-2 rounded-xl bg-surface-elevated text-text-muted hover:text-text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Filtros Temporais e Dimensionais -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex flex-wrap items-center justify-between gap-space-sm">
+<!-- Filtros de Recorte Rápido -->
+<div class="flex items-center gap-1.5 p-1 bg-surface-card rounded-xl shadow-sm overflow-x-auto max-w-full">
+<button class="px-space-md py-1.5 rounded-lg font-label-sm text-label-sm text-text-muted hover:text-text-primary transition-colors whitespace-nowrap" type="button">Esta semana</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-sm text-label-sm text-text-muted hover:text-text-primary transition-colors whitespace-nowrap" type="button">Semana passada</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-sm text-label-sm text-text-primary bg-surface-elevated shadow-inner transition-colors whitespace-nowrap" type="button">Este mês</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-sm text-label-sm text-text-muted hover:text-text-primary transition-colors whitespace-nowrap" type="button">Mês passado</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-sm text-label-sm text-text-muted hover:text-text-primary transition-colors whitespace-nowrap" type="button">Este trimestre</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-sm text-label-sm text-text-muted hover:text-text-primary transition-colors whitespace-nowrap" type="button">Este ano</button>
+<button class="px-space-md py-1.5 rounded-lg font-label-sm text-label-sm text-text-dim hover:text-text-muted transition-colors whitespace-nowrap" type="button">Sem planejamento</button>
+</div>
+<div class="flex items-center gap-space-xs text-text-dim font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>5 Dimensões Aplicadas</span>
+</div>
+</div>
+<!-- Dropdown Pills de Dimensões -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-space-sm">
+<button class="flex items-center justify-between px-space-md py-2 rounded-xl bg-surface-card hover:bg-surface-elevated text-left transition-colors group" type="button">
+<div class="flex flex-col min-w-0">
+<span class="font-code-sm text-code-sm text-text-dim">Área</span>
+<span class="font-label-md text-label-md text-text-primary truncate">Todas as Áreas</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-text-dim group-hover:text-text-primary">expand_more</span>
+</button>
+<button class="flex items-center justify-between px-space-md py-2 rounded-xl bg-surface-card hover:bg-surface-elevated text-left transition-colors group" type="button">
+<div class="flex flex-col min-w-0">
+<span class="font-code-sm text-code-sm text-text-dim">Projeto</span>
+<span class="font-label-md text-label-md text-text-primary truncate">12 Selecionados</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-text-dim group-hover:text-text-primary">expand_more</span>
+</button>
+<button class="flex items-center justify-between px-space-md py-2 rounded-xl bg-surface-card hover:bg-surface-elevated text-left transition-colors group" type="button">
+<div class="flex flex-col min-w-0">
+<span class="font-code-sm text-code-sm text-text-dim">Responsável</span>
+<span class="font-label-md text-label-md text-text-primary truncate">Time de Arquitetura</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-text-dim group-hover:text-text-primary">expand_more</span>
+</button>
+<button class="flex items-center justify-between px-space-md py-2 rounded-xl bg-surface-card hover:bg-surface-elevated text-left transition-colors group" type="button">
+<div class="flex flex-col min-w-0">
+<span class="font-code-sm text-code-sm text-text-dim">Domínio</span>
+<span class="font-label-md text-label-md text-text-primary truncate">Todos (Fintech, Core)</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-text-dim group-hover:text-text-primary">expand_more</span>
+</button>
+<button class="flex items-center justify-between px-space-md py-2 rounded-xl bg-surface-card hover:bg-surface-elevated text-left transition-colors group col-span-2 sm:col-span-1" type="button">
+<div class="flex flex-col min-w-0">
+<span class="font-code-sm text-code-sm text-text-dim">Natureza</span>
+<span class="font-label-md text-label-md text-accent-electric truncate">Estratégica &amp; Tática</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-text-dim group-hover:text-text-primary">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Grid de KPIs Primários -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- KPI 1 -->
+<div class="flex flex-col justify-between p-space-md rounded-xl bg-surface-card hover:bg-surface-elevated transition-colors shadow-sm relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-accent-electric uppercase">I-01 • Volume</span>
+<span class="font-headline-sm text-headline-sm text-text-secondary mt-1">Atividades no Período</span>
+</div>
+<span class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-text-muted">
+<span class="material-symbols-outlined text-[18px]">task_alt</span>
+</span>
+</div>
+<div class="flex items-baseline justify-between mt-space-md">
+<div class="flex items-baseline gap-space-sm">
+<span class="font-headline-xl text-headline-xl text-text-primary font-bold">38</span>
+<span class="font-body-sm text-body-sm text-text-muted">itens</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-status-success/15 text-status-success font-code-sm text-code-sm">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+          +14% vs ago
+        </span>
+</div>
+<!-- Mini Sparkline SVG -->
+<div class="w-full h-8 mt-space-sm">
+<svg class="w-full h-full text-status-success overflow-visible" preserveaspectratio="none" viewbox="0 0 100 24">
+<path d="M0,18 L15,16 L30,20 L45,11 L60,13 L75,7 L90,9 L100,3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M0,18 L15,16 L30,20 L45,11 L60,13 L75,7 L90,9 L100,3 L100,24 L0,24 Z" fill="currentColor" opacity="0.12"></path>
+</svg>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="flex flex-col justify-between p-space-md rounded-xl bg-surface-card hover:bg-surface-elevated transition-colors shadow-sm group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-tertiary uppercase">I-02 • Vazão</span>
+<span class="font-headline-sm text-headline-sm text-text-secondary mt-1">Atividades Concluídas</span>
+</div>
+<span class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-text-muted">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</span>
+</div>
+<div class="flex items-baseline justify-between mt-space-md">
+<div class="flex items-baseline gap-space-sm">
+<span class="font-headline-xl text-headline-xl text-text-primary font-bold">24</span>
+<span class="font-body-sm text-body-sm text-text-muted">entregas</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-tertiary/15 text-tertiary font-code-sm text-code-sm">
+          63.1% taxa
+        </span>
+</div>
+<div class="mt-space-sm pt-space-xs flex flex-col gap-1">
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 63.1%"></div>
+</div>
+<span class="font-body-sm text-body-sm text-text-dim">14 tarefas em trânsito/revisão</span>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="flex flex-col justify-between p-space-md rounded-xl bg-surface-card hover:bg-surface-elevated transition-colors shadow-sm group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-secondary uppercase">I-03 • Alcance</span>
+<span class="font-headline-sm text-headline-sm text-text-secondary mt-1">Projetos Atendidos</span>
+</div>
+<span class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-text-muted">
+<span class="material-symbols-outlined text-[18px]">hub</span>
+</span>
+</div>
+<div class="flex items-baseline justify-between mt-space-md">
+<div class="flex items-baseline gap-space-sm">
+<span class="font-headline-xl text-headline-xl text-text-primary font-bold">12</span>
+<span class="font-body-sm text-body-sm text-text-muted">iniciativas</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-code-sm text-code-sm">
+          5 tribos
+        </span>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center justify-between">
+<div class="flex -space-x-2 overflow-hidden">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-surface-bright text-text-primary text-[10px] font-bold ring-2 ring-surface-card">VP</span>
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent-electric/30 text-accent-electric text-[10px] font-bold ring-2 ring-surface-card">CP</span>
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary-container/40 text-secondary text-[10px] font-bold ring-2 ring-surface-card">DF</span>
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-tertiary-container/40 text-tertiary text-[10px] font-bold ring-2 ring-surface-card">+2</span>
+</div>
+<span class="font-code-sm text-code-sm text-text-dim">100% squads cobertas</span>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="flex flex-col justify-between p-space-md rounded-xl bg-surface-card hover:bg-surface-elevated transition-colors shadow-sm group">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-status-warning uppercase">I-04 • Capacidade</span>
+<span class="font-headline-sm text-headline-sm text-text-secondary mt-1">Esforço Total Alocado</span>
+</div>
+<span class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-text-muted">
+<span class="material-symbols-outlined text-[18px]">timelapse</span>
+</span>
+</div>
+<div class="flex items-baseline justify-between mt-space-md">
+<div class="flex items-baseline gap-space-sm">
+<span class="font-headline-xl text-headline-xl text-text-primary font-bold">340h</span>
+<span class="font-body-sm text-body-sm text-text-muted">/ 400h</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-status-warning/15 text-status-warning font-code-sm text-code-sm font-semibold">
+          85% cap.
+        </span>
+</div>
+<div class="mt-space-sm pt-space-xs flex flex-col gap-1">
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-status-warning rounded-full" style="width: 85%"></div>
+</div>
+<div class="flex justify-between font-body-sm text-body-sm text-text-dim">
+<span>Nominal 400h/mês</span>
+<span>60h livres</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Seções Analíticas Centrais (2 Colunas) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Distribuição por Status (7 cols) -->
+<div class="lg:col-span-7 flex flex-col justify-between p-space-lg rounded-xl bg-surface-card shadow-sm">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-accent-electric uppercase tracking-wider">Fluxo Operacional</span>
+<h2 class="font-headline-md text-headline-md text-text-primary">Distribuição de Atividades por Status</h2>
+</div>
+<span class="font-code-sm text-code-sm px-2 py-1 rounded-lg bg-surface-container text-text-muted">Total: 38</span>
+</div>
+<!-- Barra Segmentada Horizontal Multicolorida -->
+<div class="w-full my-space-sm">
+<div class="w-full h-4 rounded-full bg-surface-container overflow-hidden flex gap-0.5 p-0.5 shadow-inner">
+<div class="h-full bg-outline-variant rounded-l-full hover:opacity-80 transition-opacity" style="width: 10.5%" title="Backlog: 4"></div>
+<div class="h-full bg-secondary hover:opacity-80 transition-opacity" style="width: 15.8%" title="A Fazer: 6"></div>
+<div class="h-full bg-accent-electric hover:opacity-80 transition-opacity" style="width: 26.3%" title="Em Andamento: 10"></div>
+<div class="h-full bg-status-warning hover:opacity-80 transition-opacity" style="width: 10.5%" title="Aguardando Validação: 4"></div>
+<div class="h-full bg-status-success rounded-r-full hover:opacity-80 transition-opacity" style="width: 36.9%" title="Concluído: 14"></div>
+</div>
+</div>
+<!-- Legendas Detalhadas em Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-space-sm mt-space-md pt-space-sm">
+<div class="flex flex-col p-space-sm rounded-lg bg-surface-container/60">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-text-muted truncate">Backlog</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-text-primary">4</span>
+<span class="font-code-sm text-code-sm text-text-dim">10.5%</span>
+</div>
+<div class="flex flex-col p-space-sm rounded-lg bg-surface-container/60">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm text-text-muted truncate">A Fazer</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-text-primary">6</span>
+<span class="font-code-sm text-code-sm text-text-dim">15.8%</span>
+</div>
+<div class="flex flex-col p-space-sm rounded-lg bg-surface-container/60">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-accent-electric"></span>
+<span class="font-label-sm text-label-sm text-text-muted truncate">Em Curso</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-text-primary">10</span>
+<span class="font-code-sm text-code-sm text-text-dim">26.3%</span>
+</div>
+<div class="flex flex-col p-space-sm rounded-lg bg-surface-container/60">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-status-warning"></span>
+<span class="font-label-sm text-label-sm text-text-muted truncate">Aguardando</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-text-primary">4</span>
+<span class="font-code-sm text-code-sm text-text-dim">10.5%</span>
+</div>
+<div class="flex flex-col p-space-sm rounded-lg bg-surface-container/60 col-span-2 sm:col-span-1">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-status-success"></span>
+<span class="font-label-sm text-label-sm text-text-muted truncate">Concluído</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-status-success">14</span>
+<span class="font-code-sm text-code-sm text-status-success/80">36.9%</span>
+</div>
+</div>
+</div>
+<!-- Natureza da Atuação / Donut Chart (5 cols) -->
+<div class="lg:col-span-5 flex flex-col justify-between p-space-lg rounded-xl bg-surface-card shadow-sm">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-tag-technical uppercase tracking-wider">Foco de Impacto</span>
+<h2 class="font-headline-md text-headline-md text-text-primary">Natureza da Atuação</h2>
+</div>
+<span class="material-symbols-outlined text-text-dim text-[20px]">pie_chart</span>
+</div>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-space-lg py-space-sm">
+<!-- Donut SVG Central -->
+<div class="relative w-36 h-36 flex items-center justify-center flex-shrink-0">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 120 120">
+<!-- Background ring -->
+<circle cx="60" cy="60" fill="none" r="48" stroke="#191f2f" stroke-width="16"></circle>
+<!-- Strategic (55% -> 301.59 * 0.55 = 165.87) -->
+<circle cx="60" cy="60" fill="none" r="48" stroke="#818cf8" stroke-dasharray="301.59" stroke-dashoffset="0" stroke-linecap="round" stroke-width="16"></circle>
+<!-- Tactical (30% -> 90.47) offset: 165.87 -->
+<circle cx="60" cy="60" fill="none" r="48" stroke="#4cd7f6" stroke-dasharray="301.59" stroke-dashoffset="-165.87" stroke-linecap="round" stroke-width="16"></circle>
+<!-- Operational (15% -> 45.24) offset: 256.34 -->
+<circle cx="60" cy="60" fill="none" r="48" stroke="#4edea3" stroke-dasharray="301.59" stroke-dashoffset="-256.34" stroke-linecap="round" stroke-width="16"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+<span class="font-headline-lg text-headline-lg text-text-primary font-bold">55%</span>
+<span class="font-code-sm text-code-sm text-accent-electric uppercase tracking-tighter">Estratégico</span>
+</div>
+</div>
+<!-- Legenda Customizada do Donut -->
+<div class="flex flex-col gap-space-sm w-full">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container/50">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-accent-electric flex-shrink-0"></span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary">Estratégico</span>
+<span class="font-body-sm text-body-sm text-text-dim truncate">Decisão, Blueprint &amp; Padrões</span>
+</div>
+</div>
+<span class="font-code-md text-code-md text-text-primary font-semibold">55%</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container/50">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary flex-shrink-0"></span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary">Tático</span>
+<span class="font-body-sm text-body-sm text-text-dim truncate">Desenho Técnico &amp; Squads</span>
+</div>
+</div>
+<span class="font-code-md text-code-md text-text-primary font-semibold">30%</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container/50">
+<div class="flex items-center gap-space-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary flex-shrink-0"></span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-text-primary">Operacional</span>
+<span class="font-body-sm text-body-sm text-text-dim truncate">Apoio, Validação &amp; Dúvidas</span>
+</div>
+</div>
+<span class="font-code-md text-code-md text-text-primary font-semibold">15%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Grid Inferior (Demandas por Área + Top Projetos) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Demandas por Área Solicitante (5 cols) -->
+<div class="lg:col-span-5 flex flex-col justify-between p-space-lg rounded-xl bg-surface-card shadow-sm">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-secondary uppercase tracking-wider">Origem do Esforço</span>
+<h2 class="font-headline-md text-headline-md text-text-primary">Demandas por Área Solicitante</h2>
+</div>
+<span class="font-code-sm text-code-sm text-text-dim">38 Atividades</span>
+</div>
+<div class="flex flex-col gap-space-md">
+<!-- Item 1 -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-text-primary font-medium">Varejo &amp; Canais Digitais</span>
+<div class="flex items-center gap-space-sm">
+<span class="font-code-sm text-code-sm text-text-muted">12 itens</span>
+<span class="font-code-md text-code-md text-accent-electric font-semibold">31.5%</span>
+</div>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-accent-electric rounded-full transition-all duration-500" style="width: 31.5%"></div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-text-primary font-medium">Cartões &amp; Meios de Pagamento</span>
+<div class="flex items-center gap-space-sm">
+<span class="font-code-sm text-code-sm text-text-muted">9 itens</span>
+<span class="font-code-md text-code-md text-secondary font-semibold">23.7%</span>
+</div>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full transition-all duration-500" style="width: 23.7%"></div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-text-primary font-medium">Core Platform &amp; Cloud</span>
+<div class="flex items-center gap-space-sm">
+<span class="font-code-sm text-code-sm text-text-muted">8 itens</span>
+<span class="font-code-md text-code-md text-tertiary font-semibold">21.0%</span>
+</div>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full transition-all duration-500" style="width: 21.0%"></div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-text-primary font-medium">Seguros &amp; Previdência</span>
+<div class="flex items-center gap-space-sm">
+<span class="font-code-sm text-code-sm text-text-muted">5 itens</span>
+<span class="font-code-md text-code-md text-status-warning font-semibold">13.2%</span>
+</div>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-status-warning rounded-full transition-all duration-500" style="width: 13.2%"></div>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-text-primary font-medium">Engenharia de Dados &amp; IA</span>
+<div class="flex items-center gap-space-sm">
+<span class="font-code-sm text-code-sm text-text-muted">4 itens</span>
+<span class="font-code-md text-code-md text-text-dim font-semibold">10.6%</span>
+</div>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-outline-variant rounded-full transition-all duration-500" style="width: 10.6%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Top Projetos com Maior Volume de Arquitetura (7 cols) -->
+<div class="lg:col-span-7 flex flex-col justify-between p-space-lg rounded-xl bg-surface-card shadow-sm">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-tertiary uppercase tracking-wider">Alocação Crítica</span>
+<h2 class="font-headline-md text-headline-md text-text-primary">Top Projetos com Maior Volume de Arquitetura</h2>
+</div>
+<button class="font-label-sm text-label-sm text-accent-electric hover:underline flex items-center gap-1" type="button">
+<span>Ver todos os 12</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- Projeto 1 -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between p-space-md rounded-xl bg-surface-container hover:bg-surface-elevated transition-colors gap-space-sm">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-bright flex items-center justify-center flex-shrink-0 text-accent-electric font-code-sm font-bold">
+              P-01
+            </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-text-primary truncate">Modernização do Core de Pagamentos</span>
+<span class="px-1.5 py-0.5 rounded-full bg-status-critical/15 text-status-critical font-code-sm text-code-sm">Crítico</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-dim truncate">Cartões • Squad Ledger Distribuído</span>
+</div>
+</div>
+<div class="flex items-center justify-between sm:justify-end gap-space-lg flex-shrink-0">
+<div class="flex flex-col items-end">
+<span class="font-code-md text-code-md text-text-primary font-medium">88h alocadas</span>
+<span class="font-code-sm text-code-sm text-tertiary">75% concluído</span>
+</div>
+<span class="px-space-sm py-1 rounded-lg bg-surface-bright text-text-secondary font-label-sm text-label-sm whitespace-nowrap">
+              Homologação
+            </span>
+</div>
+</div>
+<!-- Projeto 2 -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between p-space-md rounded-xl bg-surface-container hover:bg-surface-elevated transition-colors gap-space-sm">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-bright flex items-center justify-center flex-shrink-0 text-secondary font-code-sm font-bold">
+              P-02
+            </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-text-primary truncate">PIX Automático &amp; Cobrança Recorrente</span>
+<span class="px-1.5 py-0.5 rounded-full bg-status-warning/15 text-status-warning font-code-sm text-code-sm">Alta</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-dim truncate">Canais Digitais • Open Finance Gateway</span>
+</div>
+</div>
+<div class="flex items-center justify-between sm:justify-end gap-space-lg flex-shrink-0">
+<div class="flex flex-col items-end">
+<span class="font-code-md text-code-md text-text-primary font-medium">64h alocadas</span>
+<span class="font-code-sm text-code-sm text-tertiary">90% concluído</span>
+</div>
+<span class="px-space-sm py-1 rounded-lg bg-surface-bright text-text-secondary font-label-sm text-label-sm whitespace-nowrap">
+              Em Produção
+            </span>
+</div>
+</div>
+<!-- Projeto 3 -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between p-space-md rounded-xl bg-surface-container hover:bg-surface-elevated transition-colors gap-space-sm">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-bright flex items-center justify-center flex-shrink-0 text-tertiary font-code-sm font-bold">
+              P-03
+            </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-text-primary truncate">Arquitetura Data Mesh Corporativa</span>
+<span class="px-1.5 py-0.5 rounded-full bg-secondary-container/20 text-secondary font-code-sm text-code-sm">Média</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-dim truncate">Dados &amp; IA • Governança de Domínios</span>
+</div>
+</div>
+<div class="flex items-center justify-between sm:justify-end gap-space-lg flex-shrink-0">
+<div class="flex flex-col items-end">
+<span class="font-code-md text-code-md text-text-primary font-medium">52h alocadas</span>
+<span class="font-code-sm text-code-sm text-status-warning">45% concluído</span>
+</div>
+<span class="px-space-sm py-1 rounded-lg bg-surface-bright text-text-secondary font-label-sm text-label-sm whitespace-nowrap">
+              Em Desenho
+            </span>
+</div>
+</div>
+<!-- Projeto 4 -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between p-space-md rounded-xl bg-surface-container hover:bg-surface-elevated transition-colors gap-space-sm">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-bright flex items-center justify-center flex-shrink-0 text-status-critical font-code-sm font-bold">
+              P-04
+            </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-text-primary truncate">Federação Zero Trust &amp; IAM Cloud</span>
+<span class="px-1.5 py-0.5 rounded-full bg-status-critical/15 text-status-critical font-code-sm text-code-sm">Crítico</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-dim truncate">Core Platform • Segurança Ofensiva</span>
+</div>
+</div>
+<div class="flex items-center justify-between sm:justify-end gap-space-lg flex-shrink-0">
+<div class="flex flex-col items-end">
+<span class="font-code-md text-code-md text-text-primary font-medium">40h alocadas</span>
+<span class="font-code-sm text-code-sm text-status-warning">30% concluído</span>
+</div>
+<span class="px-space-sm py-1 rounded-lg bg-surface-bright text-text-secondary font-label-sm text-label-sm whitespace-nowrap">
+              PoC / Validação
+            </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Banner de Rodapé: Comitê de Arquitetura Corporativa (ARB) -->
+<div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-surface-card via-surface-container to-surface-card p-space-md sm:p-space-lg shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-12 h-12 rounded-xl bg-inverse-primary/20 text-accent-electric flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[26px]">gavel</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-md text-headline-md text-text-primary truncate">Comitê de Arquitetura Corporativa (ARB)</span>
+<span class="px-2 py-0.5 rounded-full bg-accent-electric/15 text-accent-electric font-code-sm text-code-sm hidden md:inline">Próxima Sessão: Quinta, 14:00</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-muted">4 Decisões de Arquitetura (ARDs) aguardam revisão formal com as lideranças de engenharia.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm self-start sm:self-auto flex-shrink-0">
+<button class="px-space-md py-2 rounded-xl bg-surface-elevated hover:bg-surface-bright text-text-primary font-headline-sm text-headline-sm transition-colors shadow-sm" type="button">
+          Ver Pauta (4)
+        </button>
+<button class="px-space-md py-2 rounded-xl bg-accent-electric/20 hover:bg-accent-electric/30 text-accent-electric font-headline-sm text-headline-sm transition-colors" type="button">
+          Submeter ARD
+        </button>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

@@ -71,7 +71,7 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
         action={
           <Link
             href={retryHref(rawParams)}
-            className="inline-flex rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="inline-flex rounded-xl bg-primary px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Tentar de novo
           </Link>
@@ -89,19 +89,22 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
     : "Nenhuma atividade no recorte. Cadastre uma atividade para começar.";
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-space-lg">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Kanban</h1>
-          <p className="max-w-2xl text-sm leading-6 text-zinc-600">
+          <h1 className="text-headline-lg text-on-surface">Kanban</h1>
+          <p className="max-w-2xl text-body-md leading-6 text-on-surface-variant">
             Board único da equipe. Filtros combinam sobre o mesmo conjunto de cards. A coluna é o
             status atual, mesmo com recorte de período. Clique no card para abrir o detalhe.
           </p>
         </div>
         <Link
           href="/activities/new"
-          className="inline-flex shrink-0 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary-container px-space-md py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
+          <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+            add_circle
+          </span>
           Nova atividade
         </Link>
       </header>
@@ -131,12 +134,15 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
       />
 
       {parsed.error ? (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950" role="alert">
+        <p
+          className="rounded-xl border border-secondary-container/40 bg-secondary-container/10 px-3 py-2 text-body-sm text-on-surface"
+          role="alert"
+        >
           {parsed.error} O recorte temporal não foi aplicado.
         </p>
       ) : null}
 
-      <p className="text-sm text-zinc-600">
+      <p className="text-body-sm text-on-surface-variant">
         {total === 0
           ? emptyMessage
           : `${total} ${total === 1 ? "atividade" : "atividades"} no recorte · ${board.length} no board${
@@ -151,7 +157,7 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
           action={
             <Link
               href="/kanban"
-              className="inline-flex rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+              className="inline-flex rounded-xl bg-primary px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Limpar filtros
             </Link>
@@ -166,24 +172,24 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
       {showCancelled ? (
         <section className="flex flex-col gap-3" aria-labelledby="kanban-canceladas">
           <div className="flex flex-col gap-1">
-            <h2 id="kanban-canceladas" className="text-lg font-semibold text-zinc-900">
+            <h2 id="kanban-canceladas" className="text-headline-md text-on-surface">
               Canceladas
             </h2>
-            <p className="text-sm text-zinc-600">
+            <p className="text-body-sm text-on-surface-variant">
               Cancelado não é coluna do board. Abra o card para ver o detalhe.
             </p>
           </div>
           {cancelled.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-zinc-300 px-3 py-6 text-center text-sm text-zinc-500">
+            <p className="rounded-xl border border-dashed border-outline-variant px-3 py-6 text-center text-body-sm text-on-surface-variant">
               Nenhuma atividade cancelada neste recorte.
             </p>
           ) : (
-            <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid gap-space-sm sm:grid-cols-2 lg:grid-cols-3">
               {cancelled.map((activity) => (
                 <li key={activity.id}>
                   <Link
                     href={`/activities/${activity.id}`}
-                    className="flex flex-col gap-2 rounded-lg border border-zinc-200 bg-white p-3 shadow-sm transition-colors hover:border-zinc-400 hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+                    className="group flex flex-col gap-2 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-space-md opacity-90 shadow-sm transition-all hover:opacity-100 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     <KanbanCardBody activity={activity} />
                   </Link>

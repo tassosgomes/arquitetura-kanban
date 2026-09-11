@@ -24,7 +24,7 @@ export default async function NewProjectPage() {
         title="Cadastre uma área primeiro"
         message="É necessário ao menos uma área ativa para criar um projeto."
         action={
-          <Link href="/catalogs/areas" className="text-sm font-medium text-zinc-900 underline">
+          <Link href="/catalogs/areas" className="text-label-md font-semibold text-primary underline">
             Ir para áreas
           </Link>
         }
@@ -42,14 +42,14 @@ export default async function NewProjectPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-space-lg">
       <header className="flex flex-col gap-2">
-        <p className="text-sm">
-          <Link href="/projects" className="font-medium text-zinc-700 underline hover:text-zinc-900">
+        <p className="font-mono text-code-sm">
+          <Link href="/projects" className="font-semibold text-primary hover:underline">
             Projetos
           </Link>
         </p>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Novo projeto</h1>
+        <h1 className="text-headline-lg text-on-surface">Novo projeto</h1>
       </header>
       <ProjectForm
         mode="create"

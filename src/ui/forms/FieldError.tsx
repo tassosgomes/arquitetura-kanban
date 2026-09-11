@@ -9,7 +9,7 @@ export function FieldError({ id, message }: FieldErrorProps) {
   }
 
   return (
-    <p id={id} className="text-sm leading-5 text-red-700" role="alert">
+    <p id={id} className="text-body-sm text-error" role="alert">
       {message}
     </p>
   );

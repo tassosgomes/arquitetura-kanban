@@ -19,7 +19,7 @@ export function PrimaryButton({
       type={type}
       disabled={isDisabled}
       aria-busy={isLoading || undefined}
-      className={`rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:bg-zinc-400 disabled:hover:bg-zinc-400 ${className}`}
+      className={`rounded-xl bg-primary-container px-space-md py-2.5 text-label-md font-semibold text-on-primary shadow-sm transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:bg-outline-variant disabled:text-outline disabled:hover:bg-outline-variant ${className}`}
       {...props}
     >
       {children}

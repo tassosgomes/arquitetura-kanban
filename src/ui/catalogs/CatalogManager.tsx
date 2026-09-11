@@ -8,6 +8,7 @@ import { EmptyState } from "@/ui/feedback/EmptyState";
 import { FormField } from "@/ui/forms/FormField";
 import { PrimaryButton } from "@/ui/forms/PrimaryButton";
 import type { CatalogItemDto } from "@/ui/catalogs/catalog-types";
+import { CONTROL_CLASS_NAME } from "@/ui/projects/project-types";
 import { useMarkFormDirty, useProtectOpenEdit } from "@/ui/realtime/useProtectOpenEdit";
 
 type CatalogActions = {
@@ -91,9 +92,9 @@ export function CatalogManager({ items, labels, actions }: CatalogManagerProps) 
     <div className="flex flex-col gap-8">
       <section
         aria-labelledby="catalog-create-title"
-        className="max-w-xl rounded-lg border border-zinc-200 bg-white p-4"
+        className="max-w-xl rounded-xl bg-surface-container-lowest p-space-md shadow-sm"
       >
-        <h2 id="catalog-create-title" className="text-sm font-semibold text-zinc-900">
+        <h2 id="catalog-create-title" className="text-headline-sm text-on-surface">
           {labels.createHeading}
         </h2>
         <form action={createSubmit} className="mt-4 flex flex-col gap-4" noValidate {...formProps}>
@@ -112,7 +113,7 @@ export function CatalogManager({ items, labels, actions }: CatalogManagerProps) 
               aria-describedby={
                 fieldError(createState, "name") ? "catalog-create-name-error" : undefined
               }
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+              className={CONTROL_CLASS_NAME}
             />
           </FormField>
           <PrimaryButton type="submit" isLoading={createPending}>
@@ -122,25 +123,29 @@ export function CatalogManager({ items, labels, actions }: CatalogManagerProps) 
       </section>
 
       {globalError ? (
-        <p className="text-sm text-red-700" role="alert">{globalError}</p>
+        <p className="text-body-sm text-error" role="alert">{globalError}</p>
       ) : null}
 
       {items.length === 0 ? (
         <EmptyState title={labels.emptyTitle} message={labels.emptyMessage} />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
-          <table className="min-w-full text-left text-sm">
+        <div className="overflow-x-auto rounded-xl bg-surface-container-lowest shadow-sm">
+          <table className="min-w-full text-left text-body-sm">
             <caption className="sr-only">Lista de {labels.plural}</caption>
-            <thead className="border-b border-zinc-200 bg-zinc-50 text-zinc-700">
+            <thead className="bg-surface-container-low text-on-surface-variant">
               <tr>
-                <th scope="col" className="px-4 py-3 font-medium">Nome</th>
-                <th scope="col" className="px-4 py-3 font-medium">Situação</th>
-                <th scope="col" className="px-4 py-3 font-medium">
+                <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
+                  Nome
+                </th>
+                <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
+                  Situação
+                </th>
+                <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
                   <span className="sr-only">Ações</span>
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-outline-variant/40">
               {items.map((item) => {
                 const isEditing = editingId === item.id;
                 const renameError =
@@ -149,7 +154,7 @@ export function CatalogManager({ items, labels, actions }: CatalogManagerProps) 
                     : undefined;
 
                 return (
-                  <tr key={item.id} className="align-top">
+                  <tr key={item.id} className="align-top transition-colors hover:bg-primary-container/5">
                     <td className="px-4 py-3">
                       {isEditing ? (
                         <form action={renameSubmit} className="flex flex-col gap-2">
@@ -167,7 +172,7 @@ export function CatalogManager({ items, labels, actions }: CatalogManagerProps) 
                               defaultValue={item.name}
                               required
                               aria-invalid={Boolean(renameError)}
-                              className="w-full min-w-[12rem] rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900"
+                              className={`min-w-[12rem] ${CONTROL_CLASS_NAME}`}
                             />
                           </FormField>
                           <div className="flex flex-wrap gap-2">
@@ -177,34 +182,38 @@ export function CatalogManager({ items, labels, actions }: CatalogManagerProps) 
                             <button
                               type="button"
                               onClick={() => setEditingId(null)}
-                              className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 underline hover:text-zinc-900"
+                              className="rounded-lg px-3 py-2 text-label-md font-semibold text-on-surface-variant underline hover:text-on-surface"
                             >
                               Cancelar
                             </button>
                           </div>
                         </form>
                       ) : (
-                        <span className="font-medium text-zinc-900">{item.name}</span>
+                        <span className="font-semibold text-on-surface">{item.name}</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-label-sm font-semibold ${
                           item.isActive
-                            ? "bg-emerald-50 text-emerald-800"
-                            : "bg-zinc-100 text-zinc-600"
+                            ? "bg-tertiary-fixed text-on-tertiary-fixed"
+                            : "bg-surface-container-high text-on-surface-variant"
                         }`}
                       >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${item.isActive ? "bg-tertiary" : "bg-outline"}`}
+                          aria-hidden="true"
+                        />
                         {item.isActive ? "Ativo" : "Inativo"}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       {!isEditing ? (
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-1">
                           <button
                             type="button"
                             onClick={() => setEditingId(item.id)}
-                            className="rounded-md px-2 py-1 text-sm font-medium text-zinc-900 underline hover:text-zinc-700"
+                            className="rounded-md px-2 py-1 text-label-sm font-semibold text-primary hover:underline"
                           >
                             Renomear
                           </button>
@@ -214,7 +223,7 @@ export function CatalogManager({ items, labels, actions }: CatalogManagerProps) 
                               <button
                                 type="submit"
                                 disabled={deactivatePending}
-                                className="rounded-md px-2 py-1 text-sm font-medium text-red-800 underline hover:text-red-900 disabled:opacity-50"
+                                className="rounded-md px-2 py-1 text-label-sm font-semibold text-error hover:underline disabled:opacity-50"
                               >
                                 Inativar
                               </button>

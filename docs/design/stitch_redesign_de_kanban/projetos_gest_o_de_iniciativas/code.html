@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { 'colors': { 'secondary-container': '#39b8fd', 'inverse-primary': '#c3c0ff', 'on-tertiary-fixed': '#002113', 'secondary': '#006591', 'inverse-on-surface': '#eef0ff', 'surface-container-highest': '#dae2fd', 'error-container': '#ffdad6', 'primary': '#3525cd', 'on-primary': '#ffffff', 'on-primary-fixed': '#0f0069', 'on-error': '#ffffff', 'primary-fixed-dim': '#c3c0ff', 'on-background': '#131b2e', 'secondary-fixed': '#c9e6ff', 'surface-bright': '#faf8ff', 'on-primary-fixed-variant': '#3323cc', 'surface-container-lowest': '#ffffff', 'surface-variant': '#dae2fd', 'surface-container-high': '#e2e7ff', 'on-secondary-fixed-variant': '#004c6e', 'tertiary-fixed': '#6ffbbe', 'on-tertiary': '#ffffff', 'on-error-container': '#93000a', 'surface': '#faf8ff', 'background': '#faf8ff', 'on-surface-variant': '#464555', 'on-tertiary-fixed-variant': '#005236', 'on-tertiary-container': '#67f4b7', 'on-secondary': '#ffffff', 'surface-dim': '#d2d9f4', 'error': '#ba1a1a', 'on-primary-container': '#dad7ff', 'surface-container-low': '#f2f3ff', 'tertiary-container': '#006e4b', 'outline-variant': '#c7c4d8', 'on-surface': '#131b2e', 'surface-container': '#eaedff', 'outline': '#777587', 'primary-fixed': '#e2dfff', 'tertiary-fixed-dim': '#4edea3', 'tertiary': '#005338', 'secondary-fixed-dim': '#89ceff', 'on-secondary-fixed': '#001e2f', 'surface-tint': '#4d44e3', 'inverse-surface': '#283044', 'on-secondary-container': '#004666', 'primary-container': '#4f46e5' }, 'borderRadius': { 'DEFAULT': '0.125rem', 'lg': '0.25rem', 'xl': '0.5rem', 'full': '0.75rem' }, 'spacing': { 'margin-lg': '2rem', 'space-xl': '2rem', 'gutter-sm': '0.75rem', 'margin-sm': '1rem', 'margin': '1.5rem', 'space-md': '0.75rem', 'space-xs': '0.25rem', 'gutter': '1.25rem', 'space-sm': '0.5rem', 'space-lg': '1.25rem', 'gutter-lg': '1.75rem' }, 'fontFamily': { 'label-sm': ['Plus Jakarta Sans'], 'body-md': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'headline-md': ['Plus Jakarta Sans'], 'headline-xl': ['Plus Jakarta Sans'], 'label-md': ['Plus Jakarta Sans'], 'headline-sm': ['Plus Jakarta Sans'], 'headline-lg': ['Plus Jakarta Sans'], 'code-sm': ['JetBrains Mono'], 'body-lg': ['Plus Jakarta Sans'], 'headline-lg-mobile': ['Plus Jakarta Sans'] }, 'fontSize': { 'label-sm': ['11px', {'lineHeight': '16px', 'letterSpacing': '0.02em', 'fontWeight': '600'}], 'body-md': ['13px', {'lineHeight': '20px', 'fontWeight': '400'}], 'body-sm': ['12px', {'lineHeight': '18px', 'fontWeight': '400'}], 'headline-md': ['18px', {'lineHeight': '26px', 'letterSpacing': '-0.015em', 'fontWeight': '600'}], 'headline-xl': ['32px', {'lineHeight': '40px', 'letterSpacing': '-0.025em', 'fontWeight': '700'}], 'label-md': ['13px', {'lineHeight': '18px', 'fontWeight': '500'}], 'headline-sm': ['15px', {'lineHeight': '22px', 'letterSpacing': '-0.01em', 'fontWeight': '600'}], 'headline-lg': ['24px', {'lineHeight': '32px', 'letterSpacing': '-0.02em', 'fontWeight': '600'}], 'code-sm': ['11px', {'lineHeight': '16px', 'letterSpacing': '0', 'fontWeight': '500'}], 'body-lg': ['15px', {'lineHeight': '24px', 'fontWeight': '400'}], 'headline-lg-mobile': ['20px', {'lineHeight': '28px', 'letterSpacing': '-0.015em', 'fontWeight': '600'}] } } } };</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-sm overflow-hidden"><img alt="Logo Gestão de Atividades de Arquitetura" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UzELy5HBQOj0kWDAWKaJAGFSXUnrm7Ig1h2WgWVFSu1Ju1XrJHHvn9tXD2iGQgRx1vYG-UjiqV1AuQLP6gDXejWIJoJFO-h30y6V4IVTefFP9njK3XMTEjLq-32aV8bjVRUjcGN3eaSPKOG6uRHFXMUEi6AVuwOi721QsAbSOdwqpnSwsy0LlyJAI12Y0VTj1APbezl-lQmLGagwkLNLL6BOIShhkFSVMYjgd4ey-D4wyLto8WASh6BOEF"/><div class="flex flex-col leading-none truncate"><span class="font-headline-sm text-headline-sm text-on-surface truncate">Arquitetura</span><span class="font-code-sm text-code-sm text-on-surface-variant">Enterprise Core</span></div></div><span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-semibold">PRO</span></div><div class="px-space-md py-space-sm"><div class="font-label-sm text-label-sm uppercase tracking-wider text-outline px-space-sm mb-space-xs">Governança</div><nav class="flex flex-col gap-1" data-active-classes="bg-primary-container text-on-primary font-headline-sm shadow-sm"><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all group" data-path="kanban" href="#"><span class="material-symbols-outlined text-[20px] transition-colors">view_kanban</span><span class="font-label-md text-label-md flex-1">Kanban</span><span class="font-code-sm text-code-sm px-1.5 py-0.5 rounded-md bg-surface-container-high text-on-surface-variant">14</span></a><a aria-current="page" class="flex items-center gap-space-md px-space-md py-2.5 rounded-xl transition-all group bg-primary-container text-on-primary font-headline-sm shadow-sm" data-path="projetos" href="#"><span class="material-symbols-outlined text-[20px] transition-colors">folder_special</span><span class="font-label-md text-label-md flex-1">Projetos</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all group" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px] transition-colors">monitoring</span><span class="font-label-md text-label-md flex-1">Dashboard</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all group" data-path="relatorios" href="#"><span class="material-symbols-outlined text-[20px] transition-colors">analytics</span><span class="font-label-md text-label-md flex-1">Relatórios</span></a><a class="flex items-center gap-space-md px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all group" data-path="cadastros" href="#"><span class="material-symbols-outlined text-[20px] transition-colors">app_registration</span><span class="font-label-md text-label-md flex-1">Cadastros</span></a></nav></div></div><div class="p-space-md bg-surface-container-low/60"><div class="flex items-center justify-between p-space-sm rounded-xl bg-surface-container-lowest shadow-[0_1px_4px_rgba(0,0,0,0.03)]"><div class="flex items-center gap-space-sm min-w-0"><div class="relative flex-shrink-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-tertiary-container ring-2 ring-surface-container-lowest"></span></div><div class="flex flex-col min-w-0 leading-tight"><span class="font-label-md text-label-md text-on-surface font-semibold truncate">Teste</span><span class="font-code-sm text-code-sm text-outline truncate">teste@tasso.dev.br</span></div></div><div class="flex items-center gap-1 flex-shrink-0"><button class="w-7 h-7 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" title="Notificações" type="button"><span class="material-symbols-outlined text-[18px]">notifications</span></button><button class="w-7 h-7 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-on-error-container transition-colors" title="Sair" type="button"><span class="material-symbols-outlined text-[18px]">logout</span></button></div></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md max-w-md w-full"><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span><input class="w-full h-9 pl-9 pr-3 bg-surface-container-low rounded-xl font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest transition-colors" placeholder="Buscar atividades, projetos, tags..." type="text"/></div></div><div class="flex items-center gap-space-md"><div class="flex items-center bg-surface-container-low p-1 rounded-xl"><button class="px-space-sm py-1 font-label-sm text-label-sm text-on-surface bg-surface-container-lowest rounded-lg shadow-sm font-semibold" type="button">Este mês</button><button class="px-space-sm py-1 font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">Minha semana</button><button class="px-space-sm py-1 font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">Trimestre</button></div><button class="h-9 px-space-md bg-primary-container hover:bg-primary text-on-primary rounded-xl font-label-md text-label-md flex items-center gap-space-xs transition-colors shadow-[0_1px_3px_0_rgba(15,23,42,0.08)]" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>Nova Atividade</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 bg-surface"><div class="flex flex-col w-full">
+<!-- Top Context Header & KPI Metric Strip -->
+<div class="px-gutter-lg pt-space-lg pb-space-md">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-xs font-code-sm text-code-sm text-outline mb-1">
+<span>PORTFOLIO</span>
+<span>/</span>
+<span class="text-primary font-semibold">INICIATIVAS DE ARQUITETURA</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Projetos de Arquitetura</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-0.5">
+          Gerencie iniciativas com áreas responsáveis, papéis da Arquitetura, natureza e status independente das atividades.
+        </p>
+</div>
+<!-- Primary Actions Group -->
+<div class="flex items-center gap-space-sm self-start lg:self-auto">
+<button class="h-9 px-space-md bg-surface-container hover:bg-surface-container-high text-on-surface rounded-xl font-label-md text-label-md flex items-center gap-space-xs transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Exportar</span>
+</button>
+<button class="h-9 px-space-md bg-primary-container hover:bg-primary text-on-primary rounded-xl font-label-md text-label-md flex items-center gap-space-xs transition-all shadow-[0_1px_4px_rgba(79,70,229,0.25)] hover:shadow-md" id="openNewProjectBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span class="font-semibold">Novo Projeto</span>
+</button>
+</div>
+</div>
+<!-- Quick Analytics Bento Micro-Cards -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter mt-space-lg">
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline uppercase tracking-wider">PRJ-TOTAL</span>
+<span class="w-7 h-7 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[16px]">folder_copy</span>
+</span>
+</div>
+<div class="mt-space-sm">
+<span class="font-headline-xl text-headline-xl text-on-surface leading-none">18</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Iniciativas mapeadas</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-tertiary-container uppercase tracking-wider">ATIVOS</span>
+<span class="w-7 h-7 rounded-lg bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+</span>
+</div>
+<div class="mt-space-sm">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-on-surface leading-none">14</span>
+<span class="font-label-sm text-label-sm text-tertiary-container font-semibold">78% da carga</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Em execução contínua</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-secondary uppercase tracking-wider">ESTRATÉGICOS</span>
+<span class="w-7 h-7 rounded-lg bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[16px]">workspace_premium</span>
+</span>
+</div>
+<div class="mt-space-sm">
+<span class="font-headline-xl text-headline-xl text-on-surface leading-none">09</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Prioridade C-Level</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline uppercase tracking-wider">ATV. CORRELATAS</span>
+<span class="w-7 h-7 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">task_alt</span>
+</span>
+</div>
+<div class="mt-space-sm">
+<div class="flex items-baseline gap-1">
+<span class="font-headline-xl text-headline-xl text-on-surface leading-none">58</span>
+<span class="font-body-sm text-body-sm text-outline">cards</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Vinculadas no Kanban</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Integrated Filter Toolbar & Search Ribbon -->
+<div class="px-gutter-lg py-space-sm">
+<div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-space-sm">
+<!-- Status Tabs Switcher -->
+<div class="flex items-center bg-surface-container-low p-1 rounded-xl overflow-x-auto">
+<button class="px-space-md py-1.5 font-label-md text-label-md text-on-surface bg-surface-container-lowest rounded-lg shadow-sm font-semibold whitespace-nowrap" type="button">
+          Todos <span class="ml-1 font-code-sm text-code-sm text-outline">18</span>
+</button>
+<button class="px-space-md py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap" type="button">
+          Ativos <span class="ml-1 font-code-sm text-code-sm px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface font-semibold">14</span>
+</button>
+<button class="px-space-md py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap" type="button">
+          Concluídos <span class="ml-1 font-code-sm text-code-sm text-outline">3</span>
+</button>
+<button class="px-space-md py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap" type="button">
+          Cancelados <span class="ml-1 font-code-sm text-code-sm text-outline">1</span>
+</button>
+</div>
+<!-- Search & Meta Selectors -->
+<div class="flex items-center gap-space-sm flex-1 max-w-lg">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full h-9 pl-9 pr-3 bg-surface-container-low focus:bg-surface-container-lowest rounded-xl font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none transition-colors" id="projectSearchInput" placeholder="Buscar por nome, responsável ou área..." type="text"/>
+</div>
+<button class="h-9 px-space-sm bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface rounded-xl flex items-center gap-1 font-label-sm text-label-sm whitespace-nowrap transition-colors" title="Filtrar por Natureza" type="button">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Filtros</span>
+</button>
+<button class="h-9 w-9 bg-surface-container-low hover:bg-surface-container text-on-surface-variant rounded-xl flex items-center justify-center transition-colors" title="Alternar Layout" type="button">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Projects Cards Master View -->
+<div class="px-gutter-lg py-space-md flex-1">
+<div class="grid grid-cols-1 gap-gutter">
+<!-- Project 1: Modernização Core de Pagamentos -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-all group">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md min-w-0">
+<!-- Domain Leading Visual Indicator -->
+<div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-primary flex-shrink-0 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">payments</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center flex-wrap gap-space-xs mb-1">
+<span class="font-code-sm text-code-sm text-outline">PRJ-CORE-09</span>
+<span class="w-1 h-1 rounded-full bg-outline"></span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container animate-pulse"></span>
+                  Em Andamento
+                </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-semibold">
+                  Estratégico
+                </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-medium">
+                  Papel: Responsável
+                </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors truncate">
+                Modernização do Core de Pagamentos (Pix 2.0 &amp; Instant)
+              </h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1 mt-0.5">
+                Reformulação de micro-serviços para suportar mensageria ISO 20022 com tolerância a falhas em milissegundos e conciliação assíncrona.
+              </p>
+</div>
+</div>
+<!-- Project Meta & Lead Architect -->
+<div class="flex items-center flex-wrap gap-space-lg self-end lg:self-auto flex-shrink-0">
+<!-- Responsible Architect Pill -->
+<div class="flex items-center gap-space-sm bg-surface-container-low px-space-sm py-1.5 rounded-xl">
+<div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-on-primary text-[12px] font-bold">
+                T
+              </div>
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-outline leading-none">Área: Eng. Financeira</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Teste (Arquiteto)</span>
+</div>
+</div>
+<!-- Linked Activities Counter Badge -->
+<div class="flex flex-col items-center">
+<span class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">view_kanban</span>
+                8
+              </span>
+<span class="font-code-sm text-code-sm text-outline">Atividades</span>
+</div>
+<!-- Context Quick Menu -->
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Progress Tracker Bar with Milestones -->
+<div class="mt-space-md pt-space-sm">
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1.5">
+<span class="text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-tertiary-container">check_circle</span>
+              Entrega de Módulos Core
+            </span>
+<span class="font-code-sm text-code-sm text-on-surface font-semibold">72% concluído</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary-container rounded-full transition-all duration-500" style="width: 72%;"></div>
+</div>
+</div>
+</div>
+<!-- Project 2: Migração Multi-Cloud & FinOps Baseline -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-all group">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md min-w-0">
+<!-- Domain Leading Visual Indicator -->
+<div class="w-12 h-12 rounded-xl bg-secondary-fixed flex items-center justify-center text-secondary flex-shrink-0 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">cloud_sync</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center flex-wrap gap-space-xs mb-1">
+<span class="font-code-sm text-code-sm text-outline">PRJ-CLD-14</span>
+<span class="w-1 h-1 rounded-full bg-outline"></span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container animate-pulse"></span>
+                  Em Andamento
+                </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-semibold">
+                  Estratégico
+                </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-medium">
+                  Papel: Consultivo
+                </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-secondary transition-colors truncate">
+                Migração Multi-Cloud &amp; FinOps Baseline
+              </h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1 mt-0.5">
+                Orquestração unificada de workloads críticos entre AWS e Azure com controle orçamentário proativo e governança de clusters.
+              </p>
+</div>
+</div>
+<!-- Project Meta & Lead Architect -->
+<div class="flex items-center flex-wrap gap-space-lg self-end lg:self-auto flex-shrink-0">
+<!-- Responsible Architect Pill -->
+<div class="flex items-center gap-space-sm bg-surface-container-low px-space-sm py-1.5 rounded-xl">
+<div class="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-on-secondary text-[12px] font-bold">
+                RP
+              </div>
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-outline leading-none">Área: Infra &amp; Cloud</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Roberto P.</span>
+</div>
+</div>
+<!-- Linked Activities Counter Badge -->
+<div class="flex flex-col items-center">
+<span class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">view_kanban</span>
+                12
+              </span>
+<span class="font-code-sm text-code-sm text-outline">Atividades</span>
+</div>
+<!-- Context Quick Menu -->
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Progress Tracker Bar with Milestones -->
+<div class="mt-space-md pt-space-sm">
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1.5">
+<span class="text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">speed</span>
+              Homologação de Redundância
+            </span>
+<span class="font-code-sm text-code-sm text-on-surface font-semibold">45% concluído</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary rounded-full transition-all duration-500" style="width: 45%;"></div>
+</div>
+</div>
+</div>
+<!-- Project 3: Plataforma de Governança de APIs & Developer Portal -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-all group">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md min-w-0">
+<!-- Domain Leading Visual Indicator -->
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0 group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[24px]">api</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center flex-wrap gap-space-xs mb-1">
+<span class="font-code-sm text-code-sm text-outline">PRJ-API-03</span>
+<span class="w-1 h-1 rounded-full bg-outline"></span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                  Planejamento
+                </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-semibold">
+                  Tático
+                </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-medium">
+                  Papel: Líder Técnico
+                </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors truncate">
+                Plataforma de Governança de APIs &amp; Developer Portal
+              </h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1 mt-0.5">
+                Centralização de catálogos OpenAPI, contratos gRPC, policies de rate-limiting e onboarding seguro de parceiros B2B.
+              </p>
+</div>
+</div>
+<!-- Project Meta & Lead Architect -->
+<div class="flex items-center flex-wrap gap-space-lg self-end lg:self-auto flex-shrink-0">
+<!-- Responsible Architect Pill -->
+<div class="flex items-center gap-space-sm bg-surface-container-low px-space-sm py-1.5 rounded-xl">
+<div class="w-7 h-7 rounded-full bg-primary-container flex items-center justify-center text-on-primary text-[12px] font-bold">
+                MC
+              </div>
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-outline leading-none">Área: Digital Platforms</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Maria C.</span>
+</div>
+</div>
+<!-- Linked Activities Counter Badge -->
+<div class="flex flex-col items-center">
+<span class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">view_kanban</span>
+                6
+              </span>
+<span class="font-code-sm text-code-sm text-outline">Atividades</span>
+</div>
+<!-- Context Quick Menu -->
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Progress Tracker Bar with Milestones -->
+<div class="mt-space-md pt-space-sm">
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1.5">
+<span class="text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-outline">schedule</span>
+              Definição de Arquitetura de Referência
+            </span>
+<span class="font-code-sm text-code-sm text-on-surface font-semibold">20% concluído</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary-container/80 rounded-full transition-all duration-500" style="width: 20%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Editorial Canvas Graphic & Architecture Footnote -->
+<div class="mt-space-xl p-space-lg rounded-xl bg-surface-container-low flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-surface-container-lowest flex items-center justify-center text-primary shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Sincronização com Repositório de Decisões de Arquitetura (ADR)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Cada projeto cadastrado é automaticamente indexado para auditoria de compliance e mapeamento TOGAF.</p>
+</div>
+</div>
+<button class="font-label-sm text-label-sm text-primary hover:text-primary-container flex items-center gap-1 whitespace-nowrap" type="button">
+<span>Acessar Guia de Governança</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Polished Slide-Over Drawer: "Novo Projeto" Form Flow -->
+<div class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm z-50 transition-opacity duration-300 opacity-0 pointer-events-none" id="projectDrawerBackdrop">
+<div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+<div class="w-screen max-w-2xl bg-surface-container-lowest shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out" id="projectDrawerContent">
+<!-- Drawer Header -->
+<div class="px-gutter-lg py-space-md bg-surface-container-low flex items-center justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed font-semibold">INICIATIVA</span>
+<span class="font-code-sm text-code-sm text-outline">AUTO-ID</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-1">Novo Projeto de Arquitetura</h2>
+</div>
+<button class="w-9 h-9 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" id="closeDrawerBtn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Drawer Scrollable Form Area -->
+<div class="p-gutter-lg flex-1 overflow-y-auto space-y-space-md">
+<!-- Field: Nome do Projeto -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span>Nome do Projeto</span>
+<span class="text-error font-bold">*</span>
+</label>
+<input class="w-full h-10 px-3 bg-surface-container-low focus:bg-surface-container-lowest rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none transition-all shadow-sm" placeholder="Ex.: Modernização de Barramento de Eventos Kafka" type="text"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Título claro e alinhado com o inventário corporativo de TI.</span>
+</div>
+<!-- Field: Descrição detalhada -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Descrição Detalhada &amp; Escopo</label>
+<span class="font-code-sm text-code-sm text-outline">Suporta Markdown</span>
+</div>
+<textarea class="w-full p-3 bg-surface-container-low focus:bg-surface-container-lowest rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none transition-all shadow-sm resize-none" placeholder="Descreva os objetivos arquiteturais, restrições técnicas e entregáveis esperados..." rows="4"></textarea>
+</div>
+<!-- 2-Column Grid: Área Responsável & Responsável Arquitetura -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Área Responsável -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span>Área Responsável</span>
+<span class="text-error font-bold">*</span>
+</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-8 bg-surface-container-low focus:bg-surface-container-lowest rounded-xl font-body-md text-body-md text-on-surface focus:outline-none appearance-none transition-all shadow-sm">
+<option value="Engenharia Financeira">Engenharia Financeira</option>
+<option value="Infraestrutura &amp; Cloud">Infraestrutura &amp; Cloud</option>
+<option value="Digital Platforms">Digital Platforms</option>
+<option value="Cibersegurança &amp; Compliance">Cibersegurança &amp; Compliance</option>
+<option value="Data &amp; Analytics Core">Data &amp; Analytics Core</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Responsável Arquitetura -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span>Responsável Arquitetura</span>
+<span class="text-error font-bold">*</span>
+</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-8 bg-surface-container-low focus:bg-surface-container-lowest rounded-xl font-body-md text-body-md text-on-surface focus:outline-none appearance-none transition-all shadow-sm">
+<option value="teste@tasso.dev.br">Teste (teste@tasso.dev.br)</option>
+<option value="roberto.p@tasso.dev.br">Roberto P. (roberto.p@tasso.dev.br)</option>
+<option value="maria.c@tasso.dev.br">Maria C. (maria.c@tasso.dev.br)</option>
+<option value="lucas.v@tasso.dev.br">Lucas V. (lucas.v@tasso.dev.br)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Field: Responsável Externo -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Responsável Externo / Tech Lead de Negócio</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">person_outline</span>
+<input class="w-full h-10 pl-9 pr-3 bg-surface-container-low focus:bg-surface-container-lowest rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none transition-all shadow-sm" placeholder="Nome ou e-mail do parceiro ou líder externo..." type="text"/>
+</div>
+</div>
+<!-- Field: Participantes (Interactive Selector Chips) -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Participantes e Integrantes</label>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Membros com acesso de edição e colaboração direta na iniciativa:</p>
+<div class="flex flex-wrap gap-2 p-2 bg-surface-container-low rounded-xl">
+<label class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-lowest rounded-lg shadow-sm cursor-pointer hover:bg-surface-bright transition-colors select-none">
+<input checked="" class="rounded text-primary focus:ring-0" type="checkbox"/>
+<span class="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-on-primary text-[10px] font-bold">T</span>
+<span class="font-label-sm text-label-sm text-on-surface">Teste (teste@tasso.dev.br)</span>
+</label>
+<label class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-lowest rounded-lg shadow-sm cursor-pointer hover:bg-surface-bright transition-colors select-none">
+<input checked="" class="rounded text-primary focus:ring-0" type="checkbox"/>
+<span class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center text-on-secondary text-[10px] font-bold">RP</span>
+<span class="font-label-sm text-label-sm text-on-surface">Roberto P.</span>
+</label>
+<label class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-lowest rounded-lg shadow-sm cursor-pointer hover:bg-surface-bright transition-colors select-none">
+<input class="rounded text-primary focus:ring-0" type="checkbox"/>
+<span class="w-5 h-5 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface text-[10px] font-bold">MC</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Maria C.</span>
+</label>
+</div>
+</div>
+<!-- 2-Column Grid: Papel da Arquitetura & Natureza -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Papel da Arquitetura -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span>Papel da Arquitetura</span>
+<span class="text-error font-bold">*</span>
+</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-8 bg-surface-container-low focus:bg-surface-container-lowest rounded-xl font-body-md text-body-md text-on-surface focus:outline-none appearance-none transition-all shadow-sm">
+<option value="Responsável">Responsável (Liderança Técnica)</option>
+<option value="Consultivo">Consultivo (Apoio &amp; Parecer)</option>
+<option value="Validador">Validador (Portão de Governança)</option>
+<option value="Observador">Observador Técnico</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Natureza -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span>Natureza da Iniciativa</span>
+<span class="text-error font-bold">*</span>
+</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-8 bg-surface-container-low focus:bg-surface-container-lowest rounded-xl font-body-md text-body-md text-on-surface focus:outline-none appearance-none transition-all shadow-sm">
+<option value="Estratégico">Estratégico</option>
+<option value="Tático">Tático</option>
+<option value="Manutenção e Dívida Técnica">Manutenção e Dívida Técnica</option>
+<option value="Regulatório / Compliance">Regulatório / Compliance</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Drawer Sticky Footer -->
+<div class="p-gutter-lg bg-surface-container-low flex items-center justify-end gap-space-sm">
+<button class="h-10 px-space-md bg-surface-container hover:bg-surface-container-high text-on-surface rounded-xl font-label-md text-label-md transition-colors" id="cancelDrawerBtn" type="button">
+            Cancelar
+          </button>
+<button class="h-10 px-space-lg bg-primary-container hover:bg-primary text-on-primary rounded-xl font-label-md text-label-md flex items-center gap-space-xs font-semibold transition-all shadow-md" id="saveProjectBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span>Salvar Projeto</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const openBtn = document.getElementById('openNewProjectBtn');
+    const closeBtn = document.getElementById('closeDrawerBtn');
+    const cancelBtn = document.getElementById('cancelDrawerBtn');
+    const saveBtn = document.getElementById('saveProjectBtn');
+    const backdrop = document.getElementById('projectDrawerBackdrop');
+    const drawer = document.getElementById('projectDrawerContent');
+    const searchInput = document.getElementById('projectSearchInput');
+
+    function openDrawer() {
+      backdrop.classList.remove('opacity-0', 'pointer-events-none');
+      backdrop.classList.add('opacity-100');
+      drawer.classList.remove('translate-x-full');
+      drawer.classList.add('translate-x-0');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      backdrop.classList.remove('opacity-100');
+      backdrop.classList.add('opacity-0', 'pointer-events-none');
+      drawer.classList.remove('translate-x-0');
+      drawer.classList.add('translate-x-full');
+      document.body.style.overflow = '';
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeDrawer);
+
+    if (backdrop) {
+      backdrop.addEventListener('click', function(e) {
+        if (e.target === backdrop) closeDrawer();
+      });
+    }
+
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function() {
+        saveBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Salvando...</span>';
+        setTimeout(function() {
+          closeDrawer();
+          saveBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span><span>Salvar Projeto</span>';
+        }, 600);
+      });
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.grid > .group');
+        cards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          card.style.display = text.includes(query) ? '' : 'none';
+        });
+      });
+    }
+  })();
+</script></main></div></body></html>

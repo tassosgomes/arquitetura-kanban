@@ -106,12 +106,15 @@ export function ValueDeliveryForm({
       <input type="hidden" name="contentMarkdown" value={content} />
 
       {conflict ? (
-        <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950" role="alert">
+        <div
+          className="rounded-xl border border-secondary-container/40 bg-secondary-container/10 p-space-md text-body-sm text-on-surface"
+          role="alert"
+        >
           <p>{state && !state.ok ? state.error.message : null}</p>
           <button
             type="button"
             onClick={() => router.refresh()}
-            className="mt-2 font-medium underline"
+            className="mt-2 font-semibold text-primary underline hover:text-primary/80"
           >
             Recarregar os dados
           </button>
@@ -119,7 +122,7 @@ export function ValueDeliveryForm({
       ) : null}
 
       {globalError ? (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-body-sm text-error" role="alert">
           {globalError}
         </p>
       ) : null}
@@ -181,7 +184,7 @@ export function ValueDeliveryForm({
         </PrimaryButton>
         <Link
           href={cancelHref}
-          className="inline-flex items-center rounded-lg px-4 py-2.5 text-sm font-medium text-zinc-700 underline hover:text-zinc-900"
+          className="inline-flex items-center rounded-lg px-4 py-2.5 text-label-md font-semibold text-on-surface-variant underline hover:text-on-surface"
         >
           Cancelar
         </Link>

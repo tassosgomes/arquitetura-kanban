@@ -21,7 +21,7 @@ export function ValueDeliveryList({ projectId, deliveries, canWrite }: ValueDeli
           canWrite ? (
             <Link
               href={createHref}
-              className="inline-flex rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+              className="inline-flex rounded-xl bg-primary-container px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               Nova entrega de valor
             </Link>
@@ -32,51 +32,51 @@ export function ValueDeliveryList({ projectId, deliveries, canWrite }: ValueDeli
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
-      <table className="min-w-full text-left text-sm">
+    <div className="overflow-x-auto rounded-xl bg-surface-container-lowest shadow-sm">
+      <table className="min-w-full text-left text-body-sm">
         <caption className="sr-only">Lista de entregas de valor</caption>
-        <thead className="border-b border-zinc-200 bg-zinc-50 text-zinc-700">
+        <thead className="bg-surface-container-low text-on-surface-variant">
           <tr>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Título
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Data de referência
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Autor
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               <span className="sr-only">Ações</span>
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-zinc-100">
+        <tbody className="divide-y divide-outline-variant/40">
           {deliveries.map((delivery) => {
             const href = `/projects/${projectId}/value-deliveries/${delivery.id}`;
             return (
-              <tr key={delivery.id}>
+              <tr key={delivery.id} className="transition-colors hover:bg-primary-container/5">
                 <td className="px-4 py-3">
-                  <Link href={href} className="font-medium text-zinc-900 underline hover:text-zinc-700">
+                  <Link href={href} className="font-semibold text-on-surface hover:text-primary">
                     {delivery.title}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-zinc-700">
+                <td className="px-4 py-3 font-mono text-code-sm text-on-surface-variant">
                   {formatCivilDatePtBr(delivery.referenceDate)}
                 </td>
-                <td className="px-4 py-3 text-zinc-700">{formatUserLabel(delivery.author)}</td>
+                <td className="px-4 py-3 text-on-surface-variant">{formatUserLabel(delivery.author)}</td>
                 <td className="px-4 py-3">
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1">
                     <Link
                       href={href}
-                      className="rounded-md px-2 py-1 text-sm font-medium text-zinc-900 underline hover:text-zinc-700"
+                      className="rounded-md px-2 py-1 text-label-sm font-semibold text-primary hover:underline"
                     >
                       Ver
                     </Link>
                     {canWrite ? (
                       <Link
                         href={`${href}/edit`}
-                        className="rounded-md px-2 py-1 text-sm font-medium text-zinc-900 underline hover:text-zinc-700"
+                        className="rounded-md px-2 py-1 text-label-sm font-semibold text-primary hover:underline"
                       >
                         Editar
                       </Link>

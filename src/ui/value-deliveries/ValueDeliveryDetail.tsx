@@ -16,8 +16,8 @@ function formatInstant(value: Date): string {
 function Item({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="grid gap-1 sm:grid-cols-[12rem_1fr] sm:gap-4">
-      <dt className="text-sm font-medium text-zinc-600">{label}</dt>
-      <dd className="text-sm text-zinc-900">{children}</dd>
+      <dt className="text-label-sm uppercase tracking-wider text-outline">{label}</dt>
+      <dd className="text-body-md text-on-surface">{children}</dd>
     </div>
   );
 }
@@ -34,24 +34,24 @@ export function ValueDeliveryDetail({ delivery, canWrite }: ValueDeliveryDetailP
     <article className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
-          <p className="text-sm">
-            <Link href={viewHref} className="font-medium text-zinc-700 underline hover:text-zinc-900">
+          <p className="font-mono text-code-sm">
+            <Link href={viewHref} className="font-semibold text-primary hover:underline">
               Entregas de valor
             </Link>
           </p>
-          <h2 className="text-xl font-semibold tracking-tight text-zinc-900">{delivery.title}</h2>
+          <h2 className="text-headline-lg text-on-surface">{delivery.title}</h2>
         </div>
         {canWrite ? (
           <Link
             href={`/projects/${delivery.projectId}/value-deliveries/${delivery.id}/edit`}
-            className="inline-flex shrink-0 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="inline-flex shrink-0 rounded-xl bg-primary-container px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Editar
           </Link>
         ) : null}
       </div>
 
-      <dl className="flex max-w-3xl flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-5">
+      <dl className="flex max-w-3xl flex-col gap-space-md rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
         <Item label="Data de referência">{formatCivilDatePtBr(delivery.referenceDate)}</Item>
         <Item label="Autor">{formatUserLabel(delivery.author)}</Item>
         <Item label="Criado em">{formatInstant(delivery.createdAt)}</Item>
@@ -60,7 +60,7 @@ export function ValueDeliveryDetail({ delivery, canWrite }: ValueDeliveryDetailP
 
       <section
         aria-label="Conteúdo"
-        className="max-w-3xl rounded-lg border border-zinc-200 bg-white p-5"
+        className="max-w-3xl rounded-xl bg-surface-container-lowest p-space-lg shadow-sm"
       >
         <MarkdownView markdown={delivery.contentMarkdown} />
       </section>

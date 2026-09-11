@@ -10,13 +10,13 @@ type StatusPanelProps = {
 
 export function StatusPanel({ eyebrow, title, message, action, role }: StatusPanelProps) {
   return (
-    <section role={role} className="flex max-w-xl flex-col gap-4">
+    <section role={role} className="flex max-w-xl flex-col gap-space-sm">
       {eyebrow ? (
-        <p className="text-sm font-medium tracking-wide text-zinc-500 uppercase">{eyebrow}</p>
+        <p className="text-label-sm text-outline uppercase tracking-wider">{eyebrow}</p>
       ) : null}
-      <h1 className="text-3xl font-semibold tracking-tight text-zinc-950">{title}</h1>
-      <p className="text-lg leading-7 text-zinc-700">{message}</p>
-      {action ? <div className="pt-2">{action}</div> : null}
+      <h1 className="text-headline-lg text-on-surface">{title}</h1>
+      <p className="text-body-lg text-on-surface-variant">{message}</p>
+      {action ? <div className="pt-space-xs">{action}</div> : null}
     </section>
   );
 }

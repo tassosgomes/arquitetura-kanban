@@ -20,7 +20,11 @@ export function ProjectFilterTabs() {
   }
 
   return (
-    <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filtrar projetos por status">
+    <div
+      className="inline-flex flex-wrap gap-0.5 rounded-xl bg-surface-container-low p-1 shadow-inner"
+      role="tablist"
+      aria-label="Filtrar projetos por status"
+    >
       {FILTERS.map((filter) => {
         const href = filter.value === "active" ? "/projects" : `/projects?status=${filter.value}`;
         const selected = current === filter.value;
@@ -31,10 +35,10 @@ export function ProjectFilterTabs() {
             href={href}
             role="tab"
             aria-selected={selected}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 ${
+            className={`rounded-lg px-3 py-1.5 text-label-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
               selected
-                ? "bg-zinc-900 text-white"
-                : "bg-white text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-50"
+                ? "bg-surface-container-lowest text-on-surface shadow-sm"
+                : "text-on-surface-variant hover:text-on-surface"
             }`}
           >
             {filter.label}

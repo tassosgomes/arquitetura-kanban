@@ -30,7 +30,7 @@ export default async function NewValueDeliveryPage({ params }: NewValueDeliveryP
         action={
           <Link
             href={`/projects/${project.id}/value-deliveries`}
-            className="text-sm font-medium text-zinc-900 underline"
+            className="text-label-md font-semibold text-primary underline"
           >
             Voltar às entregas
           </Link>
@@ -41,15 +41,15 @@ export default async function NewValueDeliveryPage({ params }: NewValueDeliveryP
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm">
+      <p className="font-mono text-code-sm">
         <Link
           href={`/projects/${project.id}/value-deliveries`}
-          className="font-medium text-zinc-700 underline hover:text-zinc-900"
+          className="font-semibold text-primary hover:underline"
         >
           Entregas de valor
         </Link>
       </p>
-      <h2 className="text-xl font-semibold tracking-tight text-zinc-900">Nova entrega de valor</h2>
+      <h2 className="text-headline-lg text-on-surface">Nova entrega de valor</h2>
       <ValueDeliveryForm
         mode="create"
         projectId={project.id}

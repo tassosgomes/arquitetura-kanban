@@ -31,7 +31,7 @@ type MarkdownEditorProps = {
 
 export function MarkdownEditor({ id, value, onChange, invalid = false }: MarkdownEditorProps) {
   return (
-    <div data-color-mode="light" className="overflow-hidden rounded-md border border-zinc-300">
+    <div data-color-mode="light" className="overflow-hidden rounded-lg border border-outline-variant">
       <MDEditor
         value={value}
         onChange={(next) => onChange(next ?? "")}

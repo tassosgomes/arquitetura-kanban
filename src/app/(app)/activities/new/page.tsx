@@ -58,7 +58,7 @@ export default async function NewActivityPage({ searchParams }: NewActivityPageP
         title="Cadastre uma área primeiro"
         message="É necessário ao menos uma área ativa para criar uma atividade."
         action={
-          <Link href="/catalogs/areas" className="text-sm font-medium text-zinc-900 underline">
+          <Link href="/catalogs/areas" className="text-label-md font-semibold text-primary underline">
             Ir para áreas
           </Link>
         }
@@ -72,7 +72,7 @@ export default async function NewActivityPage({ searchParams }: NewActivityPageP
         title="Cadastre um domínio primeiro"
         message="É necessário ao menos um domínio ativo para classificar a atividade."
         action={
-          <Link href="/catalogs/domains" className="text-sm font-medium text-zinc-900 underline">
+          <Link href="/catalogs/domains" className="text-label-md font-semibold text-primary underline">
             Ir para domínios
           </Link>
         }
@@ -118,15 +118,15 @@ export default async function NewActivityPage({ searchParams }: NewActivityPageP
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-space-lg">
       <header className="flex flex-col gap-2">
-        <p className="text-sm">
-          <Link href="/kanban" className="font-medium text-zinc-700 underline hover:text-zinc-900">
+        <p className="font-mono text-code-sm">
+          <Link href="/kanban" className="font-semibold text-primary hover:underline">
             Kanban
           </Link>
         </p>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Nova atividade</h1>
-        <p className="max-w-2xl text-sm leading-6 text-zinc-600">
+        <h1 className="text-headline-lg text-on-surface">Nova atividade</h1>
+        <p className="max-w-2xl text-body-md leading-6 text-on-surface-variant">
           Cadastre uma demanda ad hoc ou vinculada a um projeto. Valores herdados do projeto podem
           ser alterados e não são sincronizados depois de salvar.
         </p>

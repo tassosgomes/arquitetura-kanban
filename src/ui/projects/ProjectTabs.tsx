@@ -23,7 +23,7 @@ export function ProjectTabs({ projectId }: ProjectTabsProps) {
   }
 
   return (
-    <nav aria-label="Seções do projeto" className="border-b border-zinc-200">
+    <nav aria-label="Seções do projeto" className="border-b border-outline-variant">
       <ul className="flex flex-wrap gap-1">
         {TABS.map((tab) => {
           const href = `${base}${tab.suffix}`;
@@ -34,10 +34,10 @@ export function ProjectTabs({ projectId }: ProjectTabsProps) {
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`block rounded-t-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 ${
+                className={`block rounded-t-lg px-3 py-2 text-label-md font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                   active
-                    ? "border border-b-0 border-zinc-200 bg-white text-zinc-900"
-                    : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                    ? "border-b-2 border-primary text-primary"
+                    : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
                 }`}
               >
                 {tab.label}

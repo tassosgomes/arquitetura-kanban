@@ -2,16 +2,16 @@ import { dismissForbidden } from "@/app/actions/auth";
 
 export default function ForbiddenPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center px-6 py-16">
-      <section className="flex max-w-md flex-col gap-4">
-        <p className="text-sm font-medium tracking-wide text-zinc-500 uppercase">403</p>
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-950">Acesso recusado</h1>
-        <p className="text-lg leading-7 text-zinc-700">
+    <main className="flex min-h-screen items-center justify-center bg-surface px-6 py-16">
+      <section className="flex w-full max-w-md flex-col gap-space-md rounded-2xl bg-surface-container-lowest p-space-xl shadow-lg">
+        <p className="font-mono text-code-sm uppercase tracking-wider text-error">403</p>
+        <h1 className="text-headline-lg text-on-surface">Acesso recusado</h1>
+        <p className="text-body-lg leading-7 text-on-surface-variant">
           Sua conta local está inativa ou não está autorizada a usar esta aplicação. O histórico
           existente é preservado. Fale com quem administra o acesso se precisar reativar.
         </p>
         <form action={dismissForbidden}>
-          <button type="submit" className="text-sm font-medium text-zinc-900 underline">
+          <button type="submit" className="text-label-md font-semibold text-primary underline">
             Voltar ao login
           </button>
         </form>

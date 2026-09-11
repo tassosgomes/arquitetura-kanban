@@ -28,8 +28,8 @@ function formatInstant(value: Date): string {
 function Item({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="grid gap-1 sm:grid-cols-[12rem_1fr] sm:gap-4">
-      <dt className="text-sm font-medium text-zinc-600">{label}</dt>
-      <dd className="text-sm text-zinc-900">{children}</dd>
+      <dt className="text-label-sm uppercase tracking-wider text-outline">{label}</dt>
+      <dd className="text-body-md text-on-surface">{children}</dd>
     </div>
   );
 }
@@ -47,8 +47,8 @@ export function ActivityDetail({
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
-          <p className="text-sm">
-            <Link href="/kanban" className="font-medium text-zinc-700 underline hover:text-zinc-900">
+          <p className="font-mono text-code-sm">
+            <Link href="/kanban" className="font-semibold text-primary hover:underline">
               Kanban
             </Link>
             {activity.project ? (
@@ -56,7 +56,7 @@ export function ActivityDetail({
                 {" · "}
                 <Link
                   href={`/projects/${activity.project.id}/activities`}
-                  className="font-medium text-zinc-700 underline hover:text-zinc-900"
+                  className="font-semibold text-primary hover:underline"
                 >
                   {activity.project.name}
                 </Link>
@@ -64,7 +64,7 @@ export function ActivityDetail({
             ) : null}
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{activity.title}</h1>
+            <h1 className="text-headline-lg text-on-surface">{activity.title}</h1>
             <ActivityStatusBadge status={activity.status} />
           </div>
           <ActivityStatusControls
@@ -77,20 +77,20 @@ export function ActivityDetail({
         {editable ? (
           <Link
             href={`/activities/${activity.id}/edit`}
-            className="inline-flex shrink-0 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="inline-flex shrink-0 rounded-xl bg-primary-container px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Editar
           </Link>
         ) : null}
       </div>
 
-      <dl className="flex max-w-3xl flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-5">
+      <dl className="flex max-w-3xl flex-col gap-space-md rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
         <Item label="Tipo">{ACTIVITY_TYPE_LABELS[activity.type]}</Item>
         <Item label="Projeto">
           {activity.project ? (
             <Link
               href={`/projects/${activity.project.id}`}
-              className="font-medium text-zinc-900 underline hover:text-zinc-700"
+              className="font-semibold text-primary hover:underline"
             >
               {activity.project.name}
             </Link>
@@ -165,7 +165,7 @@ export function ActivityDetail({
       <ActivityHistory activityId={activity.id} initialPage={history} />
 
       {editable ? null : (
-        <p className="text-sm text-zinc-600">
+        <p className="text-body-sm text-on-surface-variant">
           Atividade cancelada: o registro foi preservado e não pode ser editado nem reaberto.
         </p>
       )}

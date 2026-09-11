@@ -37,10 +37,10 @@ export function FormField({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium text-zinc-900">
+      <label htmlFor={id} className="text-label-md font-semibold text-on-surface">
         {label}
         {required ? (
-          <span className="text-red-700" aria-hidden="true">
+          <span className="text-error" aria-hidden="true">
             {" "}
             *
           </span>
@@ -48,7 +48,7 @@ export function FormField({
         {required ? <span className="sr-only"> (obrigatório)</span> : null}
       </label>
       {description ? (
-        <p id={descriptionId} className="text-sm leading-5 text-zinc-600">
+        <p id={descriptionId} className="text-body-sm text-on-surface-variant">
           {description}
         </p>
       ) : null}

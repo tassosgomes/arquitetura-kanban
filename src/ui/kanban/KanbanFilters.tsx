@@ -84,9 +84,15 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
   }
 
   return (
-    <section className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Atalhos de filtro">
+    <section className="flex flex-col gap-space-md rounded-xl bg-surface-container-lowest p-space-md shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-space-sm">
+        <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Atalhos de filtro">
+          <span className="mr-1 flex items-center gap-1 font-mono text-code-sm uppercase tracking-wider text-outline">
+            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
+              tune
+            </span>
+            Presets:
+          </span>
           {KANBAN_SHORTCUTS.map((shortcut) => {
             const selected = activeShortcut === shortcut.id;
             return (
@@ -94,10 +100,10 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
                 key={shortcut.id}
                 href={shortcut.href}
                 aria-current={selected ? "page" : undefined}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 ${
+                className={`rounded-full px-3 py-1 text-label-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                   selected
-                    ? "bg-zinc-900 text-white"
-                    : "bg-zinc-50 text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-100"
+                    ? "bg-primary-container text-on-primary shadow-sm"
+                    : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high"
                 }`}
               >
                 {shortcut.label}
@@ -108,17 +114,17 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
         {canClear ? (
           <Link
             href="/kanban"
-            className="text-sm font-medium text-zinc-900 underline hover:text-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="text-label-sm font-semibold text-primary underline hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Limpar filtros
           </Link>
         ) : null}
       </div>
 
-      <form className="flex flex-col gap-4" onSubmit={submitFilters}>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <form className="flex flex-col gap-space-md" onSubmit={submitFilters}>
+        <div className="grid gap-space-sm sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Período</span>
+            <span className="text-label-sm text-on-surface-variant">Período</span>
             <select
               name="period"
               className={CONTROL_CLASS_NAME}
@@ -136,7 +142,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           {period === KanbanPeriodOption.CUSTOM ? (
             <>
               <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium text-zinc-900">De</span>
+                <span className="text-label-sm text-on-surface-variant">De</span>
                 <input
                   type="date"
                   name="from"
@@ -146,7 +152,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
                 />
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium text-zinc-900">Até</span>
+                <span className="text-label-sm text-on-surface-variant">Até</span>
                 <input
                   type="date"
                   name="to"
@@ -159,7 +165,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           ) : null}
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Área</span>
+            <span className="text-label-sm text-on-surface-variant">Área</span>
             <select name="area" className={CONTROL_CLASS_NAME} defaultValue={values.areaId ?? ""}>
               <option value="">Todas</option>
               {areas.map((area) => (
@@ -171,7 +177,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Projeto</span>
+            <span className="text-label-sm text-on-surface-variant">Projeto</span>
             <select
               name="project"
               className={CONTROL_CLASS_NAME}
@@ -187,7 +193,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Responsável</span>
+            <span className="text-label-sm text-on-surface-variant">Responsável</span>
             <select name="owner" className={CONTROL_CLASS_NAME} defaultValue={values.ownerId ?? ""}>
               <option value="">Todos</option>
               {users.map((user) => (
@@ -199,7 +205,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Participante</span>
+            <span className="text-label-sm text-on-surface-variant">Participante</span>
             <select
               name="participant"
               className={CONTROL_CLASS_NAME}
@@ -215,7 +221,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Domínio</span>
+            <span className="text-label-sm text-on-surface-variant">Domínio</span>
             <select
               name="domain"
               className={CONTROL_CLASS_NAME}
@@ -231,7 +237,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Natureza</span>
+            <span className="text-label-sm text-on-surface-variant">Natureza</span>
             <select name="nature" className={CONTROL_CLASS_NAME} defaultValue={values.nature ?? ""}>
               <option value="">Todas</option>
               {Object.values(Nature).map((nature) => (
@@ -243,7 +249,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Prioridade</span>
+            <span className="text-label-sm text-on-surface-variant">Prioridade</span>
             <select
               name="priority"
               className={CONTROL_CLASS_NAME}
@@ -259,7 +265,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Papel da Arquitetura</span>
+            <span className="text-label-sm text-on-surface-variant">Papel da Arquitetura</span>
             <select
               name="role"
               className={CONTROL_CLASS_NAME}
@@ -275,7 +281,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Esforço</span>
+            <span className="text-label-sm text-on-surface-variant">Esforço</span>
             <select name="effort" className={CONTROL_CLASS_NAME} defaultValue={values.effort ?? ""}>
               <option value="">Todos</option>
               {Object.values(Effort).map((effort) => (
@@ -288,7 +294,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
           </label>
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-zinc-900">Status</span>
+            <span className="text-label-sm text-on-surface-variant">Status</span>
             <select name="status" className={CONTROL_CLASS_NAME} defaultValue={values.status ?? ""}>
               <option value="">Todos</option>
               {Object.values(ActivityStatus).map((status) => (
@@ -301,36 +307,39 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-4">
-            <label className="flex items-center gap-2 text-sm text-zinc-800">
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-space-md">
+            <label className="inline-flex cursor-pointer items-center gap-1.5 select-none text-label-sm text-on-surface-variant">
               <input
                 type="checkbox"
                 name="includeCancelled"
                 value="1"
                 defaultChecked={values.includeCancelled}
-                className="size-4 rounded border-zinc-300 text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+                className="size-3.5 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               />
               Incluir cancelados
             </label>
-            <label className="flex items-center gap-2 text-sm text-zinc-800">
+            <label className="inline-flex cursor-pointer items-center gap-1.5 select-none text-label-sm text-on-surface-variant">
               <input
                 type="checkbox"
                 name="mine"
                 value="1"
                 defaultChecked={values.mine}
-                className="size-4 rounded border-zinc-300 text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+                className="size-3.5 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               />
               Somente minhas
             </label>
           </div>
           <button
             type="submit"
-            className="inline-flex rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-label-sm font-semibold text-on-primary shadow-sm transition-all hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
+            <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
+              filter_alt
+            </span>
             Aplicar filtros
           </button>
         </div>
-        <p className="text-xs leading-5 text-zinc-500">
+        <p className="text-body-sm leading-5 text-outline">
           Canceladas não ocupam coluna: use “Incluir cancelados” ou o status Cancelado para vê-las
           na lista abaixo do board. Responsável e participante são filtros distintos. O período não
           altera a coluna atual da atividade.

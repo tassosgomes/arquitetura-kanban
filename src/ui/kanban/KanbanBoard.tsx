@@ -29,6 +29,7 @@ import {
 } from "@/application/activities/kanban-board";
 import type { ActivityListItem } from "@/application/activities/types";
 import { ACTIVITY_STATUS_LABELS, type ActivityStatus } from "@/domain/activity/enums";
+import { ACTIVITY_STATUS_DOT } from "@/ui/activities/ActivityStatusBadge";
 import { DraggableKanbanCard, KanbanCardBody } from "@/ui/kanban/KanbanCard";
 import { kanbanKeyboardCoordinates } from "@/ui/kanban/kanban-keyboard-coordinates";
 import { useProtectOpenEdit } from "@/ui/realtime/useProtectOpenEdit";
@@ -94,22 +95,27 @@ function KanbanColumnView({
     <section
       ref={setNodeRef}
       aria-labelledby={headingId}
-      className={`flex w-72 shrink-0 flex-col gap-3 rounded-xl p-3 ${
-        isOver ? "bg-zinc-200 ring-2 ring-zinc-900 ring-offset-2" : "bg-zinc-100"
+      className={`flex w-[300px] shrink-0 flex-col gap-space-sm rounded-2xl p-space-sm shadow-sm transition-colors ${
+        isOver ? "bg-primary/10 ring-2 ring-primary ring-offset-2 ring-offset-surface" : "bg-surface-container-low"
       }`}
     >
-      <header className="flex items-baseline justify-between gap-2 px-0.5">
-        <h2 id={headingId} className="text-sm font-semibold text-zinc-900">
-          {column.label}
-        </h2>
-        <p className="text-xs text-zinc-500">{column.activities.length}</p>
+      <header className="flex items-center justify-between gap-2 px-2 py-1.5">
+        <div className="flex items-center gap-2">
+          <span className={`h-2.5 w-2.5 rounded-full ${ACTIVITY_STATUS_DOT[column.status]}`} aria-hidden="true" />
+          <h2 id={headingId} className="text-headline-sm font-semibold text-on-surface">
+            {column.label}
+          </h2>
+        </div>
+        <span className="rounded-full bg-surface-container-high px-2 py-0.5 font-mono text-code-sm font-bold text-on-surface-variant">
+          {column.activities.length}
+        </span>
       </header>
       {column.activities.length === 0 ? (
-        <p className="min-h-24 rounded-lg border border-dashed border-zinc-300 px-3 py-6 text-center text-sm text-zinc-500">
+        <p className="min-h-24 rounded-xl border border-dashed border-outline-variant px-3 py-6 text-center text-body-sm text-on-surface-variant">
           Nenhuma atividade nesta coluna.
         </p>
       ) : (
-        <ul className="flex min-h-24 flex-col gap-2">
+        <ul className="flex min-h-24 flex-col gap-space-sm">
           {column.activities.map((activity) => (
             <li key={activity.id}>
               <DraggableKanbanCard activity={activity} disabled={disabled} onMove={onMove} />
@@ -201,25 +207,25 @@ export function KanbanBoard({ activities }: KanbanBoardProps) {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-sm leading-6 text-zinc-600">
+    <div className="flex flex-col gap-space-sm">
+      <p className="text-body-sm leading-6 text-on-surface-variant">
         Arraste pela alça para outra coluna, use Espaço e setas na alça, ou o seletor “Mover para”.
         Cancelar permanece no detalhe da atividade.
       </p>
       {isPending ? (
-        <p className="text-sm text-zinc-600" role="status" aria-live="polite">
+        <p className="text-body-sm text-on-surface-variant" role="status" aria-live="polite">
           Movendo atividade…
         </p>
       ) : null}
       {errorMessage ? (
         <div
-          className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950"
+          className="rounded-xl border border-secondary-container/40 bg-secondary-container/10 p-space-md text-body-sm text-on-surface"
           role="alert"
         >
           <p>{errorMessage}</p>
           <button
             type="button"
-            className="mt-2 rounded-md px-2 py-1 text-sm font-medium text-zinc-800 underline hover:text-zinc-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+            className="mt-2 rounded-md px-2 py-1 text-body-sm font-medium text-primary underline hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             onClick={() => {
               setErrorMessage(null);
               router.refresh();
@@ -230,7 +236,7 @@ export function KanbanBoard({ activities }: KanbanBoardProps) {
         </div>
       ) : null}
       {total === 0 ? (
-        <p className="text-sm leading-6 text-zinc-600">
+        <p className="text-body-sm leading-6 text-on-surface-variant">
           Nenhuma atividade aberta no board. Cadastre uma atividade para começar. Canceladas não
           ocupam coluna.
         </p>
@@ -255,7 +261,7 @@ export function KanbanBoard({ activities }: KanbanBoardProps) {
           aria-label="Kanban da equipe"
           aria-busy={isPending || undefined}
         >
-          <div className="flex min-w-max gap-3 pb-2">
+          <div className="flex min-w-max items-start gap-space-md pb-2">
             {columns.map((column) => (
               <KanbanColumnView
                 key={column.status}
@@ -268,7 +274,7 @@ export function KanbanBoard({ activities }: KanbanBoardProps) {
         </div>
         <DragOverlay>
           {activeActivity ? (
-            <div className="w-64 rounded-lg border border-zinc-400 bg-white p-3 shadow-lg">
+            <div className="w-72 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-space-md shadow-xl">
               <div className="flex flex-col gap-2">
                 <KanbanCardBody activity={activeActivity} />
               </div>

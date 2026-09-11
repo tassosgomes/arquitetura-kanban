@@ -9,7 +9,7 @@ import { useRealtimeSse } from "@/ui/realtime/useRealtimeSse";
 function RemoteUpdateBanner({ onReload }: { onReload: () => void }) {
   return (
     <div
-      className="mb-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950"
+      className="mb-4 rounded-xl border border-secondary-container/40 bg-secondary-container/10 p-space-md text-body-sm text-on-surface"
       role="status"
       aria-live="polite"
     >
@@ -17,7 +17,7 @@ function RemoteUpdateBanner({ onReload }: { onReload: () => void }) {
       <button
         type="button"
         onClick={onReload}
-        className="mt-2 rounded-md px-2 py-1 font-medium underline hover:text-amber-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+        className="mt-2 rounded-md px-2 py-1 font-semibold text-primary underline hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
         Recarregar
       </button>

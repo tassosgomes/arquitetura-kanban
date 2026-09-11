@@ -82,7 +82,7 @@ export default async function EditActivityPage({ params }: EditActivityPageProps
         action={
           <Link
             href={`/activities/${activity.id}`}
-            className="text-sm font-medium text-zinc-900 underline"
+            className="text-label-md font-semibold text-primary underline"
           >
             Voltar à atividade
           </Link>
@@ -130,17 +130,17 @@ export default async function EditActivityPage({ params }: EditActivityPageProps
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-space-lg">
       <header className="flex flex-col gap-2">
-        <p className="text-sm">
+        <p className="font-mono text-code-sm">
           <Link
             href={`/activities/${activity.id}`}
-            className="font-medium text-zinc-700 underline hover:text-zinc-900"
+            className="font-semibold text-primary hover:underline"
           >
             {activity.title}
           </Link>
         </p>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Editar atividade</h1>
+        <h1 className="text-headline-lg text-on-surface">Editar atividade</h1>
       </header>
       <ActivityForm
         mode="edit"

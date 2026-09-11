@@ -45,7 +45,7 @@ type ActivityChecklistProps = {
 type EditingState = { id: string; text: string };
 
 const TEXT_BUTTON_CLASS =
-  "rounded-md px-2 py-1 text-sm font-medium text-zinc-700 underline hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:text-zinc-400 disabled:no-underline";
+  "rounded-md px-2 py-1 text-label-sm font-semibold text-primary hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:text-outline disabled:no-underline";
 
 function applyResult(
   result: ActionResult<ActivityChecklistResult>,
@@ -108,7 +108,7 @@ function SortableTaskRow({
         transform: CSS.Transform.toString(transform),
         transition,
       }}
-      className={`flex flex-col gap-2 rounded-md border border-zinc-200 bg-white p-3 ${
+      className={`flex flex-col gap-2 rounded-xl bg-surface-container-low p-space-sm ${
         isDragging ? "z-10 shadow-md" : ""
       }`}
     >
@@ -116,7 +116,7 @@ function SortableTaskRow({
         {disabled ? null : (
           <button
             type="button"
-            className="mt-0.5 cursor-grab touch-none rounded px-1 text-zinc-500 hover:text-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 active:cursor-grabbing"
+            className="mt-0.5 cursor-grab touch-none rounded px-1 text-outline hover:text-on-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:cursor-grabbing"
             aria-label={`Reordenar ${task.description}`}
             disabled={pending}
             {...attributes}
@@ -128,7 +128,7 @@ function SortableTaskRow({
         <input
           id={checkboxId}
           type="checkbox"
-          className="mt-1 size-4 shrink-0 rounded border-zinc-300 text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+          className="mt-1 size-4 shrink-0 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           checked={task.isDone}
           disabled={disabled || pending}
           onChange={() => onToggle(task)}
@@ -168,7 +168,7 @@ function SortableTaskRow({
           ) : (
             <label
               htmlFor={checkboxId}
-              className={`text-sm ${task.isDone ? "text-zinc-500 line-through" : "text-zinc-900"}`}
+              className={`text-body-sm ${task.isDone ? "text-outline line-through" : "text-on-surface"}`}
             >
               {task.description}
             </label>
@@ -203,7 +203,7 @@ function SortableTaskRow({
           </button>
           <button
             type="button"
-            className={`${TEXT_BUTTON_CLASS} text-red-800 hover:text-red-900`}
+            className={`${TEXT_BUTTON_CLASS} text-error hover:text-error`}
             disabled={pending}
             onClick={() => onRemove(task)}
           >
@@ -395,19 +395,22 @@ export function ActivityChecklist({
   return (
     <section
       aria-labelledby="activity-checklist-title"
-      className="flex max-w-3xl flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-5"
+      className="flex max-w-3xl flex-col gap-space-md rounded-xl bg-surface-container-lowest p-space-lg shadow-sm"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="activity-checklist-title" className="text-lg font-semibold text-zinc-900">
+        <h2 id="activity-checklist-title" className="text-headline-md text-on-surface">
           Tarefas
         </h2>
-        <p className="text-sm text-zinc-600" aria-live="polite">
+        <p className="font-mono text-code-sm font-semibold text-primary" aria-live="polite">
           Progresso {progress}
         </p>
       </div>
 
       {conflict ? (
-        <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950" role="alert">
+        <div
+          className="rounded-xl border border-secondary-container/40 bg-secondary-container/10 p-space-md text-body-sm text-on-surface"
+          role="alert"
+        >
           <p>{conflict}</p>
           <button type="button" onClick={reload} className={`mt-2 ${TEXT_BUTTON_CLASS}`}>
             Recarregar os dados
@@ -416,13 +419,13 @@ export function ActivityChecklist({
       ) : null}
 
       {error && !addError ? (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-body-sm text-error" role="alert">
           {error}
         </p>
       ) : null}
 
       {tasks.length === 0 ? (
-        <p className="text-sm text-zinc-600">
+        <p className="text-body-sm text-on-surface-variant">
           Nenhuma tarefa. A atividade pode permanecer sem checklist.
         </p>
       ) : editable ? (
@@ -455,15 +458,15 @@ export function ActivityChecklist({
       ) : (
         <ol className="flex flex-col gap-2">
           {tasks.map((task) => (
-            <li key={task.id} className="flex items-start gap-3 rounded-md border border-zinc-200 p-3">
+            <li key={task.id} className="flex items-start gap-3 rounded-xl bg-surface-container-low p-space-sm">
               <input
                 type="checkbox"
-                className="mt-1 size-4 shrink-0 rounded border-zinc-300"
+                className="mt-1 size-4 shrink-0 rounded border-outline-variant"
                 checked={task.isDone}
                 disabled
                 readOnly
               />
-              <span className={`text-sm ${task.isDone ? "text-zinc-500 line-through" : "text-zinc-900"}`}>
+              <span className={`text-body-sm ${task.isDone ? "text-outline line-through" : "text-on-surface"}`}>
                 {task.description}
               </span>
             </li>
@@ -473,13 +476,13 @@ export function ActivityChecklist({
 
       {editable ? (
         <form
-          className="flex flex-col gap-3 border-t border-zinc-100 pt-4"
+          className="flex flex-col gap-3 border-t border-outline-variant/60 pt-4"
           onSubmit={(event) => {
             event.preventDefault();
             onAdd();
           }}
         >
-          <label htmlFor={addFieldId} className="text-sm font-medium text-zinc-900">
+          <label htmlFor={addFieldId} className="text-label-md font-semibold text-on-surface">
             Nova tarefa
           </label>
           <input

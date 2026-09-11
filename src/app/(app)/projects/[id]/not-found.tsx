@@ -7,7 +7,7 @@ export default function ProjectNotFound() {
       title="Projeto não encontrado"
       message="Este projeto não existe ou não está mais disponível."
       action={
-        <Link href="/projects" className="text-sm font-medium text-zinc-900 underline">
+        <Link href="/projects" className="text-label-md font-semibold text-primary underline">
           Voltar aos projetos
         </Link>
       }

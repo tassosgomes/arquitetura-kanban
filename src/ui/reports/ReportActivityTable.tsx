@@ -23,61 +23,61 @@ export function ReportActivityTable({ activities, emptyMessage }: ReportActivity
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
-      <table className="min-w-full text-left text-sm">
+    <div className="overflow-x-auto rounded-xl bg-surface-container-lowest shadow-sm">
+      <table className="min-w-full text-left text-body-sm">
         <caption className="sr-only">Atividades da população no retrato do fechamento</caption>
-        <thead className="border-b border-zinc-200 bg-zinc-50 text-zinc-700">
+        <thead className="bg-surface-container-low text-on-surface-variant">
           <tr>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Título
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Tipo
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Status (retrato)
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Projeto
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Área solicitante
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Responsável
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Início
             </th>
-            <th scope="col" className="px-4 py-3 font-medium">
+            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Conclusão
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-zinc-100">
+        <tbody className="divide-y divide-outline-variant/40">
           {activities.map((activity) => (
-            <tr key={activity.id}>
+            <tr key={activity.id} className="transition-colors hover:bg-primary-container/5">
               <td className="px-4 py-3">
                 <Link
                   href={`/activities/${activity.id}`}
-                  className="font-medium text-zinc-900 underline hover:text-zinc-700"
+                  className="font-semibold text-on-surface hover:text-primary"
                 >
                   {activity.title || activity.id}
                 </Link>
               </td>
-              <td className="px-4 py-3 text-zinc-700">{cell(activity.type)}</td>
+              <td className="px-4 py-3 text-on-surface-variant">{cell(activity.type)}</td>
               <td className="px-4 py-3">
                 {activity.statusKey ? (
                   <ActivityStatusBadge status={activity.statusKey} />
                 ) : (
-                  <span className="text-zinc-500">—</span>
+                  <span className="text-outline">—</span>
                 )}
               </td>
-              <td className="px-4 py-3 text-zinc-700">
+              <td className="px-4 py-3 text-on-surface-variant">
                 {activity.projectId ? (
                   <Link
                     href={`/projects/${activity.projectId}`}
-                    className="underline hover:text-zinc-900"
+                    className="hover:text-primary hover:underline"
                   >
                     {cell(activity.project)}
                   </Link>
@@ -85,10 +85,12 @@ export function ReportActivityTable({ activities, emptyMessage }: ReportActivity
                   cell(activity.project)
                 )}
               </td>
-              <td className="px-4 py-3 text-zinc-700">{cell(activity.requestingArea)}</td>
-              <td className="px-4 py-3 text-zinc-700">{cell(activity.owner)}</td>
-              <td className="px-4 py-3 whitespace-nowrap text-zinc-700">{dateCell(activity.startDate)}</td>
-              <td className="px-4 py-3 whitespace-nowrap text-zinc-700">
+              <td className="px-4 py-3 text-on-surface-variant">{cell(activity.requestingArea)}</td>
+              <td className="px-4 py-3 text-on-surface-variant">{cell(activity.owner)}</td>
+              <td className="px-4 py-3 whitespace-nowrap font-mono text-code-sm text-on-surface-variant">
+                {dateCell(activity.startDate)}
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap font-mono text-code-sm text-on-surface-variant">
                 {dateCell(activity.completedDate)}
               </td>
             </tr>
@@ -106,18 +108,20 @@ type AssociatedProjectsListProps = {
 export function AssociatedProjectsList({ projects }: AssociatedProjectsListProps) {
   return (
     <section className="flex flex-col gap-3" aria-labelledby="relatorio-projetos">
-      <h2 id="relatorio-projetos" className="text-lg font-semibold text-zinc-900">
+      <h2 id="relatorio-projetos" className="text-headline-md text-on-surface">
         Projetos associados
       </h2>
       {projects.length === 0 ? (
-        <p className="text-sm text-zinc-600">Nenhum projeto vinculado no retrato deste recorte.</p>
+        <p className="text-body-sm text-on-surface-variant">
+          Nenhum projeto vinculado no retrato deste recorte.
+        </p>
       ) : (
-        <ul className="flex flex-col gap-1 rounded-lg border border-zinc-200 bg-white px-4 py-3 text-sm">
+        <ul className="flex flex-col gap-1 rounded-xl bg-surface-container-lowest px-4 py-3 text-body-sm shadow-sm">
           {projects.map((project) => (
             <li key={project.id}>
               <Link
                 href={`/projects/${project.id}`}
-                className="font-medium text-zinc-900 underline hover:text-zinc-700"
+                className="font-semibold text-primary hover:underline"
               >
                 {project.name}
               </Link>

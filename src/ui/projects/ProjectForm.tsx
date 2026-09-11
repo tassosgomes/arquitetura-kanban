@@ -139,12 +139,15 @@ export function ProjectForm({
       ) : null}
 
       {conflict ? (
-        <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950" role="alert">
+        <div
+          className="rounded-xl border border-secondary-container/40 bg-secondary-container/10 p-space-md text-body-sm text-on-surface"
+          role="alert"
+        >
           <p>{state && !state.ok ? state.error.message : null}</p>
           <button
             type="button"
             onClick={() => router.refresh()}
-            className="mt-2 font-medium underline"
+            className="mt-2 font-semibold text-primary underline hover:text-primary/80"
           >
             Recarregar os dados
           </button>
@@ -152,7 +155,7 @@ export function ProjectForm({
       ) : null}
 
       {globalError ? (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-body-sm text-error" role="alert">
           {globalError}
         </p>
       ) : null}
@@ -256,26 +259,29 @@ export function ProjectForm({
       </FormField>
 
       <fieldset className="flex flex-col gap-1.5">
-        <legend className="text-sm font-medium text-zinc-900">Participantes</legend>
-        <p className="text-sm leading-5 text-zinc-600">
+        <legend className="text-label-md font-semibold text-on-surface">Participantes</legend>
+        <p className="text-body-sm leading-5 text-on-surface-variant">
           Opcional. Usuários inativos não entram em novas associações; participantes já vinculados
           podem ser mantidos.
         </p>
         {users.length === 0 ? (
-          <p className="text-sm text-zinc-600">Nenhum usuário disponível.</p>
+          <p className="text-body-sm text-on-surface-variant">Nenhum usuário disponível.</p>
         ) : (
-          <ul className="max-h-56 overflow-y-auto rounded-md border border-zinc-200 bg-white p-3">
+          <ul className="grid max-h-56 grid-cols-1 gap-1 overflow-y-auto rounded-xl bg-surface-container-low p-space-sm sm:grid-cols-2">
             {users.map((user) => (
-              <li key={user.id} className="flex items-start gap-2 py-1">
-                <input
-                  id={`participant-${user.id}`}
-                  name="participantIds"
-                  type="checkbox"
-                  value={user.id}
-                  defaultChecked={initial.participantIds.includes(user.id)}
-                  className="mt-1"
-                />
-                <label htmlFor={`participant-${user.id}`} className="text-sm text-zinc-800">
+              <li key={user.id}>
+                <label
+                  htmlFor={`participant-${user.id}`}
+                  className="flex cursor-pointer items-start gap-2 rounded-lg p-1.5 text-body-sm text-on-surface hover:bg-surface-container"
+                >
+                  <input
+                    id={`participant-${user.id}`}
+                    name="participantIds"
+                    type="checkbox"
+                    value={user.id}
+                    defaultChecked={initial.participantIds.includes(user.id)}
+                    className="mt-0.5 size-3.5 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  />
                   {formatUserLabel(user)}
                   {user.isActive ? null : " (inativo)"}
                 </label>
@@ -373,7 +379,7 @@ export function ProjectForm({
         </PrimaryButton>
         <Link
           href={cancelHref}
-          className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 underline hover:text-zinc-900"
+          className="rounded-lg px-3 py-2 text-label-md font-semibold text-on-surface-variant underline hover:text-on-surface"
         >
           Voltar
         </Link>
