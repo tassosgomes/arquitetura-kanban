@@ -1,0 +1,36 @@
+# ingress-nginx assumed. If the cluster uses another controller, keep the same
+# contract: no response buffering on SSE, proxy timeouts ≥ 3600s.
+# CDN in front of this Ingress must bypass buffering for /api/realtime/sse.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: arquitetura-kanban
+  namespace: arquitetura-kanban
+  labels:
+    app.kubernetes.io/name: arquitetura-kanban
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/proxy-body-size: "8m"
+    # Optional; replace with the cluster issuer name. Leave commented until cert-manager exists.
+    # cert-manager.io/cluster-issuer: CHANGEME_CLUSTER_ISSUER
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - CHANGEME_DNS
+      secretName: arquitetura-kanban-tls
+  rules:
+    - host: CHANGEME_DNS
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: arquitetura-kanban
+                port:
+                  name: http

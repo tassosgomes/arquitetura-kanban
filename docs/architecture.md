@@ -190,7 +190,7 @@ O Prisma Client é criado com o driver adapter oficial da linha 7 (`@prisma/adap
 - Cada alteração de esquema (T06 em diante) gera migration versionada em `prisma/migrations`.
 - Seeds idempotentes (domínios iniciais do PRD) em `prisma/seed.ts`.
 - Homologação e produção **não** usam `db push` como fluxo padrão.
-- T10: o CI aplica `migrate deploy` só no Postgres **de serviço**; homologação Vercel aplica `migrate deploy` no **build** (`npm run vercel-build`). Recuperação e risco: [guides/homologation.md](guides/homologation.md). T29 no Kubernetes.
+- T10: o CI aplica `migrate deploy` só no Postgres **de serviço**; homologação Vercel aplica `migrate deploy` no **build** (`npm run vercel-build`). Recuperação e risco: [guides/homologation.md](guides/homologation.md). Produção Kubernetes: Job **separado** antes do rollout, não o modelo Vercel — [guides/production.md](guides/production.md).
 
 ### 4.2 Transações
 
@@ -543,7 +543,7 @@ Pin em T05: gravar versões exatas no lockfile. Se uma linha minor tiver patch d
 | Homologação | Vercel | PostgreSQL do ambiente | Logto Cloud |
 | Produção | Kubernetes (réplicas Next.js) | PostgreSQL gerenciado | CyberArk |
 
-A mesma implementação OIDC nos três. Só mudam issuer, credenciais e mapper se o provedor exigir.
+A mesma implementação OIDC nos três. Só mudam issuer, credenciais e mapper se o provedor exigir. Produção: [guides/production.md](guides/production.md) e [guides/backup-restore.md](guides/backup-restore.md). Cluster e CyberArk **não** estão validados só porque os manifests existem.
 
 ---
 

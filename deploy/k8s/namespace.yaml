@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: arquitetura-kanban
+  labels:
+    app.kubernetes.io/name: arquitetura-kanban
+    app.kubernetes.io/part-of: arquitetura-kanban

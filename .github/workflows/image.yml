@@ -1,0 +1,50 @@
+# Build the Kubernetes image. Does not deploy, does not push unless IMAGE_REGISTRY is set.
+# Dummy OIDC/AUTH values are baked only as Next.js build-time placeholders in the Dockerfile.
+name: Image
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: image-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  production-image:
+    name: build-production-image
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build production image
+        run: docker build --target production -t "arquitetura-kanban:${GITHUB_SHA}" .
+
+      - name: Log in to container registry
+        if: ${{ vars.IMAGE_REGISTRY != '' && secrets.IMAGE_REGISTRY_USERNAME != '' && secrets.IMAGE_REGISTRY_PASSWORD != '' }}
+        run: echo "$IMAGE_REGISTRY_PASSWORD" | docker login "$IMAGE_REGISTRY" -u "$IMAGE_REGISTRY_USERNAME" --password-stdin
+        env:
+          IMAGE_REGISTRY: ${{ vars.IMAGE_REGISTRY }}
+          IMAGE_REGISTRY_USERNAME: ${{ secrets.IMAGE_REGISTRY_USERNAME }}
+          IMAGE_REGISTRY_PASSWORD: ${{ secrets.IMAGE_REGISTRY_PASSWORD }}
+
+      - name: Push image
+        if: ${{ vars.IMAGE_REGISTRY != '' && secrets.IMAGE_REGISTRY_USERNAME != '' && secrets.IMAGE_REGISTRY_PASSWORD != '' }}
+        run: |
+          IMAGE="${IMAGE_REGISTRY}/${IMAGE_REPOSITORY:-arquitetura-kanban}"
+          docker tag "arquitetura-kanban:${GITHUB_SHA}" "${IMAGE}:${GITHUB_SHA}"
+          docker push "${IMAGE}:${GITHUB_SHA}"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            docker tag "arquitetura-kanban:${GITHUB_SHA}" "${IMAGE}:${GITHUB_REF_NAME}"
+            docker push "${IMAGE}:${GITHUB_REF_NAME}"
+          fi
+        env:
+          IMAGE_REGISTRY: ${{ vars.IMAGE_REGISTRY }}
+          IMAGE_REPOSITORY: ${{ vars.IMAGE_REPOSITORY }}

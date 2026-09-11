@@ -65,6 +65,8 @@ A validação na subida da app está em `src/config/env.ts` (Zod). Segredos **n�
 
 Serviços: **somente** `app` e `postgres`. Rede interna `internal`. Volume `postgres_data` persiste o banco entre `docker compose down` / `up` (apagar o volume destrói os dados).
 
+O Compose constrói o `Dockerfile` no target **`development`** (entrypoint com `prisma migrate deploy` + `npm run dev`). A imagem de produção (`docker build --target production`, usuário non-root, `node server.js`) é para Kubernetes — [production.md](production.md).
+
 A app escuta em **http://localhost:3000**. O container alcança o Logto Cloud na internet; o Compose não publica o IdP.
 
 ```bash
@@ -168,5 +170,6 @@ Banco persistente: após `docker compose down` e `docker compose up`, os dados e
 | T06 | [data-model.md](../data-model.md) — schema, migration, seeds dos seis domínios |
 | T07 | login Auth.js; validar callbacks com [oidc.md](oidc.md); provisionar `User` por issuer+subject |
 | T10 | [homologation.md](homologation.md) — não copiar o `.env` local para a Vercel |
+| T29 | [production.md](production.md) — Compose usa target `development`; produção é `--target production` |
 
 Contrato de identidade: [identity.md](../identity.md).

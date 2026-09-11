@@ -1,6 +1,6 @@
 # arquitetura-kanban
 
-Aplicação Next.js (App Router) do MVP de Gestão de Atividades de Arquitetura, com PostgreSQL no Docker Compose e autenticação OIDC contra o Logto Cloud — sem Identity Provider no Compose. Para pré-requisitos, variáveis, Compose e diagnóstico, use o [guia de desenvolvimento local](docs/guides/local-development.md). Homologação Vercel: [docs/guides/homologation.md](docs/guides/homologation.md).
+Aplicação Next.js (App Router) do MVP de Gestão de Atividades de Arquitetura, com PostgreSQL no Docker Compose e autenticação OIDC contra o Logto Cloud — sem Identity Provider no Compose. Para pré-requisitos, variáveis, Compose e diagnóstico, use o [guia de desenvolvimento local](docs/guides/local-development.md). Homologação Vercel: [docs/guides/homologation.md](docs/guides/homologation.md). Produção Kubernetes (CyberArk, ingress SSE, Job de migrate, CronJob de 7 dias): [docs/guides/production.md](docs/guides/production.md) — **cluster e login real não validados**. Backup: [docs/guides/backup-restore.md](docs/guides/backup-restore.md).
 
 ## CI
 

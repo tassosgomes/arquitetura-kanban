@@ -478,6 +478,6 @@ Não habilite debug que imprima ID Token em log.
 | T07 | adapter + guard; login real só com §2 preenchida |
 | T09 / T13 | usuários ativos como opções; inativos sem nova atribuição |
 | T10 | [homologation.md](homologation.md): copiar §3 para env Vercel e retestar callbacks |
-| T29 | copiar §4 para secrets e DNS de produção |
+| T29 | copiar §4 para o Secret do cluster e DNS de produção; [production.md](production.md). Login CyberArk **não** validado nesta task |
 
 Contrato normativo: [docs/identity.md](../identity.md).

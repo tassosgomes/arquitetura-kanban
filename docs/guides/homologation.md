@@ -316,7 +316,7 @@ Rotacionar no Logto / Postgres / `AUTH_SECRET` no painel; **não** commitar o va
 | T09 | cadastros contra o banco de homologação (não o local) |
 | T21 | `maxDuration`, `DATABASE_URL_LISTEN`, reconexão; não fechar aceite de SSE longo aqui |
 | T28 | E2E na URL de homologação |
-| T29 | produção é Kubernetes + CyberArk; **não** promover este projeto Vercel a produção |
+| T29 | produção é Kubernetes + CyberArk; Job de migrate **antes** do rollout, não `vercel-build`. Guias: [production.md](production.md), [backup-restore.md](backup-restore.md). **Não** promover este projeto Vercel a produção |
 
 ---
 
