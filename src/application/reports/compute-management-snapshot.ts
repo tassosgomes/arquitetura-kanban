@@ -15,8 +15,11 @@ import {
   type PortraitSourceEvent,
 } from "@/application/audit/reconstruct-portrait";
 import type { ActivityListItem } from "@/application/activities/types";
-import { filterByPeriod, resolveTemporalQuery } from "@/application/temporal";
-import { aggregateManagementSnapshot } from "@/application/reports/aggregate";
+import { filterByPeriod, resolveTemporalQuery, type Instant } from "@/application/temporal";
+import {
+  aggregateManagementSnapshot,
+  type ManagementPopulationRow,
+} from "@/application/reports/aggregate";
 import { matchesManagementFilters } from "@/application/reports/filters";
 import type {
   ManagementLabelMaps,
@@ -73,15 +76,22 @@ async function loadLabels(deps: ManagementSnapshotDeps): Promise<ManagementLabel
   };
 }
 
+export type LoadedManagementPopulation = {
+  population: ManagementPopulationRow[];
+  listedById: ReadonlyMap<string, ActivityListItem>;
+  labels: ManagementLabelMaps;
+  fechamento: Instant;
+};
+
 /**
  * Population P = T19 pertinence on **current** dates ∩ historical filters (DE-17).
  * Portrait at `fechamento_exclusivo` drives I-02…I-09 and D-* (DE-04, DE-05).
  */
-export async function computeManagementSnapshot(
+export async function loadManagementPopulation(
   _actor: LocalUser,
   query: ManagementQuery,
   deps: ManagementSnapshotDeps,
-): Promise<ManagementSnapshot> {
+): Promise<LoadedManagementPopulation> {
   const clock = deps.clock ?? systemClock;
   const now = clock.now();
   const resolved = resolveTemporalQuery(query.temporal, now);
@@ -110,5 +120,19 @@ export async function computeManagementSnapshot(
     .filter((row) => matchesManagementFilters(row.portrait, query.filters));
 
   const labels = await loadLabels(deps);
-  return aggregateManagementSnapshot(population, labels, resolved.fechamentoExclusivo);
+  return {
+    population,
+    listedById: new Map(inPeriod.map((item) => [item.id, item])),
+    labels,
+    fechamento: resolved.fechamentoExclusivo,
+  };
+}
+
+export async function computeManagementSnapshot(
+  actor: LocalUser,
+  query: ManagementQuery,
+  deps: ManagementSnapshotDeps,
+): Promise<ManagementSnapshot> {
+  const loaded = await loadManagementPopulation(actor, query, deps);
+  return aggregateManagementSnapshot(loaded.population, loaded.labels, loaded.fechamento);
 }
