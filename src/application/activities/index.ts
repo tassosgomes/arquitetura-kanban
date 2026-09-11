@@ -10,7 +10,9 @@ export type {
   ActivityTaskRecord,
   ActivityUserRef,
   ActivityWriteData,
+  EffortListFilter,
 } from "@/application/activities/types";
+export { EFFORT_FILTER_UNSET } from "@/application/activities/types";
 export {
   addActivityTaskSchema,
   changeActivityStatusSchema,
@@ -43,11 +45,44 @@ export {
 } from "@/application/activities/commands/activity-checklist";
 export { listActivities } from "@/application/activities/queries/list-activities";
 export {
+  activeKanbanShortcut,
+  DEFAULT_KANBAN_FILTER_VALUES,
+  hasActiveKanbanFilters,
+  KanbanPeriodOption,
+  KanbanShortcut,
+  KANBAN_PERIOD_LABELS,
+  KANBAN_PERIOD_OPTIONS,
+  KANBAN_SHORTCUTS,
+  parseKanbanSearchParams,
+  shouldShowCancelledList,
+  splitKanbanActivities,
+  toActivityListFilter,
+  toTemporalQuery,
+} from "@/application/activities/kanban-filters";
+export type {
+  KanbanFilterValues,
+  KanbanPeriodOption as KanbanPeriodOptionType,
+  KanbanSearchParams,
+  ParsedKanbanFilters,
+} from "@/application/activities/kanban-filters";
+export {
+  adjacentKanbanColumnStatus,
+  applyKanbanStatusMove,
   buildKanbanBoard,
   KANBAN_BOARD_SCOPE,
+  KANBAN_COLUMN_DROPPABLE_PREFIX,
+  kanbanColumnDroppableId,
+  parseKanbanColumnDroppableId,
+  planKanbanStatusMove,
+  resolveKanbanDropStatus,
   toKanbanCard,
 } from "@/application/activities/kanban-board";
-export type { KanbanCardData, KanbanColumn, KanbanColumnStatus } from "@/application/activities/kanban-board";
+export type {
+  KanbanCardData,
+  KanbanColumn,
+  KanbanColumnStatus,
+  KanbanStatusMove,
+} from "@/application/activities/kanban-board";
 export { getActivity } from "@/application/activities/queries/get-activity";
 export { getProjectDefaults } from "@/application/activities/queries/get-project-defaults";
 export { listProjectPrefills } from "@/application/activities/queries/list-project-prefills";

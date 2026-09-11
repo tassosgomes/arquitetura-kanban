@@ -1,5 +1,10 @@
 import type { ActivityStatus, ActivityType } from "@/domain/activity/enums";
 import type { ArchitectureRole, Effort, Nature, Priority } from "@/domain/catalog/classifications";
+import type { TemporalQuery } from "@/application/temporal";
+
+/** Filtro de esforço “Não informado” (D-ESFORCO / PRD §14). */
+export const EFFORT_FILTER_UNSET = "UNSET" as const;
+export type EffortListFilter = Effort | typeof EFFORT_FILTER_UNSET;
 
 export type ActivityUserRef = {
   id: string;
@@ -29,6 +34,19 @@ export type ActivityProjectRef = {
 export type ActivityListFilter = {
   projectId?: string;
   includeCancelled?: boolean;
+  status?: ActivityStatus;
+  areaId?: string;
+  ownerId?: string;
+  participantId?: string;
+  /** Responsável ou participante (atalho “Minha semana”). */
+  involvedUserId?: string;
+  domainId?: string;
+  nature?: Nature;
+  priority?: Priority;
+  architectureRole?: ArchitectureRole;
+  effort?: EffortListFilter;
+  /** Recorte T19; aplicado em memória em `listActivities` (DE-16, DE-24). */
+  temporal?: TemporalQuery;
 };
 
 export type ActivityListItem = {
@@ -39,13 +57,18 @@ export type ActivityListItem = {
   priority: Priority;
   effort: Effort | null;
   architectureRole: ArchitectureRole;
+  startDate: string | null;
   expectedEndDate: string | null;
+  completedDate: string | null;
+  cancelledDate: string | null;
   checklistDoneCount: number;
   checklistTotalCount: number;
   project: ActivityProjectRef | null;
   requestingArea: ActivityAreaRef;
   owner: ActivityUserRef;
   updatedAt: Date;
+  /** Optimistic lock for Kanban moves (T18) and other mutations. */
+  version: number;
 };
 
 export type ActivityTaskRecord = {

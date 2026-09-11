@@ -12,6 +12,7 @@ import type {
   ActivityUserRef,
   ActivityWriteData,
 } from "@/application/activities/types";
+import { EFFORT_FILTER_UNSET } from "@/application/activities/types";
 import { fromPrismaDate, toPrismaDate } from "@/infrastructure/calendar";
 
 const activityInclude = {
@@ -148,8 +149,12 @@ function mapListItem(row: {
   priority: ActivityRow["priority"];
   effort: ActivityRow["effort"];
   architectureRole: ActivityRow["architectureRole"];
+  startDate: Date | null;
   expectedEndDate: Date | null;
+  completedDate: Date | null;
+  cancelledDate: Date | null;
   updatedAt: Date;
+  version: number;
   project: { id: string; name: string; status: string } | null;
   requestingArea: { id: string; name: string; isActive: boolean };
   owner: {
@@ -169,7 +174,11 @@ function mapListItem(row: {
     priority: row.priority as Priority,
     effort: (row.effort as Effort | null) ?? null,
     architectureRole: row.architectureRole as ArchitectureRole,
+    startDate: fromPrismaDate(row.startDate),
     expectedEndDate: fromPrismaDate(row.expectedEndDate),
+    completedDate: fromPrismaDate(row.completedDate),
+    cancelledDate: fromPrismaDate(row.cancelledDate),
+    version: row.version,
     checklistDoneCount: checklist.done,
     checklistTotalCount: checklist.total,
     updatedAt: row.updatedAt,
@@ -180,14 +189,67 @@ function mapListItem(row: {
 }
 
 function listWhere(filter: ActivityListFilter): Prisma.ActivityWhereInput {
-  const where: Prisma.ActivityWhereInput = {};
+  const and: Prisma.ActivityWhereInput[] = [];
+
   if (filter.projectId) {
-    where.projectId = filter.projectId;
+    and.push({ projectId: filter.projectId });
   }
-  if (!filter.includeCancelled) {
-    where.status = { not: "CANCELLED" };
+
+  if (filter.status) {
+    and.push({ status: filter.status });
+  } else if (!filter.includeCancelled) {
+    and.push({ status: { not: "CANCELLED" } });
   }
-  return where;
+
+  if (filter.areaId) {
+    and.push({
+      OR: [
+        { requestingAreaId: filter.areaId },
+        { involvedAreas: { some: { areaId: filter.areaId } } },
+      ],
+    });
+  }
+
+  if (filter.ownerId) {
+    and.push({ ownerId: filter.ownerId });
+  }
+
+  if (filter.participantId) {
+    and.push({ participants: { some: { userId: filter.participantId } } });
+  }
+
+  if (filter.involvedUserId) {
+    and.push({
+      OR: [
+        { ownerId: filter.involvedUserId },
+        { participants: { some: { userId: filter.involvedUserId } } },
+      ],
+    });
+  }
+
+  if (filter.domainId) {
+    and.push({ domainId: filter.domainId });
+  }
+
+  if (filter.nature) {
+    and.push({ nature: filter.nature });
+  }
+
+  if (filter.priority) {
+    and.push({ priority: filter.priority });
+  }
+
+  if (filter.architectureRole) {
+    and.push({ architectureRole: filter.architectureRole });
+  }
+
+  if (filter.effort === EFFORT_FILTER_UNSET) {
+    and.push({ effort: null });
+  } else if (filter.effort) {
+    and.push({ effort: filter.effort });
+  }
+
+  return and.length > 0 ? { AND: and } : {};
 }
 
 function scalarWrite(data: ActivityWriteData, actorId: string) {
@@ -232,8 +294,12 @@ export function createPrismaActivityRepository(prisma: PrismaClient): ActivityRe
             priority: true,
             effort: true,
             architectureRole: true,
+            startDate: true,
             expectedEndDate: true,
+            completedDate: true,
+            cancelledDate: true,
             updatedAt: true,
+            version: true,
             project: { select: { id: true, name: true, status: true } },
             requestingArea: { select: { id: true, name: true, isActive: true } },
             owner: {

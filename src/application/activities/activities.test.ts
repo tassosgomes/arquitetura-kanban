@@ -5,6 +5,8 @@ import type { PrismaClient } from "@/generated/prisma/client";
 import { ConflictError, InvariantError, ValidationError } from "@/domain/errors";
 import { ArchitectureRole, Effort, Nature, Priority } from "@/domain/catalog/classifications";
 import { ActivityStatus, ActivityType } from "@/domain/activity/enums";
+import { TemporalQueryMode } from "@/application/temporal";
+import { EFFORT_FILTER_UNSET } from "@/application/activities/types";
 import { ProjectStatus } from "@/domain/project/project-status";
 import { instantToCivilDate } from "@/domain/calendar/civil-date";
 import { normalizeCatalogName } from "@/domain/catalog/normalize-catalog-name";
@@ -659,6 +661,7 @@ describe("activity services (postgres)", () => {
     expect(card?.checklistDoneCount).toBe(1);
     expect(card?.checklistTotalCount).toBe(2);
     expect(card?.project?.name).toBe(`T17 Projeto ${suffix}`);
+    expect(card?.version).toBe(open.version);
     expect(board.map((item) => item.id)).not.toContain(cancelled.id);
 
     const withCancelled = await listActivities(actor, { includeCancelled: true }, deps().activities);
@@ -671,5 +674,140 @@ describe("activity services (postgres)", () => {
     );
     expect(projectList.find((item) => item.id === open.id)?.checklistTotalCount).toBe(2);
     expect(projectList.find((item) => item.id === open.id)?.effort).toBe(Effort.M);
+  });
+
+  it("filters by owner vs participant, area, effort unset and period (T20)", async ({ skip }) => {
+    if (!prisma || !actor) {
+      skip();
+      return;
+    }
+
+    const suffix = randomUUID();
+    const { area, domain, owner, participant } = await fixtures(suffix);
+    const involved = await prisma.area.create({
+      data: {
+        name: `T20 Área env ${suffix}`,
+        nameNormalized: normalizeCatalogName(`T20 Área env ${suffix}`),
+      },
+    });
+    areaIds.push(involved.id);
+
+    const owned = await createActivity(
+      actor,
+      {
+        ...adHocInput(area.id, domain.id, owner.id, `T20 Owner ${suffix}`),
+        startDate: "2026-08-25",
+        status: ActivityStatus.IN_PROGRESS,
+        effort: Effort.P,
+      },
+      deps(),
+    );
+    activityIds.push(owned.id);
+
+    const asParticipant = await createActivity(
+      actor,
+      {
+        ...adHocInput(area.id, domain.id, participant.id, `T20 Participant ${suffix}`),
+        participantIds: [owner.id],
+        startDate: "2026-09-01",
+        status: ActivityStatus.TODO,
+        effort: null,
+        involvedAreaIds: [involved.id],
+      },
+      deps(),
+    );
+    activityIds.push(asParticipant.id);
+
+    const unplanned = await createActivity(
+      actor,
+      adHocInput(area.id, domain.id, owner.id, `T20 Unplanned ${suffix}`),
+      deps(),
+    );
+    activityIds.push(unplanned.id);
+
+    const cancelled = await createActivity(
+      actor,
+      {
+        ...adHocInput(area.id, domain.id, owner.id, `T20 Cancelled ${suffix}`),
+        startDate: "2026-08-10",
+      },
+      deps(),
+    );
+    activityIds.push(cancelled.id);
+    await prisma.activity.update({
+      where: { id: cancelled.id },
+      data: { status: "CANCELLED", cancelledDate: new Date("2026-08-20T00:00:00.000Z") },
+    });
+
+    const clock = { now: () => new Date("2026-09-10T15:00:00-03:00") };
+
+    const byOwner = await listActivities(
+      actor,
+      { ownerId: owner.id, includeCancelled: true },
+      deps().activities,
+    );
+    expect(byOwner.map((item) => item.id)).toEqual(
+      expect.arrayContaining([owned.id, unplanned.id, cancelled.id]),
+    );
+    expect(byOwner.map((item) => item.id)).not.toContain(asParticipant.id);
+
+    const byParticipant = await listActivities(
+      actor,
+      { participantId: owner.id, includeCancelled: true },
+      deps().activities,
+    );
+    expect(byParticipant.map((item) => item.id)).toEqual([asParticipant.id]);
+
+    const mine = await listActivities(
+      actor,
+      { involvedUserId: owner.id, includeCancelled: false },
+      deps().activities,
+    );
+    expect(mine.map((item) => item.id)).toEqual(expect.arrayContaining([owned.id, asParticipant.id]));
+    expect(mine.map((item) => item.id)).not.toContain(cancelled.id);
+
+    const byInvolvedArea = await listActivities(
+      actor,
+      { areaId: involved.id, includeCancelled: true },
+      deps().activities,
+    );
+    expect(byInvolvedArea.map((item) => item.id)).toEqual([asParticipant.id]);
+
+    const unsetEffort = await listActivities(
+      actor,
+      { effort: EFFORT_FILTER_UNSET, includeCancelled: false },
+      deps().activities,
+    );
+    expect(unsetEffort.map((item) => item.id)).toEqual(
+      expect.arrayContaining([asParticipant.id, unplanned.id]),
+    );
+    expect(unsetEffort.map((item) => item.id)).not.toContain(owned.id);
+
+    const august = await listActivities(
+      actor,
+      {
+        includeCancelled: true,
+        temporal: {
+          mode: TemporalQueryMode.PERIOD,
+          period: { from: "2026-08-01", to: "2026-08-31" },
+        },
+      },
+      deps().activities,
+      clock,
+    );
+    expect(august.map((item) => item.id)).toEqual(expect.arrayContaining([owned.id, cancelled.id]));
+    expect(august.map((item) => item.id)).not.toContain(asParticipant.id);
+    expect(august.map((item) => item.id)).not.toContain(unplanned.id);
+    expect(august.find((item) => item.id === owned.id)?.status).toBe(ActivityStatus.IN_PROGRESS);
+    expect(august.find((item) => item.id === owned.id)?.startDate).toBe("2026-08-25");
+
+    const semPlanejamento = await listActivities(
+      actor,
+      { temporal: { mode: TemporalQueryMode.UNPLANNED }, includeCancelled: true },
+      deps().activities,
+      clock,
+    );
+    expect(semPlanejamento.map((item) => item.id)).toContain(unplanned.id);
+    expect(semPlanejamento.map((item) => item.id)).not.toContain(owned.id);
   });
 });
