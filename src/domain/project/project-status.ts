@@ -19,3 +19,11 @@ export const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
 export function isActiveProjectStatus(status: ProjectStatus): boolean {
   return status !== ProjectStatus.CANCELLED;
 }
+
+/**
+ * T02/§13 does not allow business-field edits after cancel.
+ * Cancelled projects are view-only (cancel is terminal for the cadastro).
+ */
+export function canEditProject(status: ProjectStatus): boolean {
+  return isActiveProjectStatus(status);
+}

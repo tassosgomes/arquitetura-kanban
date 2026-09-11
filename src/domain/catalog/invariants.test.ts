@@ -3,7 +3,7 @@ import { ARCHITECTURE_DOMAIN_NAMES } from "@/domain/catalog/architecture-domains
 import { normalizeCatalogName } from "@/domain/catalog/normalize-catalog-name";
 import { isActivityProjectLinkValid } from "@/domain/activity/activity-project-link";
 import { ActivityType, ACTIVITY_STATUS_LABELS, KANBAN_COLUMN_STATUSES } from "@/domain/activity/enums";
-import { isActiveProjectStatus, ProjectStatus } from "@/domain/project/project-status";
+import { canEditProject, isActiveProjectStatus, ProjectStatus } from "@/domain/project/project-status";
 
 describe("catalog and activity invariants (unit)", () => {
   it("lists the six PRD architecture domains with distinct normalized keys", () => {
@@ -32,5 +32,7 @@ describe("catalog and activity invariants (unit)", () => {
   it("treats cancelled projects as inactive for DE-14 uniqueness", () => {
     expect(isActiveProjectStatus(ProjectStatus.PLANNED)).toBe(true);
     expect(isActiveProjectStatus(ProjectStatus.CANCELLED)).toBe(false);
+    expect(canEditProject(ProjectStatus.COMPLETED)).toBe(true);
+    expect(canEditProject(ProjectStatus.CANCELLED)).toBe(false);
   });
 });
