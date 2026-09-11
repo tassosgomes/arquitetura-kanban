@@ -59,7 +59,7 @@ Não há project ID neste repositório. Use o nome que o console mostrar.
 
    Isso corre `prisma migrate deploy && prisma db seed && next build`. Não use o `npm run build` puro neste projeto: o build da Vercel é o momento em que homologação aplica schema ([§7](#7-estratégia-de-migration)).
 7. **Install Command:** deixar o padrão (`npm ci` / `npm install` com lockfile). **Não** ligue instalação só de `dependencies` (`NPM_CONFIG_PRODUCTION=true`): o CLI Prisma está em `devDependencies` e precisa existir no build.
-8. **Output:** Next.js (App Router). Não definir output estático.
+8. **Output:** Next.js (App Router). Não definir output estático. `next.config.ts` desliga `output: "standalone"` quando `process.env.VERCEL` está presente — esse modo é só para o Dockerfile/Kubernetes (T29) e o servidor de E2E; deixado ligado na Vercel, o build quebra com `ENOENT .next/next-server.js.nft.json` porque o builder da própria Vercel já empacota a função serverless.
 9. Branch de Production da Vercel: **`main`**.
 10. Fluid Compute: deixar o **padrão** dos projetos novos (T04). Não desligar por causa do SSE: o teto de Function continua existindo ([§9](#9-sse-em-homologação-degradado)).
 11. **Preview Deployments:** não são homologação e **não** recebem SSO. Opções aceitáveis:
