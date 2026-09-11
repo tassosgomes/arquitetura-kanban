@@ -22,6 +22,7 @@ import {
   type ProjectOption,
   type ProjectUserOption,
 } from "@/ui/projects/project-types";
+import { useMarkFormDirty } from "@/ui/realtime/useProtectOpenEdit";
 
 type ProjectFormProps = {
   mode: "create" | "edit";
@@ -81,6 +82,7 @@ export function ProjectForm({
   cancelHref,
 }: ProjectFormProps) {
   const router = useRouter();
+  const { formProps } = useMarkFormDirty();
   const statuses = mode === "create" ? CREATE_STATUSES : EDIT_STATUSES;
   const ownerInactive = users.some(
     (user) => user.id === initial.architectureOwnerId && !user.isActive,
@@ -128,7 +130,7 @@ export function ProjectForm({
         : undefined;
 
   return (
-    <form action={submit} className="flex max-w-2xl flex-col gap-5" noValidate>
+    <form action={submit} className="flex max-w-2xl flex-col gap-5" noValidate {...formProps}>
       {mode === "edit" && initial.id ? (
         <>
           <input type="hidden" name="id" value={initial.id} />

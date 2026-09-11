@@ -3,7 +3,7 @@
 **Task:** T04 / T21  
 **Versão:** 1.1  
 **Data:** 2026-09-10  
-**Status:** Contrato e implementação do hub (`src/infrastructure/realtime`, `GET /api/realtime/sse`). Board ainda não consome o stream (T22).  
+**Status:** Contrato e implementação do hub (`src/infrastructure/realtime`, `GET /api/realtime/sse`). Telas autenticadas consomem o stream (T22: `src/ui/realtime`).  
 **Guia de prova:** [guides/realtime-validation.md](guides/realtime-validation.md)  
 **Arquitetura (visão resumida):** [architecture.md §9](architecture.md)
 

@@ -9,6 +9,7 @@ import { FormField } from "@/ui/forms/FormField";
 import { PrimaryButton } from "@/ui/forms/PrimaryButton";
 import { CONTROL_CLASS_NAME } from "@/ui/projects/project-types";
 import { MarkdownEditor } from "@/ui/markdown/MarkdownEditor";
+import { useMarkFormDirty, useProtectOpenEdit } from "@/ui/realtime/useProtectOpenEdit";
 
 type ValueDeliveryFormProps = {
   mode: "create" | "edit";
@@ -52,7 +53,9 @@ export function ValueDeliveryForm({
   cancelHref,
 }: ValueDeliveryFormProps) {
   const router = useRouter();
+  const { formProps, markDirty } = useMarkFormDirty();
   const [content, setContent] = useState(initial.contentMarkdown);
+  useProtectOpenEdit(content !== initial.contentMarkdown);
 
   const [state, submit, pending] = useActionState(
     async (_prev: FormState, formData: FormData) => {
@@ -92,7 +95,7 @@ export function ValueDeliveryForm({
         : undefined;
 
   return (
-    <form action={submit} className="flex max-w-3xl flex-col gap-5" noValidate>
+    <form action={submit} className="flex max-w-3xl flex-col gap-5" noValidate {...formProps}>
       <input type="hidden" name="projectId" value={projectId} />
       {mode === "edit" && initial.id ? (
         <>
@@ -164,7 +167,10 @@ export function ValueDeliveryForm({
         <MarkdownEditor
           id="contentMarkdown"
           value={content}
-          onChange={setContent}
+          onChange={(next) => {
+            markDirty();
+            setContent(next);
+          }}
           invalid={Boolean(fieldError(state, "contentMarkdown"))}
         />
       </FormField>

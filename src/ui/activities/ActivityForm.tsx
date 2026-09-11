@@ -26,6 +26,7 @@ import { FormField } from "@/ui/forms/FormField";
 import { PrimaryButton } from "@/ui/forms/PrimaryButton";
 import { FieldError } from "@/ui/forms/FieldError";
 import { CONTROL_CLASS_NAME, formatUserLabel } from "@/ui/projects/project-types";
+import { useMarkFormDirty } from "@/ui/realtime/useProtectOpenEdit";
 import type {
   ActivityFormValues,
   ActivityProjectOption,
@@ -84,6 +85,7 @@ export function ActivityForm({
   cancelHref,
 }: ActivityFormProps) {
   const router = useRouter();
+  const { formProps } = useMarkFormDirty();
   const [type, setType] = useState(initial.type);
   const [projectId, setProjectId] = useState(initial.projectId);
   const [ownerId, setOwnerId] = useState(initial.ownerId);
@@ -191,7 +193,7 @@ export function ActivityForm({
   }
 
   return (
-    <form action={submit} className="flex max-w-2xl flex-col gap-5" noValidate>
+    <form action={submit} className="flex max-w-2xl flex-col gap-5" noValidate {...formProps}>
       {mode === "edit" && initial.id ? (
         <>
           <input type="hidden" name="id" value={initial.id} />

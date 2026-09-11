@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { ForbiddenError, UnauthorizedError } from "@/domain/errors";
 import { requireActiveUser } from "@/infrastructure/composition";
 import { AppShell } from "@/ui/layout/AppShell";
+import { RealtimeProvider } from "@/ui/realtime/RealtimeProvider";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -27,5 +28,9 @@ export default async function AppLayout({
 }>) {
   const user = await loadActiveUser();
 
-  return <AppShell user={user}>{children}</AppShell>;
+  return (
+    <AppShell user={user}>
+      <RealtimeProvider>{children}</RealtimeProvider>
+    </AppShell>
+  );
 }

@@ -8,6 +8,7 @@ import { EmptyState } from "@/ui/feedback/EmptyState";
 import { FormField } from "@/ui/forms/FormField";
 import { PrimaryButton } from "@/ui/forms/PrimaryButton";
 import type { CatalogItemDto } from "@/ui/catalogs/catalog-types";
+import { useMarkFormDirty, useProtectOpenEdit } from "@/ui/realtime/useProtectOpenEdit";
 
 type CatalogActions = {
   create: (input: { name: string }) => Promise<ActionResult<CatalogItem>>;
@@ -40,7 +41,9 @@ function fieldError(state: FormState, field: string): string | undefined {
 
 export function CatalogManager({ items, labels, actions }: CatalogManagerProps) {
   const router = useRouter();
+  const { formProps } = useMarkFormDirty();
   const [editingId, setEditingId] = useState<string | null>(null);
+  useProtectOpenEdit(editingId !== null);
 
   const [createState, createSubmit, createPending] = useActionState(
     async (_prev: FormState, formData: FormData) => {
@@ -93,7 +96,7 @@ export function CatalogManager({ items, labels, actions }: CatalogManagerProps) 
         <h2 id="catalog-create-title" className="text-sm font-semibold text-zinc-900">
           {labels.createHeading}
         </h2>
-        <form action={createSubmit} className="mt-4 flex flex-col gap-4" noValidate>
+        <form action={createSubmit} className="mt-4 flex flex-col gap-4" noValidate {...formProps}>
           <FormField
             id="catalog-create-name"
             label={`Nome da ${labels.singular}`}

@@ -31,6 +31,7 @@ import type { ActivityListItem } from "@/application/activities/types";
 import { ACTIVITY_STATUS_LABELS, type ActivityStatus } from "@/domain/activity/enums";
 import { DraggableKanbanCard, KanbanCardBody } from "@/ui/kanban/KanbanCard";
 import { kanbanKeyboardCoordinates } from "@/ui/kanban/kanban-keyboard-coordinates";
+import { useProtectOpenEdit } from "@/ui/realtime/useProtectOpenEdit";
 
 type KanbanBoardProps = {
   activities: ActivityListItem[];
@@ -127,6 +128,7 @@ export function KanbanBoard({ activities }: KanbanBoardProps) {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [isPending, startTransition] = useTransition();
   const pendingRef = useRef(false);
+  useProtectOpenEdit(activeId !== null);
 
   useEffect(() => {
     if (!pendingRef.current) {

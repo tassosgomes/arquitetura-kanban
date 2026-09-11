@@ -33,6 +33,7 @@ import { formatChecklistProgress } from "@/domain/activity/checklist";
 import { CONTROL_CLASS_NAME } from "@/ui/projects/project-types";
 import { PrimaryButton } from "@/ui/forms/PrimaryButton";
 import { FieldError } from "@/ui/forms/FieldError";
+import { useProtectOpenEdit } from "@/ui/realtime/useProtectOpenEdit";
 
 type ActivityChecklistProps = {
   activityId: string;
@@ -231,6 +232,7 @@ export function ActivityChecklist({
   const [editing, setEditing] = useState<EditingState | null>(null);
   const [conflict, setConflict] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  useProtectOpenEdit(addText.trim() !== "" || editing !== null);
 
   const usePendingResult = lastResult !== null && lastResult.version > serverVersion;
   const version = usePendingResult ? lastResult.version : serverVersion;
