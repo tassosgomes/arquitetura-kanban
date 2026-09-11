@@ -21,6 +21,7 @@ import {
 } from "@/infrastructure/composition";
 import { EmptyState } from "@/ui/feedback/EmptyState";
 import { ErrorState } from "@/ui/feedback/ErrorState";
+import { InfoTooltip } from "@/ui/feedback/InfoTooltip";
 import { KanbanBoard } from "@/ui/kanban/KanbanBoard";
 import { KanbanCardBody } from "@/ui/kanban/KanbanCard";
 import { KanbanFilters } from "@/ui/kanban/KanbanFilters";
@@ -91,12 +92,24 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
   return (
     <div className="flex flex-col gap-space-lg">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-1.5">
           <h1 className="text-headline-lg text-on-surface">Kanban</h1>
-          <p className="max-w-2xl text-body-md leading-6 text-on-surface-variant">
-            Board único da equipe. Filtros combinam sobre o mesmo conjunto de cards. A coluna é o
-            status atual, mesmo com recorte de período. Clique no card para abrir o detalhe.
-          </p>
+          <InfoTooltip label="Como o Kanban funciona">
+            <p>
+              Board único da equipe. Filtros combinam sobre o mesmo conjunto de cards. A coluna
+              é o status atual, mesmo com recorte de período. Clique no card para abrir o
+              detalhe.
+            </p>
+            <p className="mt-2">
+              Arraste pela alça para outra coluna, use Espaço e setas na alça, ou o seletor
+              “Mover para”. Cancelar permanece no detalhe da atividade.
+            </p>
+            <p className="mt-2">
+              Canceladas não ocupam coluna: use “Incluir cancelados” ou o status Cancelado para
+              vê-las na lista abaixo do board. Responsável e participante são filtros distintos.
+              O período não altera a coluna atual da atividade.
+            </p>
+          </InfoTooltip>
         </div>
         <Link
           href="/activities/new"

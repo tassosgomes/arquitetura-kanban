@@ -94,7 +94,7 @@ export function AppShell({ user, children }: AppShellProps) {
 
       <div className="lg:pl-64">
         <main id="conteudo-principal" tabIndex={-1} className="min-w-0 focus:outline-none">
-          <div className="mx-auto w-full max-w-[1400px] px-space-md py-space-lg lg:px-gutter-lg lg:py-space-xl">
+          <div className="mx-auto w-full max-w-[1800px] px-space-md py-space-lg lg:px-gutter-lg lg:py-space-xl">
             {children}
           </div>
         </main>

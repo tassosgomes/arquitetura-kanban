@@ -95,7 +95,7 @@ function KanbanColumnView({
     <section
       ref={setNodeRef}
       aria-labelledby={headingId}
-      className={`flex w-[300px] shrink-0 flex-col gap-space-sm rounded-2xl p-space-sm shadow-sm transition-colors ${
+      className={`flex min-w-0 flex-col gap-space-sm rounded-2xl p-space-sm shadow-sm transition-colors ${
         isOver ? "bg-primary/10 ring-2 ring-primary ring-offset-2 ring-offset-surface" : "bg-surface-container-low"
       }`}
     >
@@ -208,10 +208,6 @@ export function KanbanBoard({ activities }: KanbanBoardProps) {
 
   return (
     <div className="flex flex-col gap-space-sm">
-      <p className="text-body-sm leading-6 text-on-surface-variant">
-        Arraste pela alça para outra coluna, use Espaço e setas na alça, ou o seletor “Mover para”.
-        Cancelar permanece no detalhe da atividade.
-      </p>
       {isPending ? (
         <p className="text-body-sm text-on-surface-variant" role="status" aria-live="polite">
           Movendo atividade…
@@ -261,7 +257,7 @@ export function KanbanBoard({ activities }: KanbanBoardProps) {
           aria-label="Kanban da equipe"
           aria-busy={isPending || undefined}
         >
-          <div className="flex min-w-max items-start gap-space-md pb-2">
+          <div className="grid auto-cols-[minmax(280px,1fr)] grid-flow-col items-start gap-space-md pb-2">
             {columns.map((column) => (
               <KanbanColumnView
                 key={column.status}
