@@ -42,8 +42,36 @@ export const PROJECT_AUDIT_FIELDS = [
 
 export type ProjectAuditField = (typeof PROJECT_AUDIT_FIELDS)[number];
 
+/** ValueDelivery aggregate (T23). Independent of the project portrait (RN-18). */
+export const VALUE_DELIVERY_AUDIT_FIELDS = [
+  "title",
+  "referenceDate",
+  "contentMarkdown",
+  "projectId",
+  "authorId",
+] as const;
+
+export type ValueDeliveryAuditField = (typeof VALUE_DELIVERY_AUDIT_FIELDS)[number];
+
 /** Area / ArchitectureDomain (T09). No `version`. */
 export const CATALOG_AUDIT_FIELDS = ["name", "isActive"] as const;
+
+/** Checklist item (T15). Do not include activity portrait keys (RN-20). */
+export const ACTIVITY_TASK_AUDIT_FIELDS = ["description", "isDone", "sortOrder"] as const;
+
+export type ActivityTaskAuditField = (typeof ACTIVITY_TASK_AUDIT_FIELDS)[number];
+
+export function activityTaskAuditSnapshot(task: {
+  description: string;
+  isDone: boolean;
+  sortOrder: number;
+}) {
+  return {
+    description: task.description,
+    isDone: task.isDone,
+    sortOrder: task.sortOrder,
+  };
+}
 
 export type CatalogAuditField = (typeof CATALOG_AUDIT_FIELDS)[number];
 

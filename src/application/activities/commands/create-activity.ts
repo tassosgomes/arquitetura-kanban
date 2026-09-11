@@ -54,6 +54,7 @@ export async function createActivity(
   const today = instantToCivilDate(clock.now(), APP_TIME_ZONE);
 
   return runActivityAudited(deps.prisma, actor, {
+    clock,
     load: async (tx) => {
       const linked = await assertProjectLink(input.type, input.projectId, deps.projects, tx);
       const inherited = requireInheritedFields(

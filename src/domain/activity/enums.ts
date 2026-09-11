@@ -51,7 +51,7 @@ export function isKanbanColumnStatus(status: ActivityStatus): boolean {
   return (KANBAN_COLUMN_STATUSES as readonly ActivityStatus[]).includes(status);
 }
 
-/** Cancelada é terminal (RN-10 / DE-07). Sem T14, edição é somente leitura. */
+/** Cancelada é terminal (RN-10 / DE-07). Sem reabertura no MVP. */
 export function canEditActivity(status: ActivityStatus): boolean {
   return status !== ActivityStatus.CANCELLED;
 }

@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 import { ArchitectureRole, Nature, Priority } from "@/domain/catalog/classifications";
 import { ActivityStatus, ActivityType } from "@/domain/activity/enums";
 import { applyProjectInheritance } from "@/application/activities/apply-inheritance";
-import { createActivitySchema, updateActivitySchema } from "@/application/activities/schemas";
+import {
+  addActivityTaskSchema,
+  changeActivityStatusSchema,
+  createActivitySchema,
+  reorderActivityTasksSchema,
+  updateActivitySchema,
+} from "@/application/activities/schemas";
 
 const areaId = "11111111-1111-4111-8111-111111111111";
 const ownerId = "22222222-2222-4222-8222-222222222222";
@@ -77,6 +83,33 @@ describe("activity schemas", () => {
   });
 });
 
+describe("changeActivityStatusSchema", () => {
+  it("accepts a board destination and Cancelled", () => {
+    expect(
+      changeActivityStatusSchema.safeParse({
+        id: areaId,
+        version: 2,
+        status: ActivityStatus.IN_PROGRESS,
+      }).success,
+    ).toBe(true);
+    expect(
+      changeActivityStatusSchema.safeParse({
+        id: areaId,
+        version: 2,
+        status: ActivityStatus.CANCELLED,
+      }).success,
+    ).toBe(true);
+  });
+
+  it("accepts omitted status for explicit reopen", () => {
+    const parsed = changeActivityStatusSchema.safeParse({ id: areaId, version: 1 });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.status).toBeUndefined();
+    }
+  });
+});
+
 describe("applyProjectInheritance", () => {
   const defaults = {
     projectId,
@@ -125,5 +158,25 @@ describe("applyProjectInheritance", () => {
     expect(result.participantIds).toEqual([]);
     expect(result.nature).toBeUndefined();
     expect(result.requestingAreaId).toBeUndefined();
+  });
+});
+
+describe("activity checklist schemas", () => {
+  it("rejects an empty task description", () => {
+    const parsed = addActivityTaskSchema.safeParse({
+      activityId: areaId,
+      version: 1,
+      description: "   ",
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it("accepts an empty ordered list (zero tasks)", () => {
+    const parsed = reorderActivityTasksSchema.safeParse({
+      activityId: areaId,
+      version: 1,
+      orderedTaskIds: [],
+    });
+    expect(parsed.success).toBe(true);
   });
 });

@@ -77,6 +77,19 @@ const boardStatusSchema = z.enum(
   "Selecione o status.",
 );
 
+const lifecycleStatusSchema = z.enum(
+  [
+    ActivityStatus.BACKLOG,
+    ActivityStatus.TODO,
+    ActivityStatus.IN_PROGRESS,
+    ActivityStatus.WAITING,
+    ActivityStatus.BLOCKED,
+    ActivityStatus.DONE,
+    ActivityStatus.CANCELLED,
+  ],
+  "Selecione o status.",
+);
+
 const typeSchema = z.enum([ActivityType.PROJECT, ActivityType.AD_HOC], "Selecione o tipo.");
 
 const prioritySchema = z.enum(
@@ -192,5 +205,53 @@ export const updateActivitySchema = withProjectLink(
   ),
 );
 
+export const changeActivityStatusSchema = z.object({
+  id: catalogIdSchema,
+  version: versionSchema,
+  /** Omit on explicit “Reabrir” (DE-06 → Em andamento). */
+  status: lifecycleStatusSchema.optional(),
+});
+
 export type CreateActivityInput = z.infer<typeof createActivitySchema>;
 export type UpdateActivityInput = z.infer<typeof updateActivitySchema>;
+export type ChangeActivityStatusInput = z.infer<typeof changeActivityStatusSchema>;
+
+const taskDescriptionSchema = z.string().trim().min(1, "Informe a descrição da tarefa.");
+
+export const addActivityTaskSchema = z.object({
+  activityId: catalogIdSchema,
+  version: versionSchema,
+  description: taskDescriptionSchema,
+});
+
+export const updateActivityTaskSchema = z.object({
+  activityId: catalogIdSchema,
+  taskId: catalogIdSchema,
+  version: versionSchema,
+  description: taskDescriptionSchema,
+});
+
+export const toggleActivityTaskSchema = z.object({
+  activityId: catalogIdSchema,
+  taskId: catalogIdSchema,
+  version: versionSchema,
+  isDone: z.boolean(),
+});
+
+export const removeActivityTaskSchema = z.object({
+  activityId: catalogIdSchema,
+  taskId: catalogIdSchema,
+  version: versionSchema,
+});
+
+export const reorderActivityTasksSchema = z.object({
+  activityId: catalogIdSchema,
+  version: versionSchema,
+  orderedTaskIds: z.array(catalogIdSchema),
+});
+
+export type AddActivityTaskInput = z.infer<typeof addActivityTaskSchema>;
+export type UpdateActivityTaskInput = z.infer<typeof updateActivityTaskSchema>;
+export type ToggleActivityTaskInput = z.infer<typeof toggleActivityTaskSchema>;
+export type RemoveActivityTaskInput = z.infer<typeof removeActivityTaskSchema>;
+export type ReorderActivityTasksInput = z.infer<typeof reorderActivityTasksSchema>;

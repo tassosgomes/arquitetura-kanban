@@ -1,4 +1,5 @@
 import type { LocalUser } from "@/domain/identity/local-user";
+import type { Clock } from "@/application/ports/clock";
 import type { AuditedMutationInput } from "@/application/audit/types";
 import {
   runAuditedMutation,
@@ -10,7 +11,9 @@ import { ConflictError, NotFoundError } from "@/domain/errors";
 export async function runActivityAudited<TLoaded, TResult>(
   prisma: AuditedPrismaClient,
   actor: LocalUser,
-  input: Omit<AuditedMutationInput<Prisma.TransactionClient, TLoaded, TResult>, "actor">,
+  input: Omit<AuditedMutationInput<Prisma.TransactionClient, TLoaded, TResult>, "actor"> & {
+    clock?: Clock;
+  },
 ): Promise<TResult> {
   try {
     return await runAuditedMutation({

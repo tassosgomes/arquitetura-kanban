@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { ActivityStatus } from "@/domain/activity/enums";
-import { resolveStartDateOnCreate } from "@/domain/activity/auto-start-date";
+import {
+  resolveStartDateForDestination,
+  resolveStartDateOnCreate,
+} from "@/domain/activity/auto-start-date";
 
 describe("resolveStartDateOnCreate", () => {
   it("fills today when creating already in progress without a start date", () => {
@@ -23,3 +26,16 @@ describe("resolveStartDateOnCreate", () => {
     expect(resolveStartDateOnCreate(ActivityStatus.BACKLOG, null, "2026-09-10")).toBeNull();
   });
 });
+
+describe("resolveStartDateForDestination", () => {
+  it("fills today when moving to In progress without a start date (DE-23)", () => {
+    expect(
+      resolveStartDateForDestination(ActivityStatus.IN_PROGRESS, null, "2026-09-10"),
+    ).toBe("2026-09-10");
+  });
+
+  it("does not fill start when completing directly (DE-09)", () => {
+    expect(resolveStartDateForDestination(ActivityStatus.DONE, null, "2026-09-10")).toBeNull();
+  });
+});
+

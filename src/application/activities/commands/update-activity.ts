@@ -37,6 +37,7 @@ export async function updateActivity(
   assertCompletedDateNotFuture(data.completedDate, today);
 
   return runActivityAudited(deps.prisma, actor, {
+    clock,
     expectedVersion: input.version,
     versioned: { model: "activity", id: input.id },
     load: async (tx) => {
@@ -46,6 +47,11 @@ export async function updateActivity(
       }
       if (!canEditActivity(existing.status)) {
         throw new InvariantError("Atividade cancelada não pode ser editada.");
+      }
+      if (existing.version === input.version && existing.status !== data.status) {
+        throw new InvariantError(
+          "Altere o status pela transição da atividade, não pelo formulário de edição.",
+        );
       }
 
       await assertProjectLink(

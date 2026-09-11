@@ -7,16 +7,21 @@ export {
 } from "@/application/audit/changes";
 export {
   ACTIVITY_PORTRAIT_FIELDS,
+  ACTIVITY_TASK_AUDIT_FIELDS,
+  activityTaskAuditSnapshot,
   CATALOG_AUDIT_FIELDS,
   catalogAuditSnapshot,
   emptyActivityPortrait,
   PROJECT_AUDIT_FIELDS,
+  VALUE_DELIVERY_AUDIT_FIELDS,
   toAuditDate,
   toAuditIdList,
   type ActivityPortrait,
   type ActivityPortraitField,
+  type ActivityTaskAuditField,
   type CatalogAuditField,
   type ProjectAuditField,
+  type ValueDeliveryAuditField,
 } from "@/application/audit/portrait";
 export type {
   AuditChanges,

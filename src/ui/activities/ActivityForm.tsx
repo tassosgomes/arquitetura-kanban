@@ -519,12 +519,24 @@ export function ActivityForm({
         </select>
       </FormField>
 
-      <FormField id="activity-status" label="Status" required error={fieldError(state, "status")}>
+      <FormField
+        id="activity-status"
+        label="Status"
+        required
+        error={fieldError(state, "status")}
+        description={
+          mode === "edit"
+            ? "Altere o status na página da atividade (mover, cancelar ou reabrir)."
+            : undefined
+        }
+      >
+        {mode === "edit" ? <input type="hidden" name="status" value={initial.status} /> : null}
         <select
           id="activity-status"
-          name="status"
-          required
+          name={mode === "edit" ? undefined : "status"}
+          required={mode === "create"}
           defaultValue={initial.status}
+          disabled={mode === "edit"}
           className={CONTROL_CLASS_NAME}
         >
           {KANBAN_COLUMN_STATUSES.map((status) => (
