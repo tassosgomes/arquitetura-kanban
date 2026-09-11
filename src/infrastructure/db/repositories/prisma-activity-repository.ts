@@ -7,6 +7,7 @@ import type {
   ActivityListFilter,
   ActivityListItem,
   ActivityRecord,
+  ActivityTaskRecord,
   ActivityUserRef,
   ActivityWriteData,
 } from "@/application/activities/types";
@@ -29,6 +30,7 @@ const activityInclude = {
   },
   createdBy: { select: { id: true, displayName: true } },
   updatedBy: { select: { id: true, displayName: true } },
+  tasks: { orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] },
 } satisfies Prisma.ActivityInclude;
 
 type ActivityRow = Prisma.ActivityGetPayload<{ include: typeof activityInclude }>;
@@ -69,6 +71,37 @@ function mapInvolvedAreas(row: ActivityRow): ActivityAreaRef[] {
     .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
 }
 
+function mapTask(row: {
+  id: string;
+  description: string;
+  isDone: boolean;
+  sortOrder: number;
+}): ActivityTaskRecord {
+  return {
+    id: row.id,
+    description: row.description,
+    isDone: row.isDone,
+    sortOrder: row.sortOrder,
+  };
+}
+
+async function compactTaskOrder(tx: ActivityTx, activityId: string): Promise<void> {
+  const tasks = await tx.activityTask.findMany({
+    where: { activityId },
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    select: { id: true, sortOrder: true },
+  });
+  for (let index = 0; index < tasks.length; index += 1) {
+    const task = tasks[index];
+    if (task && task.sortOrder !== index) {
+      await tx.activityTask.update({
+        where: { id: task.id },
+        data: { sortOrder: index },
+      });
+    }
+  }
+}
+
 function mapActivityRecord(row: ActivityRow): ActivityRecord {
   return {
     id: row.id,
@@ -98,6 +131,7 @@ function mapActivityRecord(row: ActivityRow): ActivityRecord {
     owner: mapUser(row.owner),
     participants: mapParticipants(row),
     involvedAreas: mapInvolvedAreas(row),
+    tasks: row.tasks.map(mapTask),
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
     createdBy: { id: row.createdBy.id, displayName: row.createdBy.displayName },
@@ -233,6 +267,63 @@ export function createPrismaActivityRepository(prisma: PrismaClient): ActivityRe
           include: activityInclude,
         })
         .then(mapActivityRecord);
+    },
+
+    updateStatus(id, data, actorId, tx) {
+      return tx.activity
+        .update({
+          where: { id },
+          data: {
+            status: data.status,
+            startDate: toPrismaDate(data.startDate),
+            completedDate: toPrismaDate(data.completedDate),
+            cancelledDate: toPrismaDate(data.cancelledDate),
+            updatedById: actorId,
+          },
+          include: activityInclude,
+        })
+        .then(mapActivityRecord);
+    },
+
+    async addTask(activityId, description, tx) {
+      const aggregate = await tx.activityTask.aggregate({
+        where: { activityId },
+        _max: { sortOrder: true },
+      });
+      const sortOrder = (aggregate._max.sortOrder ?? -1) + 1;
+      const created = await tx.activityTask.create({
+        data: { activityId, description, isDone: false, sortOrder },
+      });
+      return mapTask(created);
+    },
+
+    updateTask(id, data, tx) {
+      return tx.activityTask.update({ where: { id }, data }).then(mapTask);
+    },
+
+    async deleteTask(activityId, taskId, tx) {
+      await tx.activityTask.delete({ where: { id: taskId } });
+      await compactTaskOrder(tx, activityId);
+    },
+
+    async reorderTasks(activityId, orderedIds, tx) {
+      for (let index = 0; index < orderedIds.length; index += 1) {
+        const id = orderedIds[index];
+        if (!id) {
+          continue;
+        }
+        await tx.activityTask.update({
+          where: { id },
+          data: { sortOrder: index },
+        });
+      }
+    },
+
+    async touchUpdatedBy(id, actorId, tx) {
+      await tx.activity.update({
+        where: { id },
+        data: { updatedById: actorId },
+      });
     },
   };
 }

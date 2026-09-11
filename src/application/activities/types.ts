@@ -43,6 +43,22 @@ export type ActivityListItem = {
   updatedAt: Date;
 };
 
+export type ActivityTaskRecord = {
+  id: string;
+  description: string;
+  isDone: boolean;
+  sortOrder: number;
+};
+
+/** Result of checklist mutations (T15). Status is included so tests can assert RN-20. */
+export type ActivityChecklistResult = {
+  id: string;
+  version: number;
+  status: ActivityStatus;
+  projectId: string | null;
+  tasks: ActivityTaskRecord[];
+};
+
 export type ActivityRecord = {
   id: string;
   title: string;
@@ -65,6 +81,7 @@ export type ActivityRecord = {
   owner: ActivityUserRef;
   participants: ActivityUserRef[];
   involvedAreas: ActivityAreaRef[];
+  tasks: ActivityTaskRecord[];
   createdAt: Date;
   updatedAt: Date;
   createdBy: { id: string; displayName: string | null };

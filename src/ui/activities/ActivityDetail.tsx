@@ -11,6 +11,9 @@ import { ACTIVITY_TYPE_LABELS, canEditActivity } from "@/domain/activity/enums";
 import type { ActivityRecord } from "@/application/activities";
 import { formatCivilDatePtBr, formatUserLabel } from "@/ui/projects/project-types";
 import { ActivityStatusBadge } from "@/ui/activities/ActivityStatusBadge";
+import { ActivityStatusControls } from "@/ui/activities/ActivityStatusControls";
+import { ActivityChecklist } from "@/ui/activities/ActivityChecklist";
+import { changeActivityStatusAction } from "@/app/actions/activities";
 
 function formatInstant(value: Date): string {
   return new Intl.DateTimeFormat("pt-BR", {
@@ -56,6 +59,12 @@ export function ActivityDetail({ activity }: { activity: ActivityRecord }) {
             <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{activity.title}</h1>
             <ActivityStatusBadge status={activity.status} />
           </div>
+          <ActivityStatusControls
+            activityId={activity.id}
+            version={activity.version}
+            status={activity.status}
+            action={changeActivityStatusAction}
+          />
         </div>
         {editable ? (
           <Link
@@ -138,10 +147,16 @@ export function ActivityDetail({ activity }: { activity: ActivityRecord }) {
         </Item>
       </dl>
 
+      <ActivityChecklist
+        activityId={activity.id}
+        version={activity.version}
+        status={activity.status}
+        tasks={activity.tasks}
+      />
+
       {editable ? null : (
         <p className="text-sm text-zinc-600">
-          Atividade cancelada: o registro foi preservado e não pode ser editado. O cancelamento
-          completo entra na próxima entrega.
+          Atividade cancelada: o registro foi preservado e não pode ser editado nem reaberto.
         </p>
       )}
     </div>
