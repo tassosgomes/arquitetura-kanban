@@ -46,3 +46,12 @@ export const KANBAN_COLUMN_STATUSES: readonly ActivityStatus[] = [
   ActivityStatus.BLOCKED,
   ActivityStatus.DONE,
 ];
+
+export function isKanbanColumnStatus(status: ActivityStatus): boolean {
+  return (KANBAN_COLUMN_STATUSES as readonly ActivityStatus[]).includes(status);
+}
+
+/** Cancelada é terminal (RN-10 / DE-07). Sem T14, edição é somente leitura. */
+export function canEditActivity(status: ActivityStatus): boolean {
+  return status !== ActivityStatus.CANCELLED;
+}

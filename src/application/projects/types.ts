@@ -59,3 +59,14 @@ export type ProjectWriteData = {
   expectedEndDate: string | null;
   status: ProjectStatus;
 };
+
+/** Prefill da atividade vinculada (decisão 8 / DE-15). Projetos não cancelados. */
+export type ProjectInheritanceSnapshot = {
+  id: string;
+  name: string;
+  nature: Nature;
+  architectureRole: ArchitectureRole;
+  responsibleAreaId: string;
+  architectureOwnerId: string;
+  participantIds: string[];
+};

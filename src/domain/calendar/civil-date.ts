@@ -38,3 +38,24 @@ export function civilDateToUtcMidnight(value: string): Date {
 export function utcMidnightToCivilDate(value: Date): string {
   return value.toISOString().slice(0, 10);
 }
+
+/**
+ * Instant → civil day in an IANA time zone (DE-21). Do not use UTC `toISOString().slice(0, 10)`.
+ */
+export function instantToCivilDate(instant: Date, timeZone: string): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(instant);
+
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+  if (!year || !month || !day) {
+    throw new RangeError("Could not convert instant to a civil date.");
+  }
+
+  return `${year}-${month}-${day}`;
+}

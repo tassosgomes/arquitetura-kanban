@@ -1,5 +1,6 @@
 export type {
   ProjectAreaRef,
+  ProjectInheritanceSnapshot,
   ProjectListFilter,
   ProjectListItem,
   ProjectRecord,

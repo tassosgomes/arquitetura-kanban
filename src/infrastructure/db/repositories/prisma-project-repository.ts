@@ -204,5 +204,33 @@ export function createPrismaProjectRepository(prisma: PrismaClient): ProjectRepo
         })
         .then(mapProjectRecord);
     },
+
+    listActiveInheritanceSnapshots() {
+      return prisma.project
+        .findMany({
+          where: { status: { not: "CANCELLED" } },
+          select: {
+            id: true,
+            name: true,
+            nature: true,
+            architectureRole: true,
+            responsibleAreaId: true,
+            architectureOwnerId: true,
+            participants: { select: { userId: true } },
+          },
+          orderBy: { name: "asc" },
+        })
+        .then((rows) =>
+          rows.map((row) => ({
+            id: row.id,
+            name: row.name,
+            nature: row.nature as Nature,
+            architectureRole: row.architectureRole as ArchitectureRole,
+            responsibleAreaId: row.responsibleAreaId,
+            architectureOwnerId: row.architectureOwnerId,
+            participantIds: row.participants.map((participant) => participant.userId),
+          })),
+        );
+    },
   };
 }

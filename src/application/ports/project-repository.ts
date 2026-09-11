@@ -1,5 +1,6 @@
 import type { Prisma } from "@/generated/prisma/client";
 import type {
+  ProjectInheritanceSnapshot,
   ProjectListFilter,
   ProjectListItem,
   ProjectRecord,
@@ -18,4 +19,5 @@ export interface ProjectRepository {
   create(data: ProjectWriteData, actorId: string, tx: ProjectTx): Promise<ProjectRecord>;
   update(id: string, data: ProjectWriteData, actorId: string, tx: ProjectTx): Promise<ProjectRecord>;
   cancel(id: string, actorId: string, tx: ProjectTx): Promise<ProjectRecord>;
+  listActiveInheritanceSnapshots(): Promise<ProjectInheritanceSnapshot[]>;
 }

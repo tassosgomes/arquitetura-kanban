@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 import { ARCHITECTURE_DOMAIN_NAMES } from "@/domain/catalog/architecture-domains";
 import { normalizeCatalogName } from "@/domain/catalog/normalize-catalog-name";
 import { isActivityProjectLinkValid } from "@/domain/activity/activity-project-link";
-import { ActivityType, ACTIVITY_STATUS_LABELS, KANBAN_COLUMN_STATUSES } from "@/domain/activity/enums";
+import {
+  ActivityStatus,
+  ActivityType,
+  ACTIVITY_STATUS_LABELS,
+  canEditActivity,
+  KANBAN_COLUMN_STATUSES,
+} from "@/domain/activity/enums";
 import { canEditProject, isActiveProjectStatus, ProjectStatus } from "@/domain/project/project-status";
 
 describe("catalog and activity invariants (unit)", () => {
@@ -27,6 +33,8 @@ describe("catalog and activity invariants (unit)", () => {
     expect(ACTIVITY_STATUS_LABELS.DONE).toBe("Concluído");
     expect(KANBAN_COLUMN_STATUSES).toHaveLength(6);
     expect(KANBAN_COLUMN_STATUSES).not.toContain("CANCELLED");
+    expect(canEditActivity(ActivityStatus.BACKLOG)).toBe(true);
+    expect(canEditActivity(ActivityStatus.CANCELLED)).toBe(false);
   });
 
   it("treats cancelled projects as inactive for DE-14 uniqueness", () => {

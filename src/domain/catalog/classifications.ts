@@ -11,6 +11,12 @@ export const NATURE_LABELS: Record<Nature, string> = {
   OPERATIONAL: "Operacional",
 };
 
+/** PRD §8: atividade usa o feminino (equivalente ao projeto). */
+export const ACTIVITY_NATURE_LABELS: Record<Nature, string> = {
+  STRATEGIC: "Estratégica",
+  OPERATIONAL: "Operacional",
+};
+
 /** Papel da Arquitetura. PRD: Responsável / Contribuidor. */
 export const ArchitectureRole = {
   RESPONSIBLE: "RESPONSIBLE",
@@ -49,3 +55,9 @@ export const Effort = {
 } as const;
 
 export type Effort = (typeof Effort)[keyof typeof Effort];
+
+export const EFFORT_LABELS: Record<Effort, string> = {
+  P: "P",
+  M: "M",
+  G: "G",
+};
