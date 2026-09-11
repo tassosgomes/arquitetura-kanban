@@ -94,3 +94,14 @@ describe("mapOidcClaims", () => {
     expect(source).not.toMatch(/\bif\s*\(.*provider/i);
   });
 });
+
+describe("OIDC adapter stays provider-agnostic (CyberArk is env-only)", () => {
+  it("has no CyberArk/Logto conditionals in the auth adapter", () => {
+    const files = ["claim-mapper.ts", "provider.ts", "auth.ts", "logout.ts", "provision-local-user.ts"];
+    for (const file of files) {
+      const source = readFileSync(path.join(import.meta.dirname, file), "utf8");
+      expect(source, file).not.toMatch(/cyberark/i);
+      expect(source, file).not.toMatch(/\bif\s*\([^)]*(logto|provider)\s*===/i);
+    }
+  });
+});

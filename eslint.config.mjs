@@ -13,6 +13,9 @@ const eslintConfig = defineConfig([
     "src/generated/**",
     "spikes/**",
     "coverage/**",
+    "test-results/**",
+    "playwright-report/**",
+    "blob-report/**",
     "node_modules/**",
   ]),
 ]);

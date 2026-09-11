@@ -23,10 +23,11 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
-    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/") ||
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico"
   ) {
+    // CSV/SSE return 401/403 in the handler. Health probes must not bounce to /login.
     return NextResponse.next();
   }
 
