@@ -37,6 +37,11 @@ export type ActivityListItem = {
   type: ActivityType;
   status: ActivityStatus;
   priority: Priority;
+  effort: Effort | null;
+  architectureRole: ArchitectureRole;
+  expectedEndDate: string | null;
+  checklistDoneCount: number;
+  checklistTotalCount: number;
   project: ActivityProjectRef | null;
   requestingArea: ActivityAreaRef;
   owner: ActivityUserRef;

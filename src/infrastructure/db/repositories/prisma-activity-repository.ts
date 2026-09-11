@@ -1,5 +1,6 @@
 import type { Prisma, PrismaClient } from "@/generated/prisma/client";
 import type { ActivityStatus, ActivityType } from "@/domain/activity/enums";
+import { checklistProgress } from "@/domain/activity/checklist";
 import type { ArchitectureRole, Effort, Nature, Priority } from "@/domain/catalog/classifications";
 import type { ActivityRepository, ActivityTx } from "@/application/ports/activity-repository";
 import type {
@@ -145,6 +146,9 @@ function mapListItem(row: {
   type: ActivityRow["type"];
   status: ActivityRow["status"];
   priority: ActivityRow["priority"];
+  effort: ActivityRow["effort"];
+  architectureRole: ActivityRow["architectureRole"];
+  expectedEndDate: Date | null;
   updatedAt: Date;
   project: { id: string; name: string; status: string } | null;
   requestingArea: { id: string; name: string; isActive: boolean };
@@ -154,13 +158,20 @@ function mapListItem(row: {
     email: string | null;
     isActive: boolean;
   };
+  tasks: { isDone: boolean }[];
 }): ActivityListItem {
+  const checklist = checklistProgress(row.tasks);
   return {
     id: row.id,
     title: row.title,
     type: row.type as ActivityType,
     status: row.status as ActivityStatus,
     priority: row.priority as Priority,
+    effort: (row.effort as Effort | null) ?? null,
+    architectureRole: row.architectureRole as ArchitectureRole,
+    expectedEndDate: fromPrismaDate(row.expectedEndDate),
+    checklistDoneCount: checklist.done,
+    checklistTotalCount: checklist.total,
     updatedAt: row.updatedAt,
     project: row.project,
     requestingArea: mapArea(row.requestingArea),
@@ -219,12 +230,16 @@ export function createPrismaActivityRepository(prisma: PrismaClient): ActivityRe
             type: true,
             status: true,
             priority: true,
+            effort: true,
+            architectureRole: true,
+            expectedEndDate: true,
             updatedAt: true,
             project: { select: { id: true, name: true, status: true } },
             requestingArea: { select: { id: true, name: true, isActive: true } },
             owner: {
               select: { id: true, displayName: true, email: true, isActive: true },
             },
+            tasks: { select: { isDone: true } },
           },
           orderBy: [{ updatedAt: "desc" }, { title: "asc" }],
         })

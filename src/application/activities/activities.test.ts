@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import "dotenv/config";
 import type { PrismaClient } from "@/generated/prisma/client";
 import { ConflictError, InvariantError, ValidationError } from "@/domain/errors";
-import { ArchitectureRole, Nature, Priority } from "@/domain/catalog/classifications";
+import { ArchitectureRole, Effort, Nature, Priority } from "@/domain/catalog/classifications";
 import { ActivityStatus, ActivityType } from "@/domain/activity/enums";
 import { ProjectStatus } from "@/domain/project/project-status";
 import { instantToCivilDate } from "@/domain/calendar/civil-date";
@@ -17,6 +17,7 @@ import {
   createActivity,
   getActivity,
   getProjectDefaults,
+  listActivities,
   updateActivity,
 } from "@/application/activities";
 import type { CreateActivityInput } from "@/application/activities";
@@ -601,5 +602,74 @@ describe("activity services (postgres)", () => {
     const loaded = await getActivity(actor, created.id, deps().activities);
     expect(loaded?.status).toBe(ActivityStatus.CANCELLED);
     expect(loaded?.description).toBeNull();
+  });
+
+  it("lists kanban card fields and excludes cancelled by default", async ({ skip }) => {
+    if (!prisma || !actor) {
+      skip();
+      return;
+    }
+
+    const suffix = randomUUID();
+    const { area, domain, owner } = await fixtures(suffix);
+    const project = await createProject(
+      actor,
+      projectInput(area.id, owner.id, `T17 Projeto ${suffix}`),
+      deps(),
+    );
+    projectIds.push(project.id);
+
+    const open = await createActivity(
+      actor,
+      {
+        ...adHocInput(area.id, domain.id, owner.id, `T17 Card ${suffix}`),
+        type: ActivityType.PROJECT,
+        projectId: project.id,
+        effort: Effort.M,
+        architectureRole: ArchitectureRole.CONTRIBUTOR,
+        expectedEndDate: "2026-09-30",
+      },
+      deps(),
+    );
+    activityIds.push(open.id);
+
+    await prisma.activityTask.createMany({
+      data: [
+        { activityId: open.id, description: "Tarefa feita", isDone: true, sortOrder: 0 },
+        { activityId: open.id, description: "Tarefa aberta", isDone: false, sortOrder: 1 },
+      ],
+    });
+
+    const cancelled = await createActivity(
+      actor,
+      adHocInput(area.id, domain.id, owner.id, `T17 Cancelada ${suffix}`),
+      deps(),
+    );
+    activityIds.push(cancelled.id);
+    await prisma.activity.update({
+      where: { id: cancelled.id },
+      data: { status: "CANCELLED" },
+    });
+
+    const board = await listActivities(actor, { includeCancelled: false }, deps().activities);
+    const card = board.find((item) => item.id === open.id);
+    expect(card?.effort).toBe(Effort.M);
+    expect(card?.architectureRole).toBe(ArchitectureRole.CONTRIBUTOR);
+    expect(card?.expectedEndDate).toBe("2026-09-30");
+    expect(card?.checklistDoneCount).toBe(1);
+    expect(card?.checklistTotalCount).toBe(2);
+    expect(card?.project?.name).toBe(`T17 Projeto ${suffix}`);
+    expect(board.map((item) => item.id)).not.toContain(cancelled.id);
+
+    const withCancelled = await listActivities(actor, { includeCancelled: true }, deps().activities);
+    expect(withCancelled.map((item) => item.id)).toContain(cancelled.id);
+
+    const projectList = await listActivities(
+      actor,
+      { projectId: project.id, includeCancelled: true },
+      deps().activities,
+    );
+    expect(projectList.find((item) => item.id === open.id)?.checklistTotalCount).toBe(2);
+    expect(projectList.find((item) => item.id === open.id)?.effort).toBe(Effort.M);
   });
 });
