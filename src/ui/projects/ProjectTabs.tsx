@@ -18,7 +18,7 @@ export function ProjectTabs({ projectId }: ProjectTabsProps) {
   const pathname = usePathname();
   const base = `/projects/${projectId}`;
 
-  if (pathname.endsWith("/edit")) {
+  if (pathname.endsWith("/edit") || pathname.endsWith("/new")) {
     return null;
   }
 
