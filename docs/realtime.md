@@ -1,9 +1,9 @@
 # Hub de realtime — desenho para T06 e T21
 
-**Task:** T04  
-**Versão:** 1.0  
+**Task:** T04 / T21  
+**Versão:** 1.1  
 **Data:** 2026-09-10  
-**Status:** Contrato. Não é a implementação de produção.  
+**Status:** Contrato e implementação do hub (`src/infrastructure/realtime`, `GET /api/realtime/sse`). Board ainda não consome o stream (T22).  
 **Guia de prova:** [guides/realtime-validation.md](guides/realtime-validation.md)  
 **Arquitetura (visão resumida):** [architecture.md §9](architecture.md)
 
@@ -204,7 +204,7 @@ Cinco usuários no MVP: autorização é binária (pode / não pode usar a app),
 | Frame SSE | sempre incluir `id:`. Sem `id:`, o browser **não** atualiza `Last-Event-ID` daquele evento. |
 | Reconexão nativa | o user agent reenvia `Last-Event-ID` automaticamente ([HTML LS §9.2.3–9.2.4](https://html.spec.whatwg.org/multipage/server-sent-events.html)) |
 | Janela | linhas com `createdAt >= now() - 7 days`. Replay nunca devolve linha mais velha, mesmo que o `id` ainda exista por atraso de cleanup |
-| Passagem replay → live | catch-up `id > max(id já enviado neste GET)` depois do `LISTEN`; duplicata no cliente é permitida (T21: aplicar por `id` já visto) |
+| Passagem replay → live | catch-up `id > max(id já enviado neste GET)` depois do `LISTEN`; duplicata no fio é permitida e **esperada** (commit+NOTIFY vs catch-up, réplicas, reconexão). O cliente T22 aplica por `id` já visto e ignora repetição. |
 | Relógio | `createdAt` em `TIMESTAMPTZ`; cleanup usa o relógio do banco |
 
 O cliente T22:

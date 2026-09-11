@@ -68,7 +68,7 @@ Não há project ID neste repositório. Use o nome que o console mostrar.
 
 Não invente IDs de projeto, org ou deployment neste guia. Copie os valores do console para um cofre interno.
 
-`vercel.json` **não** entra no repositório nesta task. `maxDuration` da rota SSE será `export const maxDuration = 300` em T21 (`src/app/api/realtime/sse/route.ts`), não um JSON de projeto.
+`vercel.json` **não** entra no repositório. A rota SSE declara `export const maxDuration = 300` em `src/app/api/realtime/sse/route.ts` (teto Hobby/Fluid; o cliente reconecta e faz replay).
 
 ---
 
@@ -92,7 +92,7 @@ Passos típicos:
 4. Se o fornecedor só entregar URL pooled, peça a URL direta. Sem ela, `LISTEN` em homologação falha por configuração, não por defeito da app.
 5. **Não** aponte a Vercel para o Postgres do Docker Compose. Não reutilize o banco de produção.
 
-Até T21, `DATABASE_URL_LISTEN` ainda não é lida pelo código. Configure-a **já** no painel para não improvisar URL pooled no dia do hub.
+A aplicação lê `DATABASE_URL_LISTEN` no `envSchema` (T21). Configure-a **já** no painel: URL **unpooled** / sessão direta. Se estiver vazia, o hub cai em `DATABASE_URL` (inadequado atrás de pooler transacional).
 
 Backup pontual do fornecedor (PITR / snapshot) é desejável para o [rollback de migration](#11-recuperação-de-deploy). Sem isso, uma migration destrutiva em homologação não tem restore fácil — por isso o MVP só aplica `migrate deploy` para frente, nunca `db push` / `migrate reset`.
 
@@ -107,7 +107,7 @@ Lista normativa da Tech Spec, mais banco. Valores **só** no painel Vercel → *
 | `APP_URL` | sim | `https://<projeto-vercel>.vercel.app` **sem** barra final. Se houver domínio customizado de homologação, use esse. |
 | `APP_TIME_ZONE` | sim | `America/Sao_Paulo` |
 | `DATABASE_URL` | sim | URL pooled do Postgres de homologação (`postgresql://…`) |
-| `DATABASE_URL_LISTEN` | sim para T21; configurar já | URL **unpooled** / sessão direta. Ainda não está no `envSchema`; a app ignora até T21. |
+| `DATABASE_URL_LISTEN` | sim para SSE | URL **unpooled** / sessão direta. No `envSchema`; se omitida, o hub usa `DATABASE_URL`. |
 | `OIDC_ISSUER` | sim | `issuer` do well-known Logto — [oidc.md §3.2](oidc.md#32-issuer-e-discovery) |
 | `OIDC_CLIENT_ID` | sim | App ID da app **Homologação** (não a Local) |
 | `OIDC_CLIENT_SECRET` | sim | App secret da app Homologação |
@@ -226,11 +226,11 @@ Depois de gravar `APP_URL` e os callbacks, **redeploy**.
 
 ## 9. SSE em homologação (degradado)
 
-Homologação **não** oferece SSE de jornada de trabalho contínua. O protocolo continua SSE (`GET /api/realtime/sse` em T21); o runtime Vercel **corta** a Function em `maxDuration` (Hobby: 300 s; Pro/Enterprise: até 800 s GA / 1800 s beta). O cliente reconecta; replay por `Last-Event-ID` cobre o buraco. Fontes e tetos: [realtime.md](../realtime.md) §11.1.
+Homologação **não** oferece SSE de jornada de trabalho contínua. O protocolo continua SSE (`GET /api/realtime/sse`); o runtime Vercel **corta** a Function em `maxDuration = 300` (Hobby: 300 s; Pro/Enterprise: até 800 s GA / 1800 s beta). O cliente reconecta; replay por `Last-Event-ID` cobre o buraco. Frames duplicados (mesmo `id`) são tolerados. Fontes e tetos: [realtime.md](../realtime.md) §11.1.
 
-Não vender esta URL como “SSE o dia inteiro”. Não tratar preview Vercel como aceite de realtime de produção. Prova longa e réplicas: Kubernetes (T29). Prova HTTP autenticada na Vercel: **pendente de acesso** + T21.
+Não vender esta URL como “SSE o dia inteiro”. Não tratar preview Vercel como aceite de realtime de produção. Prova longa e réplicas: Kubernetes (T29). Prova HTTP autenticada na Vercel: **pendente de acesso**.
 
-Quando T21 existir, a rota deve declarar (não criar nesta task):
+A rota declara:
 
 ```ts
 export const runtime = "nodejs"

@@ -198,7 +198,7 @@ Mutações auditáveis (T12) executam no mesmo `$transaction`:
 
 1. atualizar entidade com predicado de versão;
 2. gravar `AuditEvent`;
-3. gravar `RealtimeEvent` (quando o hub existir — T21).
+3. gravar `RealtimeEvent` (T21: derivado da auditoria na mesma transação).
 
 Falha em qualquer passo reverte tudo. `NOTIFY` ocorre **depois** do commit (T04/T21).
 
@@ -244,7 +244,7 @@ Biblioteca: **Zod 4.x** (tabela de versões na seção 17). Não há ADR própri
 - A UI pode reutilizar o mesmo schema para mensagens de campo; a validação **autoritativa** é sempre no servidor.
 - Serviços de aplicação assumem DTOs já parseados (`z.infer<typeof schema>`).
 - Não validar claims OIDC no domínio: o mapper descarta o que não entra em `AuthenticatedIdentity`.
-- Variáveis de ambiente são validadas na subida (`src/config/env.ts`) com os nomes da Tech Spec (`OIDC_*`, `AUTH_SECRET`, `APP_URL`, `DATABASE_URL`).
+- Variáveis de ambiente são validadas na subida (`src/config/env.ts`) com os nomes da Tech Spec (`OIDC_*`, `AUTH_SECRET`, `APP_URL`, `DATABASE_URL`) e `DATABASE_URL_LISTEN` opcional (hub SSE).
 
 ---
 

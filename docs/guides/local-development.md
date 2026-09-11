@@ -44,6 +44,7 @@ cp .env.example .env
 | `POSTGRES_DB` | Compose | `arquitetura` |
 | `POSTGRES_PORT` | Compose | `5432` no host |
 | `DATABASE_URL` | sim | no host: `postgresql://<user>:<senha>@localhost:5432/<db>`. O serviço `app` do Compose **substitui o host por `postgres`**. |
+| `DATABASE_URL_LISTEN` | não (cai em `DATABASE_URL`) | sessão `LISTEN` do hub SSE. Localmente pode repetir `DATABASE_URL`. Homologação Vercel: URL **unpooled**. |
 | `OIDC_ISSUER` | sim | campo `issuer` do well-known Logto — [oidc.md §2.2](oidc.md#22-copiar-identificadores-sem-colar-no-git) |
 | `OIDC_CLIENT_ID` | sim | App ID Logto (app Local) |
 | `OIDC_CLIENT_SECRET` | sim | App secret Logto |

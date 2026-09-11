@@ -18,6 +18,17 @@ describe("smoke: local bootstrap contracts", () => {
     const parsed = envSchema.parse(validEnv);
     expect(parsed.APP_TIME_ZONE).toBe("America/Sao_Paulo");
     expect(parsed.APP_URL).toBe("http://localhost:3000");
+    expect(parsed.DATABASE_URL_LISTEN).toBeUndefined();
+  });
+
+  it("accepts optional DATABASE_URL_LISTEN for the SSE LISTEN session", () => {
+    const parsed = envSchema.parse({
+      ...validEnv,
+      DATABASE_URL_LISTEN: "postgresql://arquitetura:CHANGEME@localhost:5432/arquitetura",
+    });
+    expect(parsed.DATABASE_URL_LISTEN).toBe(
+      "postgresql://arquitetura:CHANGEME@localhost:5432/arquitetura",
+    );
   });
 
   it("exposes application errors without leaking infrastructure details", () => {

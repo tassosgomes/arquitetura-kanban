@@ -106,6 +106,17 @@ async function createProjectFixture(
   return { userId: user.id, areaId: area.id, projectId: project.id };
 }
 
+async function deleteRealtimeForEntity(prisma: PrismaClient, entityId: string): Promise<void> {
+  await prisma.realtimeEvent.deleteMany({
+    where: {
+      payload: {
+        path: ["entityId"],
+        equals: entityId,
+      },
+    },
+  });
+}
+
 async function deleteFixture(
   prisma: PrismaClient,
   fixture: { userId: string; areaId: string; projectId: string },
@@ -113,6 +124,7 @@ async function deleteFixture(
   await prisma.auditEvent.deleteMany({
     where: { OR: [{ actorUserId: fixture.userId }, { projectId: fixture.projectId }] },
   });
+  await deleteRealtimeForEntity(prisma, fixture.projectId);
   await prisma.project.deleteMany({ where: { id: fixture.projectId } });
   await prisma.area.deleteMany({ where: { id: fixture.areaId } });
   await prisma.user.deleteMany({ where: { id: fixture.userId } });
@@ -173,6 +185,8 @@ describe("runAuditedMutation (postgres)", () => {
       },
     });
     const publishRealtime = vi.fn();
+    const notifyRealtime = vi.fn();
+    let createdId: string | undefined;
 
     try {
       const created = await runAuditedMutation({
@@ -180,6 +194,7 @@ describe("runAuditedMutation (postgres)", () => {
         actor: { id: user.id },
         clock,
         publishRealtime,
+        notifyRealtime,
         load: async () => null,
         mutate: (tx) =>
           tx.project.create({
@@ -204,8 +219,13 @@ describe("runAuditedMutation (postgres)", () => {
         }),
       });
 
+      createdId = created.id;
       expect(created.version).toBe(1);
-      expect(publishRealtime).not.toHaveBeenCalled();
+      expect(publishRealtime).toHaveBeenCalledOnce();
+      expect(notifyRealtime).toHaveBeenCalledOnce();
+      const notifiedIds = notifyRealtime.mock.calls[0]?.[0] as bigint[];
+      expect(notifiedIds).toHaveLength(1);
+      expect(typeof notifiedIds[0]).toBe("bigint");
 
       const events = await prisma.auditEvent.findMany({
         where: { entityId: created.id },
@@ -218,8 +238,21 @@ describe("runAuditedMutation (postgres)", () => {
         snapshot: { name: `T12 created ${suffix}`, status: "PLANNED" },
         fields: { name: { before: null, after: `T12 created ${suffix}` } },
       });
+
+      const realtime = await prisma.realtimeEvent.findMany({
+        where: { id: { in: notifiedIds } },
+      });
+      expect(realtime).toHaveLength(1);
+      expect(realtime[0]?.type).toBe("project.changed");
+      expect(realtime[0]?.payload).toMatchObject({
+        entityKind: "project",
+        entityId: created.id,
+      });
     } finally {
       await prisma.auditEvent.deleteMany({ where: { actorUserId: user.id } });
+      if (createdId) {
+        await deleteRealtimeForEntity(prisma, createdId);
+      }
       await prisma.project.deleteMany({ where: { createdById: user.id } });
       await prisma.area.delete({ where: { id: area.id } });
       await prisma.user.delete({ where: { id: user.id } });
@@ -412,12 +445,15 @@ describe("runAuditedMutation (postgres)", () => {
       where: { id: fixture.projectId },
     });
 
+    const notifyRealtime = vi.fn();
+
     try {
       await expect(
         runAuditedMutation({
           prisma: prismaWithFailingAuditInsert(prisma),
           actor: { id: fixture.userId },
           clock,
+          notifyRealtime,
           expectedVersion: 1,
           versioned: { model: "project", id: fixture.projectId },
           load: (tx) => loadProject(tx, fixture.projectId),
@@ -458,6 +494,17 @@ describe("runAuditedMutation (postgres)", () => {
         where: { entityId: fixture.projectId },
       });
       expect(events).toHaveLength(0);
+      expect(notifyRealtime).not.toHaveBeenCalled();
+
+      const realtime = await prisma.realtimeEvent.findMany({
+        where: {
+          payload: {
+            path: ["entityId"],
+            equals: fixture.projectId,
+          },
+        },
+      });
+      expect(realtime).toHaveLength(0);
     } finally {
       await deleteFixture(prisma, fixture);
     }

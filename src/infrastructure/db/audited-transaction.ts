@@ -8,6 +8,8 @@ import type {
 } from "@/application/audit/types";
 import { ApplicationError, ConflictError, InvariantError, NotFoundError } from "@/domain/errors";
 import { InfrastructureError } from "@/infrastructure/errors";
+import { defaultNotifyRealtime } from "@/infrastructure/realtime/notify";
+import { insertRealtimeEvents } from "@/infrastructure/realtime/persist";
 
 export type AuditedPrismaClient = {
   $transaction: PrismaClient["$transaction"];
@@ -95,23 +97,34 @@ async function insertAuditEvents(
 }
 
 /**
- * Shared transactional mutation: optimistic lock + `AuditEvent` insert.
+ * Shared transactional mutation: optimistic lock + `AuditEvent` + `RealtimeEvent`.
  *
  * ```ts
  * await runAuditedMutation({ actor, expectedVersion, load, mutate, audit })
  * ```
  *
- * `publishRealtime` is part of the contract for T21 and is **not** invoked here.
- * Insert `RealtimeEvent` inside `mutate` when T21 exists; `NOTIFY` only after this
- * function resolves (COMMIT). Do not implement LISTEN/NOTIFY in T12.
+ * `RealtimeEvent` is inserted in the same `$transaction` (type derived from audit
+ * entityKind/action). `NOTIFY realtime` runs only after COMMIT, with the decimal id.
+ * A rolled-back transaction neither leaves a row nor notifies. Duplicate SSE frames
+ * with the same id are tolerated by clients.
  *
  * Application flow never updates or deletes `AuditEvent` — this helper only INSERTs.
  */
 export async function runAuditedMutation<TLoaded, TResult>(
   input: RunAuditedMutationInput<TLoaded, TResult>,
 ): Promise<TResult> {
-  const { actor, expectedVersion, versioned, load, mutate, audit, prisma, clock = systemClock } =
-    input;
+  const {
+    actor,
+    expectedVersion,
+    versioned,
+    load,
+    mutate,
+    audit,
+    prisma,
+    clock = systemClock,
+    publishRealtime,
+    notifyRealtime = defaultNotifyRealtime,
+  } = input;
 
   if ((expectedVersion === undefined) !== (versioned === undefined)) {
     throw new InvariantError("expectedVersion and versioned must be provided together.");
@@ -120,7 +133,7 @@ export async function runAuditedMutation<TLoaded, TResult>(
   const occurredAt = clock.now();
 
   try {
-    return await prisma.$transaction(async (tx) => {
+    const { result, realtimeIds } = await prisma.$transaction(async (tx) => {
       const loaded = await load(tx);
 
       if (versioned && (loaded === null || loaded === undefined)) {
@@ -141,8 +154,25 @@ export async function runAuditedMutation<TLoaded, TResult>(
       }
 
       await insertAuditEvents(tx, actor.id, occurredAt, writes);
-      return result;
+      const realtimeIds = await insertRealtimeEvents(tx, writes);
+      return { result, realtimeIds };
     }, TRANSACTION_OPTIONS);
+
+    try {
+      await notifyRealtime(realtimeIds);
+    } catch (error) {
+      console.error("Realtime NOTIFY failed after commit", error);
+    }
+
+    if (publishRealtime) {
+      try {
+        await publishRealtime({ result, occurredAt });
+      } catch (error) {
+        console.error("publishRealtime hook failed after commit", error);
+      }
+    }
+
+    return result;
   } catch (error) {
     if (error instanceof ApplicationError) {
       throw error;

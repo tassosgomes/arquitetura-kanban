@@ -57,8 +57,9 @@ export type AuditedMutationAuditContext<TLoaded, TResult> = {
  * Contract for T11, T13, T14, T15 and T23.
  * `Tx` is `Prisma.TransactionClient` at the infrastructure boundary.
  *
- * `publishRealtime` is reserved for T21 (NOTIFY after COMMIT). The helper accepts
- * the callback so the call site can be typed, but **does not invoke it**.
+ * T21 persists `RealtimeEvent` in the same transaction (derived from audit writes)
+ * and `NOTIFY`s after COMMIT. `notifyRealtime` overrides the default `pg_notify`.
+ * `publishRealtime` still runs after a successful commit when provided.
  */
 export type AuditedMutationInput<Tx, TLoaded, TResult> = {
   actor: AuditedMutationActor;
@@ -78,8 +79,13 @@ export type AuditedMutationInput<Tx, TLoaded, TResult> = {
     context: AuditedMutationAuditContext<TLoaded, TResult>,
   ) => AuditEventWrite | readonly AuditEventWrite[];
   /**
-   * T21: call `pg_notify` **after** this function returns (COMMIT succeeded).
-   * Persist `RealtimeEvent` inside `mutate` (same transaction). T12 does not call this.
+   * Optional post-commit hook (after `NOTIFY`). The helper persists `RealtimeEvent`
+   * itself from the audit writes — do not insert a second copy in `mutate`.
    */
   publishRealtime?: (committed: { result: TResult; occurredAt: Date }) => Promise<void>;
+  /**
+   * `pg_notify('realtime', id)` after COMMIT. Inject in tests to assert rollback
+   * never publishes. Default uses `DATABASE_URL`.
+   */
+  notifyRealtime?: (ids: readonly bigint[]) => Promise<void>;
 };

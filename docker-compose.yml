@@ -36,6 +36,7 @@ services:
       APP_URL: ${APP_URL:-http://localhost:3000}
       APP_TIME_ZONE: ${APP_TIME_ZONE:-America/Sao_Paulo}
       DATABASE_URL: postgresql://${POSTGRES_USER:-arquitetura}:${POSTGRES_PASSWORD:-CHANGEME}@postgres:5432/${POSTGRES_DB:-arquitetura}
+      DATABASE_URL_LISTEN: postgresql://${POSTGRES_USER:-arquitetura}:${POSTGRES_PASSWORD:-CHANGEME}@postgres:5432/${POSTGRES_DB:-arquitetura}
       NEXT_TELEMETRY_DISABLED: "1"
     depends_on:
       postgres:

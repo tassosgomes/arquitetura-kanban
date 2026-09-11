@@ -17,6 +17,17 @@ export const envSchema = z.object({
       (value) => value.startsWith("postgres://") || value.startsWith("postgresql://"),
       "DATABASE_URL must be a PostgreSQL connection string",
     ),
+  DATABASE_URL_LISTEN: z.preprocess(
+    (value) => (value === "" || value === undefined ? undefined : value),
+    z
+      .string()
+      .min(1)
+      .refine(
+        (value) => value.startsWith("postgres://") || value.startsWith("postgresql://"),
+        "DATABASE_URL_LISTEN must be a PostgreSQL connection string",
+      )
+      .optional(),
+  ),
   OIDC_ISSUER: z.url(),
   OIDC_CLIENT_ID: z.string().min(1),
   OIDC_CLIENT_SECRET: z.string().min(1),

@@ -32,7 +32,8 @@ await runAuditedMutation({
   load,
   mutate,
   audit,
-  publishRealtime,    // opcional; T12 NÃO chama (T21)
+  publishRealtime,    // opcional; T21 chama após COMMIT (depois do NOTIFY)
+  notifyRealtime,     // opcional; default pg_notify('realtime', id)
   clock,              // opcional; default systemClock
 })
 ```
@@ -165,26 +166,18 @@ valor := último.snapshot[campo] ?? último.fields[campo].after
 
 ---
 
-## 3. Realtime (T21 — ponto de extensão **após** o COMMIT)
+## 3. Realtime (T21 — persistir na transação, NOTIFY após COMMIT)
 
-`RealtimeEvent` **não** é `AuditEvent` ([realtime.md](realtime.md) §2). T21 grava o sinal de invalidação na **mesma** transação:
+`RealtimeEvent` **não** é `AuditEvent` ([realtime.md](realtime.md) §2). T21 grava o sinal de invalidação na **mesma** transação, a partir dos writes de auditoria (`entityKind` + `action`):
 
-1. Dentro de `mutate` (ou de um passo futuro no helper): `INSERT RealtimeEvent`.
+1. Depois do INSERT de `AuditEvent`, o helper faz INSERT de `RealtimeEvent` (payload mínimo; sem copiar `changes`).
 2. `runAuditedMutation` retorna ⇒ COMMIT já ocorreu.
-3. Só então `pg_notify('realtime', id)`. **Não** NOTIFY de dentro da transação neste desenho.
+3. Só então `pg_notify('realtime', id)` com o id decimal. **Não** NOTIFY de dentro da transação.
+4. O parâmetro `notifyRealtime` substitui o `NOTIFY` nos testes. `publishRealtime`, se passado, corre depois do commit.
 
-O parâmetro `publishRealtime?` existe no tipo para T11+ já declararem o gancho. **T12 não chama o callback** (não há hub, não há LISTEN/NOTIFY). Quando T21 ligar o aviso:
+Rollback não deixa `RealtimeEvent` nem `AuditEvent` e não notifica. Duplicatas no cliente (mesmo `id` duas vezes) são toleradas.
 
-```ts
-const result = await runAuditedMutation({ …, mutate: async (tx, loaded) => {
-  const updated = await /* … */
-  await tx.realtimeEvent.create({ data: { type: "project.changed", payload: { … } } })
-  return updated
-}})
-await publishRealtimeAfterCommit(result) // T21
-```
-
-Rollback não deixa `RealtimeEvent` nem `AuditEvent`. Não copiar o JSON de auditoria para o payload realtime.
+Tipos emitidos: `activity.created` / `updated` / `status_changed` / `checklist_changed`, `project.changed`, `catalog.changed`, `value_delivery.changed`.
 
 ---
 
@@ -274,4 +267,4 @@ Helpers: `CATALOG_AUDIT_FIELDS`, `catalogAuditSnapshot`.
 - Edição com versão antiga → `ConflictError`, dados intactos.
 - Duas edições simultâneas no mesmo `Project`: uma commita, a outra `ConflictError`; só os `AuditEvent` da vencedora.
 - Falha simulada no insert de `AuditEvent` reverte a mutação (0 eventos, `version` inalterada).
-- Eventos imutáveis no fluxo da app; `publishRealtime` não é chamado; sem LISTEN/NOTIFY.
+- Eventos imutáveis no fluxo da app. T21: `RealtimeEvent` na mesma transação; `NOTIFY` só após commit.
