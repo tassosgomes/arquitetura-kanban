@@ -8,7 +8,7 @@
 | [homologation.md](homologation.md) | T10 | Escrito | Vercel, PostgreSQL de homologação, GitHub Actions, migrations no build, callbacks Logto, SSE degradado, recuperação de deploy. **Deploy real pendente de contas.** |
 | [production.md](production.md) | T29 | Escrito | Kubernetes, registry, DNS/TLS, ingress/SSE, secrets, Postgres gerenciado, CyberArk (via [oidc.md](oidc.md)), pipeline, Job de migrate (não o modelo Vercel), CronJob de 7 dias, observabilidade, rollout/rollback. **Cluster e login CyberArk não validados.** |
 | [backup-restore.md](backup-restore.md) | T29 | Escrito | Responsabilidade da infra, o que não apagar (`audit_events`), procedimento e exercício de restore. **Restore real não executado.** |
-| [adoption.md](adoption.md) | T30 | Pendente | Mapeamento da planilha, carga assistida, limites do histórico, roteiro dos cinco usuários |
+| [adoption.md](adoption.md) | T30 | Escrito | Mapeamento da planilha → sistema, preparação, carga assistida na UI, limites do histórico, roteiro dos cinco usuários, checklist de virada. **Homologação com pessoas reais e planilha pendentes do responsável.** Sem importador. |
 
 Contrato normativo de identidade (T03), usado por T06/T07/T09/T13: [identity.md](../identity.md).
 
