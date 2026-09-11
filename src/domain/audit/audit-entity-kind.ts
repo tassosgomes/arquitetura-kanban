@@ -20,6 +20,7 @@ export const AuditAction = {
   status_changed: "status_changed",
   field_changed: "field_changed",
   cancelled: "cancelled",
+  deactivated: "deactivated",
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

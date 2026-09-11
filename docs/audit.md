@@ -250,11 +250,22 @@ Erros: `ConflictError` (409 na borda), `NotFoundError`, `InvariantError`. Falha 
 
 ---
 
-## 5. T09: envolver CreateArea / CreateDomain / rename / deactivate quando estável
+## 5. T09: wrap feito (Area / Domain)
 
-Os commands em `src/application/catalogs/commands/` (`createArea`, `renameArea`, `deactivateArea`, `createDomain`, `renameDomain`, `deactivateDomain`) já existem **sem** `runAuditedMutation` (comentários “T12: wrap with audited transaction”). **Não** foram reescritos nesta task para não colidir com a T09 em paralelo.
+Os commands `createArea`, `renameArea`, `deactivateArea`, `createDomain`, `renameDomain` e `deactivateDomain` passam por `runCatalogAudited` → `runAuditedMutation`. **Sem** `expectedVersion` / `versioned` (cadastros não têm `version`).
 
-Quando o catálogo estiver estável, o orquestrador deve envolvê-los: `entityKind: Area | Domain`, `action: created | field_changed`, `changes` com `name` / `isActive` (áreas e domínios **não** têm `version`; o predicado de versão não se aplica). Usuários (`isActive`) seguem o mesmo INSERT de auditoria quando a T09/T07 mutar cadastro.
+A unicidade ativa (`assertUniqueActiveName` + UNIQUE parcial) corre **dentro** da mesma transação (`load` no `tx`). `P2002` continua mapeado para `ValidationError`.
+
+| Fluxo | `entityKind` | `action` | `changes` |
+| --- | --- | --- | --- |
+| criar | `Area` / `Domain` | `created` | `snapshot` + `fields` de `name` e `isActive` |
+| renomear | `Area` / `Domain` | `field_changed` | `name` (e `isActive` inalterado) |
+| inativar | `Area` / `Domain` | `deactivated` | `isActive` `true` → `false` |
+| inativar já inativo | — | — | no-op; sem evento |
+
+Inativar usuário (`User.isActive`) continua fora deste wrap (T07/T09 listagem).
+
+Helpers: `CATALOG_AUDIT_FIELDS`, `catalogAuditSnapshot`.
 
 ---
 

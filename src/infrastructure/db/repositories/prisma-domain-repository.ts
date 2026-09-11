@@ -1,5 +1,6 @@
 import type { PrismaClient } from "@/generated/prisma/client";
 import type {
+  CatalogTx,
   CatalogWriteData,
   DomainRepository,
 } from "@/application/ports/catalog-repositories";
@@ -17,17 +18,21 @@ const select = {
   updatedAt: true,
 };
 
+function client(prisma: PrismaClient, tx?: CatalogTx) {
+  return tx ?? prisma;
+}
+
 export function createPrismaDomainRepository(prisma: PrismaClient): DomainRepository {
   return {
-    findById(id) {
-      return prisma.architectureDomain
-        .findUnique({ where: { id }, select })
+    findById(id, tx) {
+      return client(prisma, tx)
+        .architectureDomain.findUnique({ where: { id }, select })
         .then((row) => (row ? mapCatalogItem(row) : null));
     },
 
-    findActiveByNameNormalized(nameNormalized) {
-      return prisma.architectureDomain
-        .findFirst({
+    findActiveByNameNormalized(nameNormalized, tx) {
+      return client(prisma, tx)
+        .architectureDomain.findFirst({
           where: { nameNormalized, isActive: true },
           select,
         })
@@ -44,21 +49,21 @@ export function createPrismaDomainRepository(prisma: PrismaClient): DomainReposi
         .then((rows) => rows.map(mapCatalogItem));
     },
 
-    create(data: CatalogWriteData) {
-      return prisma.architectureDomain
-        .create({ data, select })
+    create(data: CatalogWriteData, tx) {
+      return client(prisma, tx)
+        .architectureDomain.create({ data, select })
         .then(mapCatalogItem);
     },
 
-    updateName(id, data: CatalogWriteData) {
-      return prisma.architectureDomain
-        .update({ where: { id }, data, select })
+    updateName(id, data: CatalogWriteData, tx) {
+      return client(prisma, tx)
+        .architectureDomain.update({ where: { id }, data, select })
         .then(mapCatalogItem);
     },
 
-    deactivate(id) {
-      return prisma.architectureDomain
-        .update({ where: { id }, data: { isActive: false }, select })
+    deactivate(id, tx) {
+      return client(prisma, tx)
+        .architectureDomain.update({ where: { id }, data: { isActive: false }, select })
         .then(mapCatalogItem);
     },
   };

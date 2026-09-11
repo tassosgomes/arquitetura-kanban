@@ -17,6 +17,7 @@ import { runAction, type ActionResult } from "@/app/actions/action-result";
 import {
   areaRepository,
   domainRepository,
+  prisma,
   requireActiveUser,
 } from "@/infrastructure/composition";
 
@@ -41,7 +42,7 @@ export async function createAreaAction(input: { name: string }): Promise<ActionR
 
   return runAction(async () => {
     const actor = await requireActiveUser();
-    const item = await createArea(actor, parsed.data, areaRepository);
+    const item = await createArea(actor, parsed.data, areaRepository, prisma);
     revalidateCatalogs();
     return item;
   });
@@ -69,7 +70,7 @@ export async function renameAreaAction(input: {
 
   return runAction(async () => {
     const actor = await requireActiveUser();
-    const item = await renameArea(actor, parsed.data, areaRepository);
+    const item = await renameArea(actor, parsed.data, areaRepository, prisma);
     revalidateCatalogs();
     return item;
   });
@@ -90,7 +91,7 @@ export async function deactivateAreaAction(input: { id: string }): Promise<Actio
 
   return runAction(async () => {
     const actor = await requireActiveUser();
-    const item = await deactivateArea(actor, parsed.data, areaRepository);
+    const item = await deactivateArea(actor, parsed.data, areaRepository, prisma);
     revalidateCatalogs();
     return item;
   });
@@ -111,7 +112,7 @@ export async function createDomainAction(input: { name: string }): Promise<Actio
 
   return runAction(async () => {
     const actor = await requireActiveUser();
-    const item = await createDomain(actor, parsed.data, domainRepository);
+    const item = await createDomain(actor, parsed.data, domainRepository, prisma);
     revalidateCatalogs();
     return item;
   });
@@ -139,7 +140,7 @@ export async function renameDomainAction(input: {
 
   return runAction(async () => {
     const actor = await requireActiveUser();
-    const item = await renameDomain(actor, parsed.data, domainRepository);
+    const item = await renameDomain(actor, parsed.data, domainRepository, prisma);
     revalidateCatalogs();
     return item;
   });
@@ -162,7 +163,7 @@ export async function deactivateDomainAction(input: {
 
   return runAction(async () => {
     const actor = await requireActiveUser();
-    const item = await deactivateDomain(actor, parsed.data, domainRepository);
+    const item = await deactivateDomain(actor, parsed.data, domainRepository, prisma);
     revalidateCatalogs();
     return item;
   });

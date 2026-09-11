@@ -5,7 +5,16 @@ import {
   assertUniqueActiveName,
   normalizedCatalogName,
 } from "@/application/catalogs/assert-unique-active-name";
-import { mapPrismaCatalogError } from "@/application/catalogs/map-prisma-catalog-error";
+import { runCatalogAudited } from "@/application/catalogs/run-catalog-audited";
+import type { AuditedPrismaClient } from "@/infrastructure/db/audited-transaction";
+import {
+  AuditAction,
+  AuditEntityKind,
+  buildCreatedChanges,
+  buildUpdatedChanges,
+  CATALOG_AUDIT_FIELDS,
+  catalogAuditSnapshot,
+} from "@/application/audit";
 import { NotFoundError } from "@/domain/errors";
 
 export type CreateAreaInput = {
@@ -13,51 +22,68 @@ export type CreateAreaInput = {
 };
 
 export async function createArea(
-  _actor: LocalUser,
+  actor: LocalUser,
   input: CreateAreaInput,
   areas: AreaRepository,
+  prisma: AuditedPrismaClient,
 ): Promise<CatalogItem> {
   const trimmed = input.name.trim();
   const nameNormalized = normalizedCatalogName(trimmed);
 
-  const duplicate = await areas.findActiveByNameNormalized(nameNormalized);
-  assertUniqueActiveName(trimmed, duplicate);
-
-  try {
-    // T12: wrap with audited transaction
-    return await areas.create({ name: trimmed, nameNormalized });
-  } catch (error) {
-    mapPrismaCatalogError(error);
-  }
+  return runCatalogAudited(prisma, actor, {
+    load: async (tx) => {
+      const duplicate = await areas.findActiveByNameNormalized(nameNormalized, tx);
+      assertUniqueActiveName(trimmed, duplicate);
+      return null;
+    },
+    mutate: (tx) => areas.create({ name: trimmed, nameNormalized }, tx),
+    audit: ({ result }) => ({
+      entityKind: AuditEntityKind.Area,
+      entityId: result.id,
+      action: AuditAction.created,
+      changes: buildCreatedChanges(catalogAuditSnapshot(result)),
+    }),
+  });
 }
 
 export async function renameArea(
-  _actor: LocalUser,
+  actor: LocalUser,
   input: { id: string; name: string },
   areas: AreaRepository,
+  prisma: AuditedPrismaClient,
 ): Promise<CatalogItem> {
-  const existing = await areas.findById(input.id);
-  if (!existing) {
-    throw new NotFoundError("Área não encontrada.");
-  }
-
   const trimmed = input.name.trim();
   const nameNormalized = normalizedCatalogName(trimmed);
-  const duplicate = await areas.findActiveByNameNormalized(nameNormalized);
-  assertUniqueActiveName(trimmed, duplicate, input.id);
 
-  try {
-    // T12: wrap with audited transaction
-    return await areas.updateName(input.id, { name: trimmed, nameNormalized });
-  } catch (error) {
-    mapPrismaCatalogError(error);
-  }
+  return runCatalogAudited(prisma, actor, {
+    load: async (tx) => {
+      const existing = await areas.findById(input.id, tx);
+      if (!existing) {
+        throw new NotFoundError("Área não encontrada.");
+      }
+      const duplicate = await areas.findActiveByNameNormalized(nameNormalized, tx);
+      assertUniqueActiveName(trimmed, duplicate, input.id);
+      return existing;
+    },
+    mutate: (tx) => areas.updateName(input.id, { name: trimmed, nameNormalized }, tx),
+    audit: ({ loaded, result }) => ({
+      entityKind: AuditEntityKind.Area,
+      entityId: result.id,
+      action: AuditAction.field_changed,
+      changes: buildUpdatedChanges(
+        catalogAuditSnapshot(loaded),
+        catalogAuditSnapshot(result),
+        CATALOG_AUDIT_FIELDS,
+      ),
+    }),
+  });
 }
 
 export async function deactivateArea(
-  _actor: LocalUser,
+  actor: LocalUser,
   input: { id: string },
   areas: AreaRepository,
+  prisma: AuditedPrismaClient,
 ): Promise<CatalogItem> {
   const existing = await areas.findById(input.id);
   if (!existing) {
@@ -68,6 +94,29 @@ export async function deactivateArea(
     return existing;
   }
 
-  // T12: wrap with audited transaction
-  return areas.deactivate(input.id);
+  return runCatalogAudited(prisma, actor, {
+    load: async (tx) => {
+      const row = await areas.findById(input.id, tx);
+      if (!row) {
+        throw new NotFoundError("Área não encontrada.");
+      }
+      return row;
+    },
+    mutate: async (tx, loaded) => {
+      if (!loaded.isActive) {
+        return loaded;
+      }
+      return areas.deactivate(input.id, tx);
+    },
+    audit: ({ loaded, result }) => ({
+      entityKind: AuditEntityKind.Area,
+      entityId: result.id,
+      action: AuditAction.deactivated,
+      changes: buildUpdatedChanges(
+        catalogAuditSnapshot(loaded),
+        catalogAuditSnapshot(result),
+        CATALOG_AUDIT_FIELDS,
+      ),
+    }),
+  });
 }

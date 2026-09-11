@@ -7,12 +7,15 @@ export {
 } from "@/application/audit/changes";
 export {
   ACTIVITY_PORTRAIT_FIELDS,
+  CATALOG_AUDIT_FIELDS,
+  catalogAuditSnapshot,
   emptyActivityPortrait,
   PROJECT_AUDIT_FIELDS,
   toAuditDate,
   toAuditIdList,
   type ActivityPortrait,
   type ActivityPortraitField,
+  type CatalogAuditField,
   type ProjectAuditField,
 } from "@/application/audit/portrait";
 export type {

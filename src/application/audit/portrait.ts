@@ -42,6 +42,18 @@ export const PROJECT_AUDIT_FIELDS = [
 
 export type ProjectAuditField = (typeof PROJECT_AUDIT_FIELDS)[number];
 
+/** Area / ArchitectureDomain (T09). No `version`. */
+export const CATALOG_AUDIT_FIELDS = ["name", "isActive"] as const;
+
+export type CatalogAuditField = (typeof CATALOG_AUDIT_FIELDS)[number];
+
+export function catalogAuditSnapshot(item: { name: string; isActive: boolean }) {
+  return {
+    name: item.name,
+    isActive: item.isActive,
+  };
+}
+
 /**
  * Calendar DATE → `YYYY-MM-DD`. Prisma `@db.Date` values are midnight UTC for that day.
  * `null` / `undefined` → `null` (effort, optional dates).
