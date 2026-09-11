@@ -2,22 +2,28 @@
 
 import { revalidatePath } from "next/cache";
 import type { ZodError } from "zod";
+import { z } from "zod";
 import {
   cancelProject,
   cancelProjectSchema,
   createProject,
   createProjectSchema,
+  listProjectHistory,
   updateProject,
   updateProjectSchema,
 } from "@/application/projects";
-import type { ProjectRecord } from "@/application/projects";
+import type { ProjectHistoryPage, ProjectRecord } from "@/application/projects";
 import { runAction, type ActionResult } from "@/app/actions/action-result";
 import {
+  activityRepository,
   areaRepository,
+  auditRepository,
   catalogUserRepository,
+  domainRepository,
   prisma,
   projectRepository,
   requireActiveUser,
+  valueDeliveryRepository,
 } from "@/infrastructure/composition";
 
 function projectDeps() {
@@ -29,11 +35,29 @@ function projectDeps() {
   };
 }
 
+function historyDeps() {
+  return {
+    projects: projectRepository,
+    activities: activityRepository,
+    valueDeliveries: valueDeliveryRepository,
+    audit: auditRepository,
+    users: catalogUserRepository,
+    areas: areaRepository,
+    domains: domainRepository,
+  };
+}
+
+const loadProjectHistorySchema = z.object({
+  projectId: z.string().uuid(),
+  beforeSequence: z.string().regex(/^\d+$/).optional(),
+});
+
 function revalidateProject(id?: string) {
   revalidatePath("/projects");
   if (id) {
     revalidatePath(`/projects/${id}`);
     revalidatePath(`/projects/${id}/edit`);
+    revalidatePath(`/projects/${id}/history`);
   }
 }
 
@@ -95,5 +119,19 @@ export async function cancelProjectAction(input: unknown): Promise<ActionResult<
     const project = await cancelProject(actor, parsed.data, projectDeps());
     revalidateProject(project.id);
     return project;
+  });
+}
+
+export async function loadProjectHistoryAction(
+  input: unknown,
+): Promise<ActionResult<ProjectHistoryPage>> {
+  const parsed = loadProjectHistorySchema.safeParse(input);
+  if (!parsed.success) {
+    return zodFailure(parsed.error);
+  }
+
+  return runAction(async () => {
+    const actor = await requireActiveUser();
+    return listProjectHistory(actor, parsed.data, historyDeps());
   });
 }

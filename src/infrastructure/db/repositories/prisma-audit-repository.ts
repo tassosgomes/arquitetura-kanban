@@ -1,4 +1,5 @@
 import type { PrismaClient } from "@/generated/prisma/client";
+import { AuditEntityKind } from "@/domain/audit/audit-entity-kind";
 import type { AuditChanges } from "@/application/audit/types";
 import type { AuditEventRecord, AuditRepository } from "@/application/ports/audit-repository";
 
@@ -58,6 +59,66 @@ export function createPrismaAuditRepository(prisma: PrismaClient): AuditReposito
         events: page.reverse().map(mapRow),
         hasMore,
       };
+    },
+
+    async listForProject({ projectId, limit, beforeSequence }) {
+      const where = {
+        OR: [{ projectId }, { entityKind: AuditEntityKind.Project, entityId: projectId }],
+        ...(beforeSequence != null ? { sequence: { lt: beforeSequence } } : {}),
+      };
+
+      const rows = await prisma.auditEvent.findMany({
+        where,
+        orderBy: [{ sequence: "desc" }],
+        take: limit + 1,
+        select: {
+          id: true,
+          sequence: true,
+          occurredAt: true,
+          actorUserId: true,
+          entityKind: true,
+          entityId: true,
+          action: true,
+          activityId: true,
+          changes: true,
+        },
+      });
+
+      const hasMore = rows.length > limit;
+      const page = hasMore ? rows.slice(0, limit) : rows;
+
+      return {
+        events: page.reverse().map(mapRow),
+        hasMore,
+      };
+    },
+
+    async listForActivities({ activityIds, beforeOccurredAt }) {
+      if (activityIds.length === 0) {
+        return [];
+      }
+
+      const rows = await prisma.auditEvent.findMany({
+        where: {
+          activityId: { in: [...activityIds] },
+          entityKind: AuditEntityKind.Activity,
+          ...(beforeOccurredAt ? { occurredAt: { lt: beforeOccurredAt } } : {}),
+        },
+        orderBy: [{ occurredAt: "asc" }, { sequence: "asc" }],
+        select: {
+          id: true,
+          sequence: true,
+          occurredAt: true,
+          actorUserId: true,
+          entityKind: true,
+          entityId: true,
+          action: true,
+          activityId: true,
+          changes: true,
+        },
+      });
+
+      return rows.map(mapRow);
     },
   };
 }

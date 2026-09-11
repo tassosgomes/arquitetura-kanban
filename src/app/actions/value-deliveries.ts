@@ -30,6 +30,7 @@ function revalidateValueDelivery(delivery: { id: string; projectId: string }) {
   revalidatePath(`/projects/${delivery.projectId}/value-deliveries`);
   revalidatePath(`/projects/${delivery.projectId}/value-deliveries/${delivery.id}`);
   revalidatePath(`/projects/${delivery.projectId}/value-deliveries/${delivery.id}/edit`);
+  revalidatePath(`/projects/${delivery.projectId}/history`);
 }
 
 function zodFailure(error: ZodError): ActionResult<never> {

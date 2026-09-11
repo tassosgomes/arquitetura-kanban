@@ -25,6 +25,26 @@ export type ListActivityAuditEventsResult = {
   hasMore: boolean;
 };
 
+export type ListProjectAuditEventsInput = {
+  projectId: string;
+  limit: number;
+  /** Fetch events with `sequence` strictly less than this cursor (older page). */
+  beforeSequence?: bigint | null;
+};
+
+export type ListProjectAuditEventsResult = {
+  events: AuditEventRecord[];
+  hasMore: boolean;
+};
+
+export type ListActivitiesAuditEventsInput = {
+  activityIds: readonly string[];
+  /** Exclusive upper bound: `occurredAt < beforeOccurredAt` (DE-04). */
+  beforeOccurredAt?: Date;
+};
+
 export interface AuditRepository {
   listForActivity(input: ListActivityAuditEventsInput): Promise<ListActivityAuditEventsResult>;
+  listForProject(input: ListProjectAuditEventsInput): Promise<ListProjectAuditEventsResult>;
+  listForActivities(input: ListActivitiesAuditEventsInput): Promise<AuditEventRecord[]>;
 }

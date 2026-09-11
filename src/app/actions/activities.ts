@@ -73,6 +73,7 @@ function revalidateActivity(activity: { id: string; project: { id: string } | nu
   if (activity.project) {
     revalidatePath(`/projects/${activity.project.id}`);
     revalidatePath(`/projects/${activity.project.id}/activities`);
+    revalidatePath(`/projects/${activity.project.id}/history`);
   }
 }
 

@@ -22,3 +22,10 @@ export { updateProject } from "@/application/projects/commands/update-project";
 export { cancelProject } from "@/application/projects/commands/cancel-project";
 export { listProjects } from "@/application/projects/queries/list-projects";
 export { getProject } from "@/application/projects/queries/get-project";
+export { listProjectHistory } from "@/application/projects/queries/list-project-history";
+export type {
+  ProjectHistoryItem,
+  ProjectHistoryPage,
+  ProjectHistorySourceKind,
+} from "@/application/projects/project-history-types";
+export { PROJECT_HISTORY_PAGE_SIZE } from "@/application/projects/project-history-types";
