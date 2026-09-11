@@ -23,6 +23,22 @@ export {
   type ProjectAuditField,
   type ValueDeliveryAuditField,
 } from "@/application/audit/portrait";
+export {
+  PORTRAIT_ABSENT,
+  areaIdsFromPortrait,
+  asPortraitId,
+  asPortraitIdList,
+  comparePortraitEvents,
+  isPortraitAbsent,
+  isUsableActivityPortrait,
+  parsePortraitEvents,
+  reconstructActivityPortrait,
+  valueAtClosing,
+  type PortraitAbsent,
+  type PortraitFieldValue,
+  type PortraitSourceEvent,
+  type ReconstructedActivityPortrait,
+} from "@/application/audit/reconstruct-portrait";
 export type {
   AuditChanges,
   AuditEventWrite,
