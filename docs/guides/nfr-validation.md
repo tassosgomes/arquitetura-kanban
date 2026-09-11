@@ -188,6 +188,6 @@ O middleware redirecionava **qualquer** path anônimo (exceto `/login` e `/403`)
 | --- | --- | --- |
 | Aplicação Logto DEV (e TEST/homolog) | Login real, reativar `e2e/authenticated-flow.spec.ts`, checklist teclado | [oidc.md](oidc.md) |
 | Projeto Vercel + Postgres de homologação | E2E na URL estável | [homologation.md](homologation.md) |
-| Cinco integrantes disponíveis | Premissa de carga humana e rotina | T30 / [adoption.md](adoption.md) (ainda pendente) |
+| Cinco integrantes disponíveis | Premissa de carga humana e rotina | T30 / [adoption.md](adoption.md) — guia escrito; sessão com pessoas reais **pendente** |
 
 Nenhum secret neste arquivo. Placeholders `CHANGEME` / `<…>` nos outros guias.
