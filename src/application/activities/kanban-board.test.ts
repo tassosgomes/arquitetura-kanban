@@ -2,9 +2,16 @@ import { describe, expect, it } from "vitest";
 import { ActivityStatus, ActivityType, KANBAN_COLUMN_STATUSES } from "@/domain/activity/enums";
 import { ArchitectureRole, Effort, Priority } from "@/domain/catalog/classifications";
 import type { ActivityListItem } from "@/application/activities/types";
+import { changeActivityStatusSchema } from "@/application/activities/schemas";
 import {
+  adjacentKanbanColumnStatus,
+  applyKanbanStatusMove,
   buildKanbanBoard,
   KANBAN_BOARD_SCOPE,
+  kanbanColumnDroppableId,
+  parseKanbanColumnDroppableId,
+  planKanbanStatusMove,
+  resolveKanbanDropStatus,
   toKanbanCard,
 } from "@/application/activities/kanban-board";
 
@@ -16,13 +23,17 @@ function listItem(
     priority: Priority.HIGH,
     effort: Effort.M,
     architectureRole: ArchitectureRole.CONTRIBUTOR,
+    startDate: null,
     expectedEndDate: "2026-09-30",
+    completedDate: null,
+    cancelledDate: null,
     checklistDoneCount: 3,
     checklistTotalCount: 5,
     project: null,
     requestingArea: { id: "area-1", name: "Financeiro", isActive: true },
     owner: { id: "u-1", displayName: "João", email: "joao@ex.com", isActive: true },
     updatedAt: new Date("2026-09-10T12:00:00.000Z"),
+    version: 1,
     ...overrides,
   };
 }
@@ -134,5 +145,76 @@ describe("kanban board (T17 / RN-01–02)", () => {
     expect(card.effortLabel).toBeNull();
     expect(card.checklistLabel).toBeNull();
     expect(card.expectedEndDate).toBeNull();
+  });
+});
+
+describe("kanban movement (T18)", () => {
+  const activityId = "11111111-1111-4111-8111-111111111111";
+
+  it("plans a column move with the list item version for T14", () => {
+    const activities = [
+      listItem({ id: activityId, title: "Mover", status: ActivityStatus.TODO, version: 4 }),
+    ];
+
+    const plan = planKanbanStatusMove(activities, activityId, ActivityStatus.IN_PROGRESS);
+
+    expect(plan).toEqual({
+      id: activityId,
+      version: 4,
+      status: ActivityStatus.IN_PROGRESS,
+    });
+    expect(changeActivityStatusSchema.safeParse(plan).success).toBe(true);
+  });
+
+  it("does not persist ranking when the card stays in the same column", () => {
+    const activities = [
+      listItem({ id: activityId, title: "Mesma coluna", status: ActivityStatus.TODO, version: 2 }),
+    ];
+
+    expect(planKanbanStatusMove(activities, activityId, ActivityStatus.TODO)).toBeNull();
+  });
+
+  it("does not plan a move to Cancelled from the board", () => {
+    const activities = [
+      listItem({ id: activityId, title: "Aberta", status: ActivityStatus.TODO, version: 1 }),
+    ];
+
+    expect(planKanbanStatusMove(activities, activityId, ActivityStatus.CANCELLED)).toBeNull();
+  });
+
+  it("applies an optimistic status change without reordering siblings", () => {
+    const first = listItem({ id: "a", title: "A", status: ActivityStatus.TODO });
+    const second = listItem({ id: "b", title: "B", status: ActivityStatus.TODO });
+    const third = listItem({ id: "c", title: "C", status: ActivityStatus.IN_PROGRESS });
+
+    const moved = applyKanbanStatusMove([first, second, third], "b", ActivityStatus.DONE);
+
+    expect(moved.map((item) => item.id)).toEqual(["a", "b", "c"]);
+    expect(moved[1]?.status).toBe(ActivityStatus.DONE);
+    expect(moved[0]?.status).toBe(ActivityStatus.TODO);
+  });
+
+  it("resolves drop targets from column ids or cards already in a column", () => {
+    const doing = listItem({
+      id: "doing-id",
+      title: "Em andamento",
+      status: ActivityStatus.IN_PROGRESS,
+    });
+
+    expect(parseKanbanColumnDroppableId(kanbanColumnDroppableId(ActivityStatus.BLOCKED))).toBe(
+      ActivityStatus.BLOCKED,
+    );
+    expect(resolveKanbanDropStatus(kanbanColumnDroppableId(ActivityStatus.WAITING), [doing])).toBe(
+      ActivityStatus.WAITING,
+    );
+    expect(resolveKanbanDropStatus(doing.id, [doing])).toBe(ActivityStatus.IN_PROGRESS);
+    expect(resolveKanbanDropStatus("unknown", [doing])).toBeNull();
+  });
+
+  it("moves between adjacent columns with arrow keys", () => {
+    expect(adjacentKanbanColumnStatus(ActivityStatus.TODO, 1)).toBe(ActivityStatus.IN_PROGRESS);
+    expect(adjacentKanbanColumnStatus(ActivityStatus.TODO, -1)).toBe(ActivityStatus.BACKLOG);
+    expect(adjacentKanbanColumnStatus(ActivityStatus.BACKLOG, -1)).toBeNull();
+    expect(adjacentKanbanColumnStatus(ActivityStatus.DONE, 1)).toBeNull();
   });
 });

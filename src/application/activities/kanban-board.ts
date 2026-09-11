@@ -1,5 +1,9 @@
-import { ACTIVITY_STATUS_LABELS, KANBAN_COLUMN_STATUSES } from "@/domain/activity/enums";
-import type { ActivityStatus } from "@/domain/activity/enums";
+import {
+  ACTIVITY_STATUS_LABELS,
+  ActivityStatus,
+  isKanbanColumnStatus,
+  KANBAN_COLUMN_STATUSES,
+} from "@/domain/activity/enums";
 import {
   ARCHITECTURE_ROLE_LABELS,
   EFFORT_LABELS,
@@ -78,4 +82,92 @@ export function buildKanbanBoard(activities: readonly ActivityListItem[]): Kanba
     label: ACTIVITY_STATUS_LABELS[status],
     activities: byStatus.get(status) ?? [],
   }));
+}
+
+/** Prefix for column droppable ids so they never collide with activity UUIDs. */
+export const KANBAN_COLUMN_DROPPABLE_PREFIX = "kanban-column:" as const;
+
+export function kanbanColumnDroppableId(status: ActivityStatus): string {
+  return `${KANBAN_COLUMN_DROPPABLE_PREFIX}${status}`;
+}
+
+export function parseKanbanColumnDroppableId(id: string): KanbanColumnStatus | null {
+  if (!id.startsWith(KANBAN_COLUMN_DROPPABLE_PREFIX)) {
+    return null;
+  }
+  const status = id.slice(KANBAN_COLUMN_DROPPABLE_PREFIX.length);
+  return isKanbanColumnStatus(status as ActivityStatus) ? (status as KanbanColumnStatus) : null;
+}
+
+/**
+ * Drop target is a column, or a card already in a column (pointer over a sibling).
+ * Cancelled / unknown ids are not valid destinations.
+ */
+export function resolveKanbanDropStatus(
+  overId: string | number | null | undefined,
+  activities: readonly ActivityListItem[],
+): KanbanColumnStatus | null {
+  if (overId == null) {
+    return null;
+  }
+  const id = String(overId);
+  const fromColumn = parseKanbanColumnDroppableId(id);
+  if (fromColumn) {
+    return fromColumn;
+  }
+  const activity = activities.find((item) => item.id === id);
+  if (!activity || !isKanbanColumnStatus(activity.status)) {
+    return null;
+  }
+  return activity.status;
+}
+
+export function adjacentKanbanColumnStatus(
+  current: ActivityStatus,
+  direction: -1 | 1,
+): KanbanColumnStatus | null {
+  const index = KANBAN_COLUMN_STATUSES.indexOf(current as KanbanColumnStatus);
+  if (index < 0) {
+    return null;
+  }
+  return KANBAN_COLUMN_STATUSES[index + direction] ?? null;
+}
+
+/** Payload for `changeActivityStatus` (T14). Same-column is a no-op: no ranking (PRD). */
+export type KanbanStatusMove = {
+  id: string;
+  version: number;
+  status: KanbanColumnStatus;
+};
+
+export function planKanbanStatusMove(
+  activities: readonly ActivityListItem[],
+  activityId: string,
+  toStatus: ActivityStatus,
+): KanbanStatusMove | null {
+  const activity = activities.find((item) => item.id === activityId);
+  if (!activity) {
+    return null;
+  }
+  if (!isKanbanColumnStatus(toStatus)) {
+    return null;
+  }
+  if (activity.status === toStatus) {
+    return null;
+  }
+  if (activity.status === ActivityStatus.CANCELLED) {
+    return null;
+  }
+  return { id: activity.id, version: activity.version, status: toStatus };
+}
+
+/** Optimistic board update. Does not reorder siblings in the source list. */
+export function applyKanbanStatusMove(
+  activities: readonly ActivityListItem[],
+  activityId: string,
+  toStatus: ActivityStatus,
+): ActivityListItem[] {
+  return activities.map((activity) =>
+    activity.id === activityId ? { ...activity, status: toStatus } : activity,
+  );
 }
