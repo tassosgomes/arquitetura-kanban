@@ -43,6 +43,7 @@ type ActivityFormProps = {
   projects: ActivityProjectOption[];
   initial: ActivityFormValues;
   cancelHref: string;
+  defaultOwnerId?: string;
 };
 
 type FormState = ActionResult<ActivityRecord> | null;
@@ -57,7 +58,6 @@ function fieldError(state: FormState, field: string): string | undefined {
 function applyPrefill(
   option: ActivityProjectOption | undefined,
   setters: {
-    setOwnerId: (value: string) => void;
     setParticipantIds: (value: string[]) => void;
     setNature: (value: string) => void;
     setArchitectureRole: (value: string) => void;
@@ -67,7 +67,6 @@ function applyPrefill(
   if (!option) {
     return;
   }
-  setters.setOwnerId(option.defaults.ownerId);
   setters.setParticipantIds(option.defaults.participantIds);
   setters.setNature(option.defaults.nature);
   setters.setArchitectureRole(option.defaults.architectureRole);
@@ -83,12 +82,14 @@ export function ActivityForm({
   projects,
   initial,
   cancelHref,
+  defaultOwnerId,
 }: ActivityFormProps) {
   const router = useRouter();
   const { formProps } = useMarkFormDirty();
   const [type, setType] = useState(initial.type);
   const [projectId, setProjectId] = useState(initial.projectId);
   const [ownerId, setOwnerId] = useState(initial.ownerId);
+  const [ownerWasEdited, setOwnerWasEdited] = useState(false);
   const [participantIds, setParticipantIds] = useState(initial.participantIds);
   const [nature, setNature] = useState(initial.nature);
   const [architectureRole, setArchitectureRole] = useState(initial.architectureRole);
@@ -176,8 +177,10 @@ export function ActivityForm({
   function onProjectChange(nextId: string) {
     setProjectId(nextId);
     if (mode === "create") {
+      if (nextId && !ownerWasEdited && !ownerId && defaultOwnerId) {
+        setOwnerId(defaultOwnerId);
+      }
       applyPrefill(projects.find((project) => project.id === nextId), {
-        setOwnerId,
         setParticipantIds,
         setNature,
         setArchitectureRole,
@@ -440,7 +443,10 @@ export function ActivityForm({
           name="ownerId"
           required
           value={ownerId}
-          onChange={(event) => setOwnerId(event.target.value)}
+          onChange={(event) => {
+            setOwnerWasEdited(true);
+            setOwnerId(event.target.value);
+          }}
           className={CONTROL_CLASS_NAME}
         >
           <option value="">Selecione um responsável</option>

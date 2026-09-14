@@ -790,21 +790,20 @@ intervaloAtual: [2026-08-20, 2026-09-10]
 id: FX-16
 projeto p-erp:
   areaResponsavel: ar-fin
-  responsavelArquitetura: u-ana
   participantes: [u-carlos]
   natureza: Estratégico
   papel: Contribuidor
 acao: criar atividade tipo Projeto vinculada a p-erp, usuário não altera prefill
 esperadoNaCriacao:
-  responsavel: u-ana
+  responsavel: usuarioCriador
   participantes: [u-carlos]
   natureza: Estratégica
   papel: Contribuidor
   areaSolicitante: ar-fin
   dominio: (não herdado — obrigatório informar)
 depois:
-  alterar projeto.responsavelArquitetura para u-carlos
-  atividade.responsavel permanece u-ana
+  alterar projeto.participantes para [u-ana]
+  atividade.responsavel permanece usuarioCriador
 ```
 
 ---

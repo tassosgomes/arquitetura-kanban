@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { EmptyState } from "@/ui/feedback/EmptyState";
 import { ProjectStatusBadge } from "@/ui/projects/ProjectStatusBadge";
-import { formatUserLabel } from "@/ui/projects/project-types";
 import type { ProjectListItem } from "@/application/projects";
 import { canEditProject } from "@/domain/project/project-status";
+import { ARCHITECTURE_GROUP_LABEL } from "@/domain/catalog/architecture-group";
 
 type ProjectListProps = {
   projects: ProjectListItem[];
@@ -17,7 +17,7 @@ export function ProjectList({ projects, filter }: ProjectListProps) {
     const emptyMessage =
       filter === "cancelled"
         ? "Projetos cancelados permanecem visíveis para consulta e não são excluídos."
-        : "Cadastre projetos com área, responsáveis, participantes e datas para vincular atividades de arquitetura.";
+        : "Cadastre projetos com área, grupo Arquitetura, participantes e datas para vincular atividades de arquitetura.";
 
     return (
       <EmptyState
@@ -79,8 +79,7 @@ export function ProjectList({ projects, filter }: ProjectListProps) {
                 {project.responsibleArea.isActive ? null : " (inativa)"}
               </td>
               <td className="px-4 py-3 text-on-surface-variant">
-                {formatUserLabel(project.architectureOwner)}
-                {project.architectureOwner.isActive ? null : " (inativo)"}
+                {ARCHITECTURE_GROUP_LABEL}
               </td>
               <td className="px-4 py-3">
                 <div className="flex flex-wrap gap-1">

@@ -146,7 +146,6 @@ describe("activity services (postgres)", () => {
 
   function projectInput(
     areaId: string,
-    ownerId: string,
     name: string,
     overrides: Partial<CreateProjectInput> = {},
   ): CreateProjectInput {
@@ -155,7 +154,6 @@ describe("activity services (postgres)", () => {
       description: null,
       responsibleAreaId: areaId,
       externalResponsible: null,
-      architectureOwnerId: ownerId,
       participantIds: [],
       architectureRole: ArchitectureRole.RESPONSIBLE,
       nature: Nature.STRATEGIC,
@@ -219,7 +217,7 @@ describe("activity services (postgres)", () => {
 
     const project = await createProject(
       actor,
-      projectInput(area.id, owner.id, `T13 Projeto ${suffix}`, {
+      projectInput(area.id, `T13 Projeto ${suffix}`, {
         participantIds: [participant.id],
         nature: Nature.OPERATIONAL,
         architectureRole: ArchitectureRole.CONTRIBUTOR,
@@ -234,6 +232,7 @@ describe("activity services (postgres)", () => {
         ...adHocInput(area.id, domain.id, owner.id, `T13 Vinculada ${suffix}`),
         type: ActivityType.PROJECT,
         projectId: project.id,
+        ownerId: undefined,
       },
       deps(),
     );
@@ -241,7 +240,7 @@ describe("activity services (postgres)", () => {
 
     expect(linked.type).toBe(ActivityType.PROJECT);
     expect(linked.project?.id).toBe(project.id);
-    expect(linked.owner.id).toBe(owner.id);
+    expect(linked.owner.id).toBe(actor.id);
   });
 
   it("rejects tipo Projeto without projectId", async ({ skip }) => {
@@ -273,7 +272,7 @@ describe("activity services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, domain, owner, participant } = await fixtures(suffix);
+    const { area, domain, participant } = await fixtures(suffix);
     const otherArea = await prisma.area.create({
       data: {
         name: `T13 Área alt ${suffix}`,
@@ -293,7 +292,7 @@ describe("activity services (postgres)", () => {
 
     const project = await createProject(
       actor,
-      projectInput(area.id, owner.id, `T13 Herança ${suffix}`, {
+      projectInput(area.id, `T13 Herança ${suffix}`, {
         participantIds: [participant.id],
         nature: Nature.OPERATIONAL,
         architectureRole: ArchitectureRole.CONTRIBUTOR,
@@ -305,7 +304,6 @@ describe("activity services (postgres)", () => {
     const defaults = await getProjectDefaults(actor, project.id, deps().projects);
     expect(defaults).toMatchObject({
       projectId: project.id,
-      ownerId: owner.id,
       participantIds: [participant.id],
       nature: Nature.OPERATIONAL,
       architectureRole: ArchitectureRole.CONTRIBUTOR,
@@ -338,7 +336,7 @@ describe("activity services (postgres)", () => {
     );
     activityIds.push(inherited.id);
 
-    expect(inherited.owner.id).toBe(owner.id);
+    expect(inherited.owner.id).toBe(actor.id);
     expect(inherited.participants.map((item) => item.id)).toEqual([participant.id]);
     expect(inherited.nature).toBe(Nature.OPERATIONAL);
     expect(inherited.architectureRole).toBe(ArchitectureRole.CONTRIBUTOR);
@@ -616,7 +614,7 @@ describe("activity services (postgres)", () => {
     const { area, domain, owner } = await fixtures(suffix);
     const project = await createProject(
       actor,
-      projectInput(area.id, owner.id, `T17 Projeto ${suffix}`),
+      projectInput(area.id, `T17 Projeto ${suffix}`),
       deps(),
     );
     projectIds.push(project.id);

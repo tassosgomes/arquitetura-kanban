@@ -13,7 +13,6 @@ export function toProjectAudit(
   return {
     name: project.name,
     status: project.status,
-    architectureOwnerId: project.architectureOwner.id,
     responsibleAreaId: project.responsibleArea.id,
     nature: project.nature,
     architectureRole: project.architectureRole,

@@ -31,7 +31,6 @@ export type ActivityPortrait = Record<ActivityPortraitField, AuditJsonValue>;
 export const PROJECT_AUDIT_FIELDS = [
   "name",
   "status",
-  "architectureOwnerId",
   "responsibleAreaId",
   "nature",
   "architectureRole",

@@ -191,7 +191,6 @@ describe("listProjectHistory (postgres)", () => {
         description: null,
         responsibleAreaId: area.id,
         externalResponsible: null,
-        architectureOwnerId: owner.id,
         participantIds: [],
         architectureRole: ArchitectureRole.RESPONSIBLE,
         nature: Nature.STRATEGIC,

@@ -13,9 +13,6 @@ import { fromPrismaDate, toPrismaDate } from "@/infrastructure/calendar";
 
 const projectInclude = {
   responsibleArea: { select: { id: true, name: true, isActive: true } },
-  architectureOwner: {
-    select: { id: true, displayName: true, email: true, isActive: true },
-  },
   participants: {
     include: {
       user: { select: { id: true, displayName: true, email: true, isActive: true } },
@@ -68,7 +65,6 @@ function mapProjectRecord(row: ProjectRow): ProjectRecord {
       name: row.responsibleArea.name,
       isActive: row.responsibleArea.isActive,
     },
-    architectureOwner: mapUser(row.architectureOwner),
     participants: mapParticipants(row),
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
@@ -83,12 +79,6 @@ function mapListItem(row: {
   status: ProjectRow["status"];
   updatedAt: Date;
   responsibleArea: { id: string; name: string; isActive: boolean };
-  architectureOwner: {
-    id: string;
-    displayName: string | null;
-    email: string | null;
-    isActive: boolean;
-  };
 }): ProjectListItem {
   return {
     id: row.id,
@@ -96,7 +86,6 @@ function mapListItem(row: {
     status: row.status as ProjectStatus,
     updatedAt: row.updatedAt,
     responsibleArea: row.responsibleArea,
-    architectureOwner: mapUser(row.architectureOwner),
   };
 }
 
@@ -118,7 +107,6 @@ function scalarWrite(data: ProjectWriteData, actorId: string) {
     description: data.description,
     responsibleAreaId: data.responsibleAreaId,
     externalResponsible: data.externalResponsible,
-    architectureOwnerId: data.architectureOwnerId,
     nature: data.nature,
     architectureRole: data.architectureRole,
     startDate: toPrismaDate(data.startDate),
@@ -155,9 +143,6 @@ export function createPrismaProjectRepository(prisma: PrismaClient): ProjectRepo
             status: true,
             updatedAt: true,
             responsibleArea: { select: { id: true, name: true, isActive: true } },
-            architectureOwner: {
-              select: { id: true, displayName: true, email: true, isActive: true },
-            },
           },
           orderBy: [{ updatedAt: "desc" }, { name: "asc" }],
         })
@@ -215,7 +200,6 @@ export function createPrismaProjectRepository(prisma: PrismaClient): ProjectRepo
             nature: true,
             architectureRole: true,
             responsibleAreaId: true,
-            architectureOwnerId: true,
             participants: { select: { userId: true } },
           },
           orderBy: { name: "asc" },
@@ -227,7 +211,6 @@ export function createPrismaProjectRepository(prisma: PrismaClient): ProjectRepo
             nature: row.nature as Nature,
             architectureRole: row.architectureRole as ArchitectureRole,
             responsibleAreaId: row.responsibleAreaId,
-            architectureOwnerId: row.architectureOwnerId,
             participantIds: row.participants.map((participant) => participant.userId),
           })),
         );

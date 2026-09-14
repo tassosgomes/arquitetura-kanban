@@ -40,27 +40,6 @@ export async function assertUsableArea(
   });
 }
 
-export async function assertActiveOwner(
-  ownerId: string,
-  users: CatalogUserRepository,
-  tx: CatalogTx,
-): Promise<void> {
-  const user = await users.findById(ownerId, tx);
-  if (!user) {
-    throw new ValidationError("Responsável de Arquitetura inválido.", {
-      architectureOwnerId: ["Selecione um responsável válido."],
-    });
-  }
-  if (user.isActive) {
-    return;
-  }
-  throw new ValidationError("O responsável de Arquitetura precisa estar ativo.", {
-    architectureOwnerId: [
-      "O responsável atual está inativo. Reatribua para um usuário ativo para salvar.",
-    ],
-  });
-}
-
 export async function assertParticipants(
   participantIds: readonly string[],
   users: CatalogUserRepository,

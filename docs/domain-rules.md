@@ -548,7 +548,7 @@ Ao **criar** atividade com `tipo = Projeto` e `projetoId` selecionado, o formul�
 
 | Campo da atividade | Origem no projeto |
 | --- | --- |
-| Responsável | Responsável de Arquitetura do projeto |
+| Responsável | Usuário criador da atividade (fallback individual, não vem do projeto) |
 | Participantes | Participantes do projeto |
 | Natureza | Natureza do projeto (Estratégico/Operacional ≡ Estratégica/Operacional) |
 | Papel da Arquitetura | Papel da Arquitetura no projeto (Responsável / Contribuidor) |
@@ -558,9 +558,9 @@ Regras:
 
 1. O usuário pode alterar qualquer valor sugerido antes e depois de salvar.
 2. Mudanças **posteriores** no projeto **não** sincronizam atividades já criadas (RN-13).
-3. Trocar o projeto no rascunho **ainda não salvo** recalcula o prefill; após persistida, trocar o projeto **não** reaplica herança (conservador: evita sobrescrever edição humana).
+3. Trocar o projeto no rascunho **ainda não salvo** recalcula participantes, natureza, papel e área solicitante; o responsável individual não é sobrescrito. Após persistida, trocar o projeto **não** reaplica herança (conservador: evita sobrescrever edição humana).
 4. Atividade ad hoc: sem herança.
-5. Não herdar: título, descrição, domínio, prioridade, esforço, áreas envolvidas, datas, tarefas, observações.
+5. Não herdar: responsável do projeto, título, descrição, domínio, prioridade, esforço, áreas envolvidas, datas, tarefas, observações.
 6. Status da atividade **não** deriva do status do projeto (RN-11). Status do projeto não muda por atividades.
 
 ---

@@ -22,7 +22,6 @@ type NewActivityPageProps = {
 function snapshotToOption(snapshot: {
   id: string;
   name: string;
-  architectureOwnerId: string;
   participantIds: string[];
   nature: Nature;
   architectureRole: ArchitectureRole;
@@ -33,7 +32,6 @@ function snapshotToOption(snapshot: {
     name: snapshot.name,
     defaults: {
       projectId: snapshot.id,
-      ownerId: snapshot.architectureOwnerId,
       participantIds: snapshot.participantIds,
       nature: snapshot.nature,
       architectureRole: snapshot.architectureRole,
@@ -106,7 +104,7 @@ export default async function NewActivityPage({ searchParams }: NewActivityPageP
     domainId: "",
     nature: defaults?.nature ?? "",
     architectureRole: defaults?.architectureRole ?? "",
-    ownerId: defaults?.ownerId ?? "",
+    ownerId: initialProjectId ? actor.id : "",
     participantIds: defaults?.participantIds ?? [],
     involvedAreaIds: [],
     priority: Priority.MEDIUM,
@@ -143,6 +141,7 @@ export default async function NewActivityPage({ searchParams }: NewActivityPageP
         users={users}
         projects={projects}
         cancelHref={initialProjectId ? `/projects/${initialProjectId}/activities` : "/kanban"}
+        defaultOwnerId={actor.id}
         initial={initial}
       />
     </div>

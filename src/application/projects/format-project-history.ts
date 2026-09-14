@@ -27,7 +27,6 @@ function formatCivilDatePtBr(value: string): string {
 const PROJECT_FIELD_LABELS: Record<string, string> = {
   name: "Nome",
   status: "Status",
-  architectureOwnerId: "Responsável Arquitetura",
   responsibleAreaId: "Área responsável",
   nature: "Natureza",
   architectureRole: "Papel da Arquitetura",
@@ -127,7 +126,6 @@ function formatProjectFieldValue(
     case "expectedEndDate":
     case "referenceDate":
       return formatDate(value);
-    case "architectureOwnerId":
     case "authorId":
       return formatId(value, (id) => resolve.users.get(id) ?? INACTIVE_RECORD_LABEL);
     case "responsibleAreaId":
@@ -337,11 +335,6 @@ export function collectProjectHistoryReferenceIds(events: readonly AuditEventRec
         }
         for (const value of [change.before, change.after]) {
           switch (key) {
-            case "architectureOwnerId":
-              if (typeof value === "string") {
-                merged.userIds.add(value);
-              }
-              break;
             case "participantIds":
               for (const id of asStringList(value)) {
                 merged.userIds.add(id);
@@ -360,11 +353,6 @@ export function collectProjectHistoryReferenceIds(events: readonly AuditEventRec
       if (event.changes.snapshot) {
         for (const [key, value] of Object.entries(event.changes.snapshot)) {
           switch (key) {
-            case "architectureOwnerId":
-              if (typeof value === "string") {
-                merged.userIds.add(value);
-              }
-              break;
             case "participantIds":
               for (const id of asStringList(value)) {
                 merged.userIds.add(id);

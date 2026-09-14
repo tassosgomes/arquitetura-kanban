@@ -139,7 +139,6 @@ export type ActivityWriteData = {
 
 export type ActivityProjectDefaults = {
   projectId: string;
-  ownerId: string;
   participantIds: string[];
   nature: Nature;
   architectureRole: ArchitectureRole;

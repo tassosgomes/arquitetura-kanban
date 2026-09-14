@@ -13,7 +13,6 @@ import {
 import type { CreateProjectInput } from "@/application/projects/schemas";
 import type { ProjectRecord, ProjectWriteData } from "@/application/projects/types";
 import {
-  assertActiveOwner,
   assertParticipants,
   assertUniqueActiveProjectName,
   assertUsableArea,
@@ -33,7 +32,6 @@ export function toWriteData(input: {
   description: string | null;
   responsibleAreaId: string;
   externalResponsible: string | null;
-  architectureOwnerId: string;
   participantIds: string[];
   architectureRole: ProjectWriteData["architectureRole"];
   nature: ProjectWriteData["nature"];
@@ -48,7 +46,6 @@ export function toWriteData(input: {
     description: input.description,
     responsibleAreaId: input.responsibleAreaId,
     externalResponsible: input.externalResponsible,
-    architectureOwnerId: input.architectureOwnerId,
     nature: input.nature,
     architectureRole: input.architectureRole,
     participantIds: input.participantIds,
@@ -72,7 +69,6 @@ export async function createProject(
         assertUniqueActiveProjectName(duplicate);
       }
       await assertUsableArea(data.responsibleAreaId, deps.areas, tx);
-      await assertActiveOwner(data.architectureOwnerId, deps.users, tx);
       await assertParticipants(data.participantIds, deps.users, tx, new Set());
       return null;
     },

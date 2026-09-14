@@ -21,7 +21,6 @@ const clock = { now: () => occurredAt };
 function projectAuditFields(project: {
   name: string;
   status: string;
-  architectureOwnerId: string;
   responsibleAreaId: string;
   nature: string;
   architectureRole: string;
@@ -31,7 +30,6 @@ function projectAuditFields(project: {
   return {
     name: project.name,
     status: project.status,
-    architectureOwnerId: project.architectureOwnerId,
     responsibleAreaId: project.responsibleAreaId,
     nature: project.nature,
     architectureRole: project.architectureRole,
@@ -94,7 +92,6 @@ async function createProjectFixture(
       name: `T12 Projeto ${suffix}`,
       nameNormalized: normalizeCatalogName(`T12 Projeto ${suffix}`),
       responsibleAreaId: area.id,
-      architectureOwnerId: user.id,
       nature: "STRATEGIC",
       architectureRole: "RESPONSIBLE",
       status: "PLANNED",
@@ -198,17 +195,16 @@ describe("runAuditedMutation (postgres)", () => {
         load: async () => null,
         mutate: (tx) =>
           tx.project.create({
-            data: {
-              name: `T12 created ${suffix}`,
+              data: {
+                name: `T12 created ${suffix}`,
               nameNormalized: normalizeCatalogName(`T12 created ${suffix}`),
               responsibleAreaId: area.id,
-              architectureOwnerId: user.id,
               nature: "OPERATIONAL",
               architectureRole: "CONTRIBUTOR",
               status: "PLANNED",
-              createdById: user.id,
-              updatedById: user.id,
-            },
+                createdById: user.id,
+                updatedById: user.id,
+              },
           }),
         audit: ({ result }) => ({
           entityKind: AuditEntityKind.Project,

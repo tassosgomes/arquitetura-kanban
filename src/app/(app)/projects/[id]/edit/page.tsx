@@ -67,7 +67,7 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
     areas.map((area) => ({ id: area.id, name: area.name, isActive: area.isActive })),
     project.responsibleArea,
   );
-  const userOptions = mergeUsers(users, [project.architectureOwner, ...project.participants]);
+  const userOptions = mergeUsers(users, project.participants);
 
   return (
     <ProjectForm
@@ -83,7 +83,6 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
         description: project.description ?? "",
         responsibleAreaId: project.responsibleArea.id,
         externalResponsible: project.externalResponsible ?? "",
-        architectureOwnerId: project.architectureOwner.id,
         participantIds: project.participants.map((participant) => participant.id),
         architectureRole: project.architectureRole,
         nature: project.nature,

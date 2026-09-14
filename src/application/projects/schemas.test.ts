@@ -4,13 +4,11 @@ import { ProjectStatus } from "@/domain/project/project-status";
 import { createProjectSchema, updateProjectSchema } from "@/application/projects/schemas";
 
 const areaId = "11111111-1111-4111-8111-111111111111";
-const ownerId = "22222222-2222-4222-8222-222222222222";
 
 function requiredFields(overrides: Record<string, unknown> = {}) {
   return {
     name: "Implantação ERP",
     responsibleAreaId: areaId,
-    architectureOwnerId: ownerId,
     architectureRole: ArchitectureRole.RESPONSIBLE,
     nature: Nature.STRATEGIC,
     status: ProjectStatus.PLANNED,

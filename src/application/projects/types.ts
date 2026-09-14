@@ -21,7 +21,6 @@ export type ProjectListItem = {
   name: string;
   status: ProjectStatus;
   responsibleArea: ProjectAreaRef;
-  architectureOwner: ProjectUserRef;
   updatedAt: Date;
 };
 
@@ -37,7 +36,6 @@ export type ProjectRecord = {
   expectedEndDate: string | null;
   version: number;
   responsibleArea: ProjectAreaRef;
-  architectureOwner: ProjectUserRef;
   participants: ProjectUserRef[];
   createdAt: Date;
   updatedAt: Date;
@@ -51,7 +49,6 @@ export type ProjectWriteData = {
   description: string | null;
   responsibleAreaId: string;
   externalResponsible: string | null;
-  architectureOwnerId: string;
   nature: Nature;
   architectureRole: ArchitectureRole;
   participantIds: string[];
@@ -67,6 +64,5 @@ export type ProjectInheritanceSnapshot = {
   nature: Nature;
   architectureRole: ArchitectureRole;
   responsibleAreaId: string;
-  architectureOwnerId: string;
   participantIds: string[];
 };

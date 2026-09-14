@@ -144,9 +144,9 @@ Responsável externo
 
 Opcional
 
-Responsável Arquitetura
+Responsável
 
-Obrigatório
+Grupo virtual fixo: Arquitetura
 
 Participantes
 
@@ -758,7 +758,7 @@ US-03
 
 Como usuário, quero cadastrar um projeto
 
-Deve permitir nome, descrição, área responsável, responsável externo, responsável de Arquitetura, participantes, natureza, papel da Arquitetura, datas e status
+Deve permitir nome, descrição, área responsável, responsável externo, grupo responsável fixo Arquitetura, participantes, natureza, papel da Arquitetura, datas e status; todos os usuários ativos começam marcados como participantes
 
 US-04
 
@@ -912,7 +912,7 @@ Natureza e papel da Arquitetura podem existir em Projeto e Atividade
 
 RN-13
 
-Ao criar atividade vinculada a projeto, valores compatíveis poderão ser herdados do projeto e alterados posteriormente
+Ao criar atividade vinculada a projeto, participantes, natureza, papel e área solicitante poderão ser herdados do projeto e alterados posteriormente; o responsável individual começa com o usuário criador e não é herdado do projeto
 
 RN-14
 

@@ -57,8 +57,14 @@ export async function createActivity(
     clock,
     load: async (tx) => {
       const linked = await assertProjectLink(input.type, input.projectId, deps.projects, tx);
+      const inheritedValues = applyProjectInheritance(
+        input,
+        linked ? toActivityProjectDefaults(linked) : null,
+      );
       const inherited = requireInheritedFields(
-        applyProjectInheritance(input, linked ? toActivityProjectDefaults(linked) : null),
+        linked && !inheritedValues.ownerId
+          ? { ...inheritedValues, ownerId: actor.id }
+          : inheritedValues,
       );
 
       const startDate = resolveStartDateOnCreate(inherited.status, inherited.startDate, today);

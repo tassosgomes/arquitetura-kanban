@@ -225,7 +225,6 @@ describe("computeManagementSnapshot postgres fixtures (T25)", () => {
         description: null,
         responsibleAreaId: catalog.fin.id,
         externalResponsible: null,
-        architectureOwnerId: catalog.ana.id,
         participantIds: [],
         architectureRole: ArchitectureRole.RESPONSIBLE,
         nature: Nature.STRATEGIC,

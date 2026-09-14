@@ -10,7 +10,6 @@ import {
 import type { UpdateProjectInput } from "@/application/projects/schemas";
 import type { ProjectRecord } from "@/application/projects/types";
 import {
-  assertActiveOwner,
   assertParticipants,
   assertUniqueActiveProjectName,
   assertUsableArea,
@@ -43,7 +42,6 @@ export async function updateProject(
         assertUniqueActiveProjectName(duplicate, input.id);
       }
       await assertUsableArea(data.responsibleAreaId, deps.areas, tx, existing.responsibleArea.id);
-      await assertActiveOwner(data.architectureOwnerId, deps.users, tx);
       await assertParticipants(
         data.participantIds,
         deps.users,

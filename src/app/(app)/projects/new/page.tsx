@@ -32,15 +32,6 @@ export default async function NewProjectPage() {
     );
   }
 
-  if (users.length === 0) {
-    return (
-      <EmptyState
-        title="Nenhum usuário ativo"
-        message="É necessário um usuário ativo para definir o responsável de Arquitetura."
-      />
-    );
-  }
-
   return (
     <div className="flex flex-col gap-space-lg">
       <header className="flex flex-col gap-2">
@@ -62,8 +53,7 @@ export default async function NewProjectPage() {
           description: "",
           responsibleAreaId: "",
           externalResponsible: "",
-          architectureOwnerId: "",
-          participantIds: [],
+          participantIds: users.map((user) => user.id),
           architectureRole: ArchitectureRole.RESPONSIBLE,
           nature: Nature.STRATEGIC,
           startDate: "",

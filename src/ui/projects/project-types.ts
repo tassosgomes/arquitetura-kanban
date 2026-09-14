@@ -18,7 +18,6 @@ export type ProjectFormValues = {
   description: string;
   responsibleAreaId: string;
   externalResponsible: string;
-  architectureOwnerId: string;
   participantIds: string[];
   architectureRole: string;
   nature: string;

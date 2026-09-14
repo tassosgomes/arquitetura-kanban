@@ -96,7 +96,7 @@ describe("value delivery services (postgres)", () => {
     };
   }
 
-  async function createAreaAndOwner(suffix: string) {
+  async function createArea(suffix: string) {
     if (!prisma) {
       throw new Error("prisma is required");
     }
@@ -108,22 +108,11 @@ describe("value delivery services (postgres)", () => {
     });
     areaIds.push(area.id);
 
-    const owner = await prisma.user.create({
-      data: {
-        oidcIssuer: `https://t23.test/${suffix}`,
-        oidcSubject: `owner-${suffix}`,
-        displayName: `Owner ${suffix}`,
-        isActive: true,
-      },
-    });
-    userIds.push(owner.id);
-
-    return { area, owner };
+    return { area };
   }
 
   function projectInput(
     areaId: string,
-    ownerId: string,
     name: string,
     overrides: Partial<CreateProjectInput> = {},
   ): CreateProjectInput {
@@ -132,7 +121,6 @@ describe("value delivery services (postgres)", () => {
       description: null,
       responsibleAreaId: areaId,
       externalResponsible: null,
-      architectureOwnerId: ownerId,
       participantIds: [],
       architectureRole: ArchitectureRole.RESPONSIBLE,
       nature: Nature.STRATEGIC,
@@ -150,10 +138,10 @@ describe("value delivery services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createArea(suffix);
     const project = await createProject(
       actor,
-      projectInput(area.id, owner.id, `T23 Projeto ${suffix}`),
+      projectInput(area.id, `T23 Projeto ${suffix}`),
       projectDeps(),
     );
     projectIds.push(project.id);
@@ -202,10 +190,10 @@ describe("value delivery services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createArea(suffix);
     const project = await createProject(
       actor,
-      projectInput(area.id, owner.id, `T23 RN18 ${suffix}`, {
+      projectInput(area.id, `T23 RN18 ${suffix}`, {
         status: ProjectStatus.IN_PROGRESS,
       }),
       projectDeps(),
@@ -234,8 +222,6 @@ describe("value delivery services (postgres)", () => {
     expect(afterCreate.version).toBe(before.version);
     expect(afterCreate.name).toBe(before.name);
     expect(afterCreate.updatedAt.getTime()).toBe(before.updatedAt.getTime());
-    expect(afterCreate.architectureOwnerId).toBe(before.architectureOwnerId);
-
     await updateValueDelivery(
       actor,
       {
@@ -267,10 +253,10 @@ describe("value delivery services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createArea(suffix);
     const project = await createProject(
       actor,
-      projectInput(area.id, owner.id, `T23 Conflito ${suffix}`),
+      projectInput(area.id, `T23 Conflito ${suffix}`),
       projectDeps(),
     );
     projectIds.push(project.id);
@@ -327,10 +313,10 @@ describe("value delivery services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createArea(suffix);
     const project = await createProject(
       actor,
-      projectInput(area.id, owner.id, `T23 Cancelado ${suffix}`),
+      projectInput(area.id, `T23 Cancelado ${suffix}`),
       projectDeps(),
     );
     projectIds.push(project.id);
@@ -388,15 +374,15 @@ describe("value delivery services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createArea(suffix);
     const first = await createProject(
       actor,
-      projectInput(area.id, owner.id, `T23 Lista A ${suffix}`),
+      projectInput(area.id, `T23 Lista A ${suffix}`),
       projectDeps(),
     );
     const second = await createProject(
       actor,
-      projectInput(area.id, owner.id, `T23 Lista B ${suffix}`),
+      projectInput(area.id, `T23 Lista B ${suffix}`),
       projectDeps(),
     );
     projectIds.push(first.id, second.id);
@@ -427,10 +413,10 @@ describe("value delivery services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createArea(suffix);
     const project = await createProject(
       actor,
-      projectInput(area.id, owner.id, `T23 XSS store ${suffix}`),
+      projectInput(area.id, `T23 XSS store ${suffix}`),
       projectDeps(),
     );
     projectIds.push(project.id);

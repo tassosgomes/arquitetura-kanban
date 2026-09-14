@@ -45,7 +45,6 @@ function mergeUsers(active: ActivityUserOption[], extras: ActivityUserOption[]):
 function snapshotToOption(snapshot: {
   id: string;
   name: string;
-  architectureOwnerId: string;
   participantIds: string[];
   nature: Nature;
   architectureRole: ArchitectureRole;
@@ -56,7 +55,6 @@ function snapshotToOption(snapshot: {
     name: snapshot.name,
     defaults: {
       projectId: snapshot.id,
-      ownerId: snapshot.architectureOwnerId,
       participantIds: snapshot.participantIds,
       nature: snapshot.nature,
       architectureRole: snapshot.architectureRole,
@@ -120,7 +118,6 @@ export default async function EditActivityPage({ params }: EditActivityPageProps
       name: `${activity.project.name} (cancelado)`,
       defaults: {
         projectId: activity.project.id,
-        ownerId: activity.owner.id,
         participantIds: activity.participants.map((participant) => participant.id),
         nature: activity.nature,
         architectureRole: activity.architectureRole,

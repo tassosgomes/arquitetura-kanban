@@ -80,7 +80,7 @@ describe("project services (postgres)", () => {
     };
   }
 
-  async function createAreaAndOwner(suffix: string) {
+  async function createAreaAndUser(suffix: string) {
     if (!prisma) {
       throw new Error("prisma is required");
     }
@@ -92,7 +92,7 @@ describe("project services (postgres)", () => {
     });
     areaIds.push(area.id);
 
-    const owner = await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         oidcIssuer: `https://t11.test/${suffix}`,
         oidcSubject: `owner-${suffix}`,
@@ -100,14 +100,13 @@ describe("project services (postgres)", () => {
         isActive: true,
       },
     });
-    userIds.push(owner.id);
+    userIds.push(user.id);
 
-    return { area, owner };
+    return { area, user };
   }
 
   function requiredInput(
     areaId: string,
-    ownerId: string,
     name: string,
     overrides: Partial<CreateProjectInput> = {},
   ): CreateProjectInput {
@@ -116,7 +115,6 @@ describe("project services (postgres)", () => {
       description: null,
       responsibleAreaId: areaId,
       externalResponsible: null,
-      architectureOwnerId: ownerId,
       participantIds: [],
       architectureRole: ArchitectureRole.RESPONSIBLE,
       nature: Nature.STRATEGIC,
@@ -134,10 +132,12 @@ describe("project services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area, user } = await createAreaAndUser(suffix);
     const created = await createProject(
       actor,
-      requiredInput(area.id, owner.id, `T11 Projeto ${suffix}`),
+      requiredInput(area.id, `T11 Projeto ${suffix}`, {
+        participantIds: [actor.id, user.id],
+      }),
       deps(),
     );
     projectIds.push(created.id);
@@ -145,7 +145,10 @@ describe("project services (postgres)", () => {
     expect(created.name).toBe(`T11 Projeto ${suffix}`);
     expect(created.status).toBe(ProjectStatus.PLANNED);
     expect(created.responsibleArea.id).toBe(area.id);
-    expect(created.architectureOwner.id).toBe(owner.id);
+    expect(created.participants.map((participant) => participant.id)).toEqual(
+      expect.arrayContaining([actor.id, user.id]),
+    );
+    expect(created.participants).toHaveLength(2);
     expect(created.version).toBe(1);
     expect(created.createdBy.id).toBe(actor.id);
 
@@ -156,6 +159,26 @@ describe("project services (postgres)", () => {
     expect(events[0]?.changes).toMatchObject({
       snapshot: { name: created.name, status: "PLANNED" },
     });
+
+    const edited = await updateProject(
+      actor,
+      {
+        id: created.id,
+        version: created.version,
+        name: created.name,
+        description: created.description,
+        responsibleAreaId: created.responsibleArea.id,
+        externalResponsible: created.externalResponsible,
+        participantIds: [actor.id],
+        architectureRole: created.architectureRole,
+        nature: created.nature,
+        startDate: created.startDate,
+        expectedEndDate: created.expectedEndDate,
+        status: ProjectStatus.PLANNED,
+      },
+      deps(),
+    );
+    expect(edited.participants.map((participant) => participant.id)).toEqual([actor.id]);
   });
 
   it("rejects a duplicate active name after normalization", async ({ skip }) => {
@@ -165,13 +188,13 @@ describe("project services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createAreaAndUser(suffix);
     const name = `T11 Duplicado ${suffix}`;
-    const first = await createProject(actor, requiredInput(area.id, owner.id, name), deps());
+    const first = await createProject(actor, requiredInput(area.id, name), deps());
     projectIds.push(first.id);
 
     await expect(
-      createProject(actor, requiredInput(area.id, owner.id, ` ${name.toUpperCase()} `), deps()),
+      createProject(actor, requiredInput(area.id, ` ${name.toUpperCase()} `), deps()),
     ).rejects.toBeInstanceOf(ValidationError);
   });
 
@@ -182,9 +205,9 @@ describe("project services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createAreaAndUser(suffix);
     const name = `T11 ERP ${suffix}`;
-    const first = await createProject(actor, requiredInput(area.id, owner.id, name), deps());
+    const first = await createProject(actor, requiredInput(area.id, name), deps());
     projectIds.push(first.id);
 
     const cancelled = await cancelProject(actor, { id: first.id, version: first.version }, deps());
@@ -194,7 +217,7 @@ describe("project services (postgres)", () => {
     expect(stillThere).not.toBeNull();
     expect(stillThere?.status).toBe("CANCELLED");
 
-    const second = await createProject(actor, requiredInput(area.id, owner.id, name), deps());
+    const second = await createProject(actor, requiredInput(area.id, name), deps());
     projectIds.push(second.id);
     expect(second.status).toBe(ProjectStatus.PLANNED);
     expect(second.id).not.toBe(first.id);
@@ -210,10 +233,10 @@ describe("project services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createAreaAndUser(suffix);
     const created = await createProject(
       actor,
-      requiredInput(area.id, owner.id, `T11 Status ${suffix}`, {
+      requiredInput(area.id, `T11 Status ${suffix}`, {
         status: ProjectStatus.IN_PROGRESS,
       }),
       deps(),
@@ -229,7 +252,6 @@ describe("project services (postgres)", () => {
         description: created.description,
         responsibleAreaId: created.responsibleArea.id,
         externalResponsible: created.externalResponsible,
-        architectureOwnerId: created.architectureOwner.id,
         participantIds: [],
         architectureRole: created.architectureRole,
         nature: created.nature,
@@ -252,10 +274,10 @@ describe("project services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createAreaAndUser(suffix);
     const created = await createProject(
       actor,
-      requiredInput(area.id, owner.id, `T11 Conflito ${suffix}`),
+      requiredInput(area.id, `T11 Conflito ${suffix}`),
       deps(),
     );
     projectIds.push(created.id);
@@ -269,7 +291,6 @@ describe("project services (postgres)", () => {
         description: null,
         responsibleAreaId: area.id,
         externalResponsible: null,
-        architectureOwnerId: owner.id,
         participantIds: [],
         architectureRole: ArchitectureRole.RESPONSIBLE,
         nature: Nature.STRATEGIC,
@@ -291,7 +312,6 @@ describe("project services (postgres)", () => {
           description: null,
           responsibleAreaId: area.id,
           externalResponsible: null,
-          architectureOwnerId: owner.id,
           participantIds: [],
           architectureRole: ArchitectureRole.CONTRIBUTOR,
           nature: Nature.OPERATIONAL,
@@ -316,10 +336,10 @@ describe("project services (postgres)", () => {
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
+    const { area } = await createAreaAndUser(suffix);
     const created = await createProject(
       actor,
-      requiredInput(area.id, owner.id, `T11 Terminal ${suffix}`),
+      requiredInput(area.id, `T11 Terminal ${suffix}`),
       deps(),
     );
     projectIds.push(created.id);
@@ -335,7 +355,6 @@ describe("project services (postgres)", () => {
           description: "tentativa",
           responsibleAreaId: area.id,
           externalResponsible: null,
-          architectureOwnerId: owner.id,
           participantIds: [],
           architectureRole: ArchitectureRole.RESPONSIBLE,
           nature: Nature.STRATEGIC,
@@ -348,18 +367,20 @@ describe("project services (postgres)", () => {
     ).rejects.toBeInstanceOf(InvariantError);
   });
 
-  it("rejects an inactive user as a new owner", async ({ skip }) => {
+  it("allows a project without a nominal owner", async ({ skip }) => {
     if (!prisma || !actor) {
       skip();
       return;
     }
 
     const suffix = randomUUID();
-    const { area, owner } = await createAreaAndOwner(suffix);
-    await prisma.user.update({ where: { id: owner.id }, data: { isActive: false } });
-
-    await expect(
-      createProject(actor, requiredInput(area.id, owner.id, `T11 Inativo ${suffix}`), deps()),
-    ).rejects.toBeInstanceOf(ValidationError);
+    const { area } = await createAreaAndUser(suffix);
+    const created = await createProject(
+      actor,
+      requiredInput(area.id, `T11 Sem dono nominal ${suffix}`),
+      deps(),
+    );
+    projectIds.push(created.id);
+    expect(created.participants).toEqual([]);
   });
 });

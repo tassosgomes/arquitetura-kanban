@@ -11,6 +11,7 @@ import {
   NATURE_LABELS,
   Nature,
 } from "@/domain/catalog/classifications";
+import { ARCHITECTURE_GROUP_LABEL } from "@/domain/catalog/architecture-group";
 import { PROJECT_STATUS_LABELS, ProjectStatus } from "@/domain/project/project-status";
 import { FormField } from "@/ui/forms/FormField";
 import { PrimaryButton } from "@/ui/forms/PrimaryButton";
@@ -61,7 +62,6 @@ function readForm(formData: FormData) {
     description: String(formData.get("description") ?? ""),
     responsibleAreaId: String(formData.get("responsibleAreaId") ?? ""),
     externalResponsible: String(formData.get("externalResponsible") ?? ""),
-    architectureOwnerId: String(formData.get("architectureOwnerId") ?? ""),
     participantIds: formData.getAll("participantIds").map(String).filter(Boolean),
     architectureRole: String(formData.get("architectureRole") ?? ""),
     nature: String(formData.get("nature") ?? ""),
@@ -84,9 +84,6 @@ export function ProjectForm({
   const router = useRouter();
   const { formProps } = useMarkFormDirty();
   const statuses = mode === "create" ? CREATE_STATUSES : EDIT_STATUSES;
-  const ownerInactive = users.some(
-    (user) => user.id === initial.architectureOwnerId && !user.isActive,
-  );
   const areaInactive = areas.some(
     (area) => area.id === initial.responsibleAreaId && !area.isActive,
   );
@@ -100,7 +97,6 @@ export function ProjectForm({
           description: values.description,
           responsibleAreaId: values.responsibleAreaId,
           externalResponsible: values.externalResponsible,
-          architectureOwnerId: values.architectureOwnerId,
           participantIds: values.participantIds,
           architectureRole: values.architectureRole,
           nature: values.nature,
@@ -212,36 +208,15 @@ export function ProjectForm({
         </select>
       </FormField>
 
-      <FormField
-        id="project-owner"
-        label="Responsável Arquitetura"
-        required
-        error={fieldError(state, "architectureOwnerId")}
-        description={
-          ownerInactive
-            ? "O responsável atual está inativo. Reatribua para um usuário ativo para salvar."
-            : undefined
-        }
-      >
-        <select
+      <FormField id="project-owner" label="Responsável">
+        <input
           id="project-owner"
-          name="architectureOwnerId"
-          required
-          defaultValue={initial.architectureOwnerId}
-          aria-invalid={Boolean(fieldError(state, "architectureOwnerId"))}
-          className={CONTROL_CLASS_NAME}
-        >
-          <option value="">Selecione um responsável</option>
-          {users
-            .filter((user) => user.isActive || user.id === initial.architectureOwnerId)
-            .map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.isActive
-                  ? formatUserLabel(user)
-                  : `${formatUserLabel(user)} (inativo)`}
-              </option>
-            ))}
-        </select>
+          type="text"
+          value={ARCHITECTURE_GROUP_LABEL}
+          readOnly
+          aria-readonly="true"
+          className={`${CONTROL_CLASS_NAME} cursor-default`}
+        />
       </FormField>
 
       <FormField
@@ -261,8 +236,9 @@ export function ProjectForm({
       <fieldset className="flex flex-col gap-1.5">
         <legend className="text-label-md font-semibold text-on-surface">Participantes</legend>
         <p className="text-body-sm leading-5 text-on-surface-variant">
-          Opcional. Usuários inativos não entram em novas associações; participantes já vinculados
-          podem ser mantidos.
+          {mode === "create"
+            ? "Todos os usuários ativos começam marcados. Desmarque quem não participará."
+            : "Usuários inativos não entram em novas associações; participantes já vinculados podem ser mantidos."}
         </p>
         {users.length === 0 ? (
           <p className="text-body-sm text-on-surface-variant">Nenhum usuário disponível.</p>
@@ -280,6 +256,7 @@ export function ProjectForm({
                     type="checkbox"
                     value={user.id}
                     defaultChecked={initial.participantIds.includes(user.id)}
+                    disabled={!user.isActive && !initial.participantIds.includes(user.id)}
                     className="mt-0.5 size-3.5 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   />
                   {formatUserLabel(user)}

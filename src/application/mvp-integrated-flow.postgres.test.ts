@@ -177,7 +177,6 @@ describe("MVP integrated flow (postgres, T28)", () => {
       description: "Projeto do fluxo integrado",
       responsibleAreaId: area.id,
       externalResponsible: null,
-      architectureOwnerId: owner.id,
       participantIds: [],
       architectureRole: ArchitectureRole.RESPONSIBLE,
       nature: Nature.STRATEGIC,

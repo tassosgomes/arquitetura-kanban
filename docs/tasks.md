@@ -27,7 +27,7 @@ Estas decisões foram aprovadas pelo responsável pelo projeto após a análise 
 | 5 | Reabertura e conclusão | Concluídas podem ser reabertas: limpar conclusão atual, preservar início e eventos anteriores. Contar cada atividade uma vez na população do período; ela só conta como concluída se estiver concluída no fechamento consultado. Cancelado é terminal. | T02, T14, T25 |
 | 6 | Correções retroativas | Permitir correções de datas com auditoria e recálculo do intervalo de execução. Uma correção pode alterar relatório passado; manter autoria e momento da correção. Não criar versões imutáveis dos relatórios no MVP. | T02, T12, T19, T27 |
 | 7 | Áreas e projetos atendidos | Projetos distintos das atividades selecionadas; áreas distintas considerando solicitante e envolvidas. Uma atividade pode aparecer em várias áreas na distribuição, com explicação na tela, sem multiplicar o total de atividades. | T02, T25, T26 |
-| 8 | Herança do projeto | Sugerir responsável de Arquitetura, participantes, natureza, papel e área responsável como solicitante ao criar atividade vinculada. Permitir alteração e não sincronizar mudanças posteriores do projeto. | T11, T13 |
+| 8 | Herança do projeto | Sugerir participantes, natureza, papel e área responsável como solicitante ao criar atividade vinculada. Iniciar o responsável individual com o usuário criador, permitir alteração e não sincronizar mudanças posteriores do projeto. | T11, T13 |
 | 9 | Ciclo de vida | Inativar áreas e domínios; cancelar projetos e atividades em vez de excluir. Preservar referências antigas. Impedir nomes ativos duplicados ignorando caixa e espaços nas extremidades. | T06, T09, T11, T14 |
 | 10 | Autorização | Restringir acesso no IdP e conferir isActive no servidor. Provisionar usuário no primeiro login autorizado por issuer + subject. Inativos preservam histórico, não recebem novas atribuições e exigem reatribuição explícita das atividades abertas. | T03, T07, T09, T13 |
 | 11 | Realtime | Validar SSE e LISTEN/NOTIFY nos runtimes antes de fechar hospedagem do hub. Preservar SSE, replay e retenção de sete dias; documentar eventual ajuste de infraestrutura com base na prova técnica. | T04, T21, T29 |
@@ -172,7 +172,7 @@ A ordem não obriga execução estritamente sequencial. Após M2, Entregas de Va
 - **Complexidade:** `mid` — Formulários e relacionamentos múltiplos exigem validação consistente das regras do projeto.
 - **Referência:** EP-03 / US-03; PRD §7; RN-11–13.
 - **Dependências:** T09.
-- **Escopo:** listagem, criação, edição e visão geral com todos os campos do PRD: área, responsáveis interno/externo, participantes, natureza, papel, datas e status.
+- **Escopo:** listagem, criação, edição e visão geral com todos os campos do PRD: área, grupo responsável fixo Arquitetura, responsável externo, participantes, natureza, papel, datas e status.
 - **Aceite:** campos obrigatórios e relacionamentos validados no servidor; todos os quatro status suportados; status do projeto não muda por alterações de atividades; responsável externo é opcional; edição respeita política de ciclo de vida de T02.
 
 ### T12 — Implementar infraestrutura transacional de auditoria e concorrência

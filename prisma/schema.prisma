@@ -126,7 +126,6 @@ model User {
   updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
   lastLoginAt DateTime? @db.Timestamptz(6)
 
-  projectsOwned         Project[]             @relation("ProjectArchitectureOwner")
   projectsCreated       Project[]             @relation("ProjectCreatedBy")
   projectsUpdated       Project[]             @relation("ProjectUpdatedBy")
   projectParticipations ProjectParticipant[]
@@ -194,7 +193,6 @@ model Project {
   description         String?
   responsibleAreaId   String            @db.Uuid
   externalResponsible String?
-  architectureOwnerId String            @db.Uuid
   nature              Nature
   architectureRole    ArchitectureRole
   startDate           DateTime?         @db.Date
@@ -208,7 +206,6 @@ model Project {
   updatedAt           DateTime          @updatedAt @db.Timestamptz(6)
 
   responsibleArea   Area                 @relation(fields: [responsibleAreaId], references: [id], onDelete: Restrict)
-  architectureOwner User                 @relation("ProjectArchitectureOwner", fields: [architectureOwnerId], references: [id], onDelete: Restrict)
   createdBy         User                 @relation("ProjectCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   updatedBy         User                 @relation("ProjectUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict)
   participants      ProjectParticipant[]

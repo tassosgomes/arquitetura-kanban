@@ -90,8 +90,8 @@ Status do projeto é **independente** das atividades (PRD §7). Não derive “p
 | Descrição / contexto | | Descrição | idem | não |
 | Área dona / demandante do projeto | | Área responsável | select de áreas ativas | sim |
 | Ponto focal fora da Arquitetura | | Responsável externo (texto) | idem | não |
-| Arquiteto dono no time | | Responsável Arquitetura | usuário **ativo** já provisionado por SSO | sim |
-| Demais arquitetos no projeto | | Participantes | checkboxes | não |
+| Grupo responsável | | Responsável | **Arquitetura**, grupo virtual fixo | sim, fixo |
+| Pessoas do time no projeto | | Participantes | checkboxes; todos os usuários ativos começam marcados | não |
 | Arquitetura lidera ou só contribui | | Papel da Arquitetura: Responsável / Contribuidor | select | sim |
 | Estratégico vs operacional | | Natureza: Estratégico / Operacional | select | sim |
 | Início previsto ou real | | Data de início | `type=date` | não |
@@ -129,7 +129,7 @@ Unidade do board único. Tipo Projeto **exige** vínculo; Ad hoc **não** tem pr
 
 Criado por / em e Atualizado por / em são automáticos. Serão o operador da carga e o instante da carga — não o autor histórico da planilha. Não tente forjar isso.
 
-Herança ao criar atividade **vinculada** (decisão 8): a UI sugere responsável de Arquitetura, participantes, natureza, papel e área responsável do projeto como solicitante. Confira contra a linha da planilha e altere se for diferente. Mudanças posteriores no projeto **não** sincronizam a atividade.
+Herança ao criar atividade **vinculada**: a UI sugere participantes, natureza, papel e área responsável do projeto como solicitante. O responsável individual começa com o usuário que criou a atividade e pode ser alterado. Confira contra a linha da planilha e ajuste se for diferente. Mudanças posteriores no projeto **não** sincronizam a atividade.
 
 ### 2.4 Tarefas (checklist)
 
@@ -183,8 +183,8 @@ Faça **antes** de tratar a aplicação como fonte principal. Ordem obrigatória
 
 1. Confirme allowlist no IdP do ambiente ([oidc.md](oidc.md)).
 2. Cada um dos cinco abre a URL, `/login`, **Entrar com SSO**. O primeiro login autorizado cria o usuário local (`issuer` + `subject`).
-3. Em Cadastros → Visão geral, confira os cinco **ativos**. Sem isso, não há como escolher responsável/participantes.
-4. Quem estiver no IdP mas inativo na aplicação não recebe atribuição nova.
+3. Em Cadastros → Visão geral, confira os cinco **ativos**. Eles serão marcados por padrão como participantes de novos projetos.
+4. Quem estiver no IdP mas inativo na aplicação não entra por padrão em novas associações.
 
 Ensaio de teclado/layout: [nfr-validation.md §7](nfr-validation.md#7-teclado-e-layout-checklist-manual). Continua pendente de sessão real até alguém marcar.
 

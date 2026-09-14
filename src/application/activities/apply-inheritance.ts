@@ -38,7 +38,7 @@ export function applyProjectInheritance<T extends InheritanceFields & { type: Ac
 
   return {
     ...input,
-    ownerId: input.ownerId || defaults.ownerId,
+    ownerId: input.ownerId,
     participantIds: input.participantIds ?? defaults.participantIds,
     nature: input.nature ?? defaults.nature,
     architectureRole: input.architectureRole ?? defaults.architectureRole,
@@ -48,7 +48,6 @@ export function applyProjectInheritance<T extends InheritanceFields & { type: Ac
 
 export function toActivityProjectDefaults(project: {
   id: string;
-  architectureOwner: { id: string };
   participants: { id: string }[];
   nature: Nature;
   architectureRole: ArchitectureRole;
@@ -56,7 +55,6 @@ export function toActivityProjectDefaults(project: {
 }): ActivityProjectDefaults {
   return {
     projectId: project.id,
-    ownerId: project.architectureOwner.id,
     participantIds: project.participants.map((participant) => participant.id),
     nature: project.nature,
     architectureRole: project.architectureRole,

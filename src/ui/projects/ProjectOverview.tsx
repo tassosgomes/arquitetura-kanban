@@ -4,6 +4,7 @@ import {
   ARCHITECTURE_ROLE_LABELS,
   NATURE_LABELS,
 } from "@/domain/catalog/classifications";
+import { ARCHITECTURE_GROUP_LABEL } from "@/domain/catalog/architecture-group";
 import type { ProjectRecord } from "@/application/projects";
 import { formatCivilDatePtBr, formatUserLabel } from "@/ui/projects/project-types";
 import { canEditProject } from "@/domain/project/project-status";
@@ -42,10 +43,7 @@ export function ProjectOverview({ project }: { project: ProjectRecord }) {
           {project.responsibleArea.name}
           {project.responsibleArea.isActive ? null : " (inativa)"}
         </Item>
-        <Item label="Responsável Arquitetura">
-          {formatUserLabel(project.architectureOwner)}
-          {project.architectureOwner.isActive ? null : " (inativo)"}
-        </Item>
+        <Item label="Responsável">{ARCHITECTURE_GROUP_LABEL}</Item>
         <Item label="Responsável externo">{project.externalResponsible ?? "—"}</Item>
         <Item label="Participantes">
           {project.participants.length === 0

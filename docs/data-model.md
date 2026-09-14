@@ -24,7 +24,6 @@ Datas de planejamento/execução são `DATE` (dia civil em `America/Sao_Paulo`).
 
 ```mermaid
 erDiagram
-  users ||--o{ projects : architectureOwner
   users ||--o{ projects : createdBy
   users ||--o{ projects : updatedBy
   users ||--o{ project_participants : participates
@@ -80,7 +79,6 @@ erDiagram
     text name
     text nameNormalized
     uuid responsibleAreaId FK
-    uuid architectureOwnerId FK
     date startDate
     date expectedEndDate
     enum status
@@ -134,6 +132,12 @@ erDiagram
     timestamptz createdAt
   }
 ```
+
+O responsável de um projeto é o grupo virtual fixo **Arquitetura**. Esse rótulo não é uma
+entidade cadastrável e não possui tabela, FK ou relacionamento próprio. A participação
+individual no projeto continua sendo persistida em `project_participants`.
+A migration `20260914120000_virtual_architecture_project_group` remove a FK e a coluna
+legadas do responsável nominal, sem backfill ou relacionamento de compatibilidade.
 
 `realtime_event` **não** tem FK: é efêmero (retenção 7 dias, T21/T29) e não é `audit_events`.
 

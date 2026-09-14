@@ -115,7 +115,6 @@ describe("relational invariants (postgres)", () => {
         name: `T06 Projeto ${suffix}`,
         nameNormalized: normalizeCatalogName(`T06 Projeto ${suffix}`),
         responsibleAreaId: area.id,
-        architectureOwnerId: user.id,
         nature: "STRATEGIC",
         architectureRole: "RESPONSIBLE",
         status: "PLANNED",

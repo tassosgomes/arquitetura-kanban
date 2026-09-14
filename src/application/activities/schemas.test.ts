@@ -113,7 +113,6 @@ describe("changeActivityStatusSchema", () => {
 describe("applyProjectInheritance", () => {
   const defaults = {
     projectId,
-    ownerId,
     participantIds: ["55555555-5555-4555-8555-555555555555"],
     nature: Nature.OPERATIONAL,
     architectureRole: ArchitectureRole.CONTRIBUTOR,
@@ -125,7 +124,7 @@ describe("applyProjectInheritance", () => {
       { type: ActivityType.PROJECT },
       defaults,
     );
-    expect(result.ownerId).toBe(ownerId);
+    expect(result.ownerId).toBeUndefined();
     expect(result.participantIds).toEqual(defaults.participantIds);
     expect(result.nature).toBe(Nature.OPERATIONAL);
     expect(result.architectureRole).toBe(ArchitectureRole.CONTRIBUTOR);
