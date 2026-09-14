@@ -43,9 +43,16 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-export function AppNav({ orientation = "vertical" }: { orientation?: "vertical" | "horizontal" }) {
+export function AppNav({
+  orientation = "vertical",
+  collapsed = false,
+}: {
+  orientation?: "vertical" | "horizontal";
+  collapsed?: boolean;
+}) {
   const pathname = usePathname();
   const isHorizontal = orientation === "horizontal";
+  const isCollapsed = !isHorizontal && collapsed;
 
   return (
     <nav aria-label="Principal">
@@ -58,7 +65,10 @@ export function AppNav({ orientation = "vertical" }: { orientation?: "vertical" 
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
+                title={isCollapsed ? item.label : undefined}
                 className={`group flex items-center gap-space-md rounded-xl px-space-md py-2.5 text-label-md font-medium transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                  isCollapsed ? "justify-center px-2" : ""
+                } ${
                   active
                     ? "bg-primary-container text-on-primary shadow-sm"
                     : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
@@ -67,7 +77,7 @@ export function AppNav({ orientation = "vertical" }: { orientation?: "vertical" 
                 <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
                   {item.icon}
                 </span>
-                <span className="flex-1">{item.label}</span>
+                <span className={isCollapsed ? "sr-only" : "flex-1"}>{item.label}</span>
               </Link>
             </li>
           );

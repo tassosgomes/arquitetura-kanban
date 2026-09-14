@@ -64,7 +64,7 @@ export function DashboardFilters({
 }: DashboardFiltersProps) {
   const router = useRouter();
   const [period, setPeriod] = useState<ManagementPeriodOption>(values.period);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const activeShortcut = activeManagementShortcut(values);
   const canClear = hasActiveManagementFilters(values);
   const bodyId = useId();

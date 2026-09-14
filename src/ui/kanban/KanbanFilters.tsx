@@ -50,7 +50,7 @@ const FILTERS_EXPANDED_STORAGE_KEY = "kanban-filters-expanded";
 export function KanbanFilters({ values, areas, projects, users, domains }: KanbanFiltersProps) {
   const router = useRouter();
   const [period, setPeriod] = useState<KanbanPeriodOption>(values.period);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const activeShortcut = activeKanbanShortcut(values);
   const canClear = hasActiveKanbanFilters(values);
   const bodyId = useId();
