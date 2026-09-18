@@ -1,0 +1,311 @@
+área Solicitante: Arrecadação
+		- Projeto:   Construção das esteiras do GitHub com o padrão corporativo ECAD.
+		- status:	 backlog
+		- Atividade: Criar as esteira GitHub e fazer onboard da equipe de arrecadação.
+		- Descrição: Será necessário decompor as atividades e fazer um planejamento em etapas.
+		- observação:
+ 
+	
+		- Projeto:   Captação -  webscraping prefeituras
+		- Status:	 Concluída
+		- Atividade: Definição de arquitetura do projeto.
+		- Descrição: Foi necessário definir uma arquitetura para internalizar o projeto no ambiente ECAD, pois o mesmo foi desenvolvido no ambiente da consultoria.
+		- observação: Foi definido utilizar o ambiente Azure cloud, como arquitetura do projeto, em virtude do baixo custo e sazionalidade de execução.
+
+		- Projeto:   Projeto captação - webscraping prefeituras
+		- Status:	 backlog
+		- Atividade: Alinhamento com infraesturura sobre Modelo de LLM utilizada
+		- Descrição: Sérgio solicitou para entrarmos em contato com a equipe de infra para entendermos qual modelo de LLM será utilzado no projeto.
+		- observação: 
+
+		- Projeto:    Projeto captação ( webscraping) - fase 2
+		- status:	  Aguardando devolutiva ( Em Hold )
+		- Atividade:  Definição de arquitetura do projeto.
+		- Descrição: Poderá haver uma nova fase do projeto contemplando não apenas sites de prefeituras e/ou diario oficial, mas também as redes sociais.
+		- observação:
+
+		- Projeto:   Unificação da camada de armazenamento
+		- status:    Concluída
+		- Atividade: Definir arquitetura de solução e padrões de uso storage com protocolo S3
+		- Descrição: Construir um documentação de uso S3 e aplicação de exemplo.
+		- observação: Foi desenvolvida a documentação e aplicação de exemplo e foi aderente ao cenário solicitado.
+
+		Prioridade!!!
+		- Projeto:   Unificação da camada de armazenamento
+		- status:    Backlog
+		- Atividade: Definir arquitetura de solução e padrões de uso storage com protocolo S3
+		- Descrição: Alinhamento sobre a projeto e detalhamento do caso de uso atual.
+		- observação: Sérgio solicitou que entrassemos em contato com o Fábio Araujo para entender se a proposta apresentada está aderente ao projeto.
+		Além de verificarmos haverá integração com o Salesforce.
+
+ 
+		
+	área Solicitante: Distribuição
+		- Projeto: API rematch de pedido
+		- Projeto: API sonorização
+		- status: Concluída
+		- Atividade: Definição de arquitetura de solução para API de sonorilização
+		- Descriação: Contribuir com a arquitetura de solução da API
+		- observação: Milene solicitou que entrassemos em contato para com o Rodrigo para auxiliar na solução, pois a API está com problemas de performance.
+		O probelma foi resolvido.
+
+		- Projeto: 		ECADNET - habilitar MFA
+		- status:  		Em andamento ( Aguardando devolutiva )
+		- Atividade: 	Implementação da solução de MFA
+		- Descrição: 	A fase de implementação da solução de MFA está em andamento.
+		- observação: 
+		A equipe de arquitetura entrou na fase inicial do projeto.
+		Construir uma arquitetura de solução e alinhou com o time de distribuição e segurança.
+		Inicialmente foi definido que haveria um grande volume de e-mails, sendo assim, foi recomandado utilizar a solução de e-mail malgrid e utilização do e-mail com o domínio ECADNET.
+		Quando a equipe de distribuição entrou em contato com a equipe de infraestrutura para provisionar o serviço mailgrid, a equipe infraestura orientou que o serviço não será necessário pois a volumetria de e-mail é baixa.
+		A solução encontra-se em andamento e o projeto deve entrar em fase de homologação.
+ 
+		
+	área Solicitante:Identificação GSIM-NG
+		- Projeto: 		Maestro - Mapeamento de integração de identificação.
+		- status: 		Concluída.
+		- Atividade: 	Solicitar o mapa das integrações da equipe de indentificação com o sistema de distribuição.
+		- Descrição: 	obter o conhecimento
+		- observação:	Sérgio solicitou para o Davi Lyra o mapa das integrações e a mesma foi disponibilizada via miro.
+		acesso ao board para o David para encaminhar para o projeto maestro.
+ 
+	
+	área Solicitante:Identificação GSIM-G
+		- Projeto: Migração de API's legada 
+		- status:  Em andamento.
+		- Atividade: Acompanhar o status do projeto, alocação da Sensedia.	
+		- Descrição: Acompanhar a modernização das duas API's legadas para ambiente produtivo da Sensedia.
+		- observação: Foi criado um relatório para dar visibilidade para o Wilder sobre a API e uma reunião de status semanal.
+ 
+	área Solicitante: Arquitetura - maestro
+		- Projeto: 		Maestro - Arquitetura de software
+		- status: 		Concluída.
+		- Atividade:	Apresentação gerencial sobre arquitetura de software para ECAD.
+		- Descrição:	A aprsentação tem como objetivo apresentar uma proposta de solução e pacificar o entendimento de todas as áreas sobre o tema.
+		- Observação: 	Foi realizada a apresentação para a gerencia do ECAD e aos respectivos pares técnicos de cada gerência.
+		- Projeto: 		Maestro - Arquitetura de software
+		- status:		Concluída
+		- Atividade:  	apresentação técnica sobre arquitetura de software, para liderança técnica da V8.
+		- Descrição:	A apresentar a proposta de solução de arquitetura de software e os impactos na modelagem dos dados.
+		- Observação:	Foi realizada a apresentação para líder técnico Bruno Maria, arquiteto de dados Márcio e o arquiteto de solução jean Silva.
+ 
+		- Projeto: 		Maestro - Arquitetura de software
+		- status:		Em andamento
+		- Atividade:  	Devolutiva técnica da arquitetura de solução e modelagem.
+		- Descrição:	V8 precisa apresentar uma devolutiva sobre o material apresentado.
+		- Observação:	Foi realizada a apresentação para líder técnico Bruno Maria, arquiteto de dados Márcio e o arquiteto de solução jean Silva.
+ 
+ 
+			
+		- Projeto: 	Maestro - Dominio de dados 
+		- status:	backlog
+		- Atividade:	apresentação executiva sobre domínio e fazer apresentação para todo time técnico e ECAD.
+		- Descriação:
+		- observação:
+
+		- Projeto: 		Maestro - Apresentação de riscos do projeto.
+		- status:		backlog
+		- Atividade:	apresentação executiva sobre arquitetura de software técnica.
+		- Descrição:
+		- Observação:
+		- projeto: 		Maestro - mitigações de riscos com APIS
+		- status:		Concluída
+		- atividade:	Ações para mitigar os riscos de não haver um roadmap de desenvolvimento do projeto.
+		- Descrição:
+		- observação:
+		- projeto: 		Maestro - domínio de dados.
+		- status:	 Concluída
+		- atividade: ALinhamento sobre arquitetura e domínio de dados.
+		- Descrição: 
+		- observação: Alinhamento com o juliana sobre a definição de domínios e impacto na modelagem.
+ 
+ 
+	área Solicitante: Arquitetura - gerais
+		- Projeto: 		backlog da arquitetura.
+		- status:		Em andamento
+		- Atividade: 	construir uma arqutietura e fluxo que consiga manter o board sempre atualizado para o Sérgio.
+		- Descrição:
+		- observação:
+
+		- Projeto: 		Maestro
+		- status:		Backlog
+		- Atividade: 	Maestro - domínio de dados (hipotético)
+		- Descrição:
+		- observação: utilizar IA no projeto da franciscone, visando realizar uma proposição sobre os domínios de negócio.
+
+		- Projeto: 		FinOps IA
+		- status:		Em andamento
+		- Atividades: 	Recomentação de uso de modelos
+		- Descrição:
+		- observação:
+			- Realizar uma reunião com o vinícius para alinhamento sobre o tema de modelos de IA ( descontinuar e novos )
+			- Criar uma política para:
+				- Alinhar um processo de recorrente visando manter modelos adequados para o ECAD, tendo um uso consciente.
+				- Criar uma Documento para recomendações de modelos para os usuários de IA.
+				- Divulgar as documento de recomendações para os usuários de IA.
+
+		- Projeto: 		Workshop IA - ROI das soluções de IA
+		- status:		Backlog
+		- Atividade: 	Criar um processo e comunicação com os líderes para calculo de ROI e de valor com IA
+		- Descrição:
+		- Observação:
+
+ 
+		- Projeto: 		Workshop de IA -  Consultoria
+		- status:		Backlog
+		- Atividade:	Entrar em contato com os participantes que perguntaram sobre exemplos práticos e criar uma estratégia para acompanhar a evolução de IA (ROI)
+		- Descrição:
+		- observação:
+
+	área Solicitante: Analytics 
+		- projeto:   Fabric na arrecadação.
+		- status:	 Concluída
+		- Atividade: Permissionamento de repositórios no GIT 
+		- Descrição: Rever a política de permissionamento para que os projetos Fabric na arrecadação, com a consultoria Niteo, e o projeto Maestro analytics, com a consuloria V8, possuam os seus acessos segregados.
+		- Observação: Abrir chamado para equipe de infraestrutura, na fila cloud e virtualização, para criação dos grupos do AD e vincular a permissão aos respectivos grupos.
+
+		- projeto:   Fabric na arrecadação. 
+		- status:	 Backlog
+		- Atividade: Estudo de viabilidade para integração do Elastic Stack com componentes do Azure.
+		- descrição:
+		- observação: 
+				- Enviar  a lista dos componentes, que fazem parte da arquitetura de solução do projeto, para a equipe de sustentação da ITOne.
+				- A partir desta lista a equipe da ItOne irá verificar qual será a melhor forma para realizar a integração com o Elastic Cloud.
+				- Existem duas formas de realizar essa integração: Primeira alternativa é utilizar a integração nativa com o Elastic em cada componente.A segunda alternativa é concentrar os logs de todos os componentes da solução, em um único compoente do ambiente Azure, por exemplo: Log analytics ou Blob storage.
+				- Será necessário definir um formato tabular com para facilitar o consumo dos logs, unificando o formato dos logs de todos os serviços.
+				- Em conjunto com o estudo de viabilidade, será necessário 
+		- projeto:   Maestro analytics
+		- status:	 Backlog
+		- atividade: Estudo de viabilidade para integração do Elastic Stack com cloud GCP.
+		- Descriação:
+		- observação:
+
+		- Projeto: 	 Ferramenta corporativa de modelagem para analytics.
+		- status:	 Backlog
+		- Atividade: Alinhamento sobre a área de analytics ser um cliente de Erwin ER360.
+		- Descrição:
+		- observação:
+
+		- Projeto: Ferramenta de governança de dados 
+		- status:   Backlog
+		- Atividade: POC OpenMetadata
+		- descrição: Montar uma apresentação para sobre a motivação da  POC do produto de catálogo de dados.
+		- observação:
+
+	área Solicitante: Infraestrutura 
+		- projeto:   Agentes de build ( hibrida )
+		- status:	 Em andamento
+		- Atividade:   Aguardando devolutiva do evangelista
+		- Descrição:
+		- observação:
+ 
+		
+		- projeto:   	s3 ( uso interno ou externo )
+		- status:  		Concluída.
+		- Atividade: 	arquitetura aprovada.
+		- Descrição:
+		- observação:
+		Prioridade!!!
+		- projeto:   	netscaler como light gateway
+		- status:	 	Backlog
+		- Atividade: 	permissionamento
+		- Descrição:
+		- observação:	 Retornar o assunto com o Sandro Mendonça.
+		- projeto:    	Control - M
+		- status:	  	Em andamento
+		- Atividade:   	control-M elencar novos cases para a POC.
+		- Descrição:
+		- observação: 	Aguardando o Vinícus
+
+		- projeto:   	SEGURA
+		- status:	 	Em andamento
+		- Atividade:   	Fazer POC.
+		- Descrição:
+		- observação:
+
+	área Solicitante:Segurança 
+		- projeto:   SIEM
+		- status:	Em andamento
+		- Atividade: Aguardando devolutiva.
+		- Descrição:
+		- observação:
+		Prioridade!!!
+		- projeto:   GSIM-NG API relatório de uso. 
+		- status:	Backlog
+		- Atividade: fazer uma apresentação para arquitetura de aplicações externas.
+				- Utilização do Devportal como solução coorporativa para compartilhamento de cliente ID e client secret, para parceiros parceiros externo.
+				- Apresentação de arquitetura corporativa para integração de API Externa.
+		- descrição:
+		- observação:
+
+	área Solicitante: Banco de dados 
+		- projeto:   Maestro - POC OGG
+		- status:
+		- Atividade: Disponibilizar a nova versão do UI do OGG para fazermos testes. (Golden gate studio)
+		- descrição:
+		- observação:
+		- projeto:   Maestro - auditoria forence
+		- status:
+		- Atividade: alinhamento com o segurança e banco de dados.
+		- descrição:
+		- observação:
+
+
+
+	Sensedia - Devportal ( definir os marcos do projeto.)
+		- Projeto:   onboard de API no devPortal premium. 
+		- Atividade: Reenviar o invite da reunião da reunião de trabalho com a equipe de captação. (Feito)
+				- cancelar a atual reunião de trabalho de terça-feira as 10:00
+				- devportal Quarta-feira as 15:00 reunião de trabalho
+				- Listar todas as atividades deste projeto (backlog)
+		- Projeto:   estruturação do devportal premium. 
+		- Atividade: alterar a reunião de status para terça-feira ou quarta 14:00, se não for possível poderia ser 15:00 as 16:00
+				- Reenvio o invite da reunião desta semana e atribuir. 
+				- alinhar com o sérgio sobre disponibilidade de novos horários para agenda de status.
+				- Listar todas as atividades deste projeto (backlog)
+
+		- Projeto:  unificação do devPortal premium e o devportal basic. 
+		- Atividade: Realizar a unificação dos portais, visando .
+				- Precisa apresentar um macrocronograma das atividades.
+				- Premissa é não ter impacto nos usuários atuais.
+		- Projeto:      Devportal 
+		- Atividade: 	Fazer apresentação para a equipe de marketing.
+ 
+		
+	Sensedia - consultoria
+ 
+		- Projeto:  Habilitar o SSO no Manager 
+		- Atividade: Realizar a unificação dos portais, visando .
+				- Precisa apresentar um macrocronograma das atividades.
+				- Premissa é não ter impacto nos usuários atuais.
+
+		- Projeto:  Projeto APIOps 
+		- Atividade: Criar o PRD do projeto.
+				- fazer alinhamento interno sobre o PRD e voltarmos com a reunião do projeto.
+				- construção e revisão do cronograma.
+				- reunir todas as documentações do projeto APIOps, processos da Sensedia e centralizar em uma repositório.
+				- Reunião recorrente
+				- fazer uma reunião apresentação do projeto para o vini.
+ 
+		
+		- Projeto:  dashboard de tickets 
+		- Atividade: Criar um dashboard que retrate cada ticket criado na Sensedia.
+				- Campos do relatório:  ( backlog, numero do ticket, tipo de atividade: Code review, API first, treinamento,consultoria, data abertura, data fim,SLA,dentro do SLA)
+				- Alocação de mão de obra nas squad serão reportados como alocação, atendimento sem tickets, tendo um status do projeto.
+		- Projeto:  automações desenvolvidas para maior governança da consultoria 
+		- Atividade: Criar um dashboard que retrate cada ticket criado na Sensedia.
+				- Listar as integrações.
+				- macrocronograma para implementação da v5.
+		- Projeto:  disponibilizar as consultas para o ECAD
+		- Atividade: Reunião ocorrerá segunda-feira as 17:00.
+ 
+		- Projeto:  disponibilizar as consultas para o ECAD
+		- Atividade: Reunião ocorrerá segunda-feira as 17:00.
+		- Projeto:  Onboard da API de analytics   ( daniel ) com a Sensedia
+		- Atividade: Aguardando retorno do paulo para a reunião.
+ 
+ 
+		
+		- Projeto: CS Sensedia
+		- Atividade: realizar alinhamento sobre todas as iniciativas da empresa ( consultoria, alocação e Devportal ).
+				- Marcar reunião recorrente quinzenal sobre o andamento dos projetos.

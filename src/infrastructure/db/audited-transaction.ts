@@ -13,6 +13,8 @@ import { insertRealtimeEvents } from "@/infrastructure/realtime/persist";
 
 export type AuditedPrismaClient = {
   $transaction: PrismaClient["$transaction"];
+  /** Batch adapters defer notification until their outer transaction commits. */
+  notifyRealtime?: (ids: readonly bigint[]) => Promise<void>;
 };
 
 export type RunAuditedMutationInput<TLoaded, TResult> = AuditedMutationInput<
@@ -123,7 +125,7 @@ export async function runAuditedMutation<TLoaded, TResult>(
     prisma,
     clock = systemClock,
     publishRealtime,
-    notifyRealtime = defaultNotifyRealtime,
+    notifyRealtime = prisma.notifyRealtime ?? defaultNotifyRealtime,
   } = input;
 
   if ((expectedVersion === undefined) !== (versioned === undefined)) {
