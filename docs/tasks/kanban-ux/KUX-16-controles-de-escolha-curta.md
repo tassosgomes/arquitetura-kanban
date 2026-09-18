@@ -28,30 +28,30 @@ e um `<select>` de duas opções esconde essa bifurcação.
 
 ## Escopo
 
-- [ ] Substituir esses cinco `<select>` por controle segmentado (grupo de rádios
+- [x] Substituir esses cinco `<select>` por controle segmentado (grupo de rádios
       estilizado), mantendo `<input type="radio">` reais por baixo.
-- [ ] Manter os mesmos `name`, os mesmos valores enviados e o mesmo `defaultValue`
+- [x] Manter os mesmos `name`, os mesmos valores enviados e o mesmo `defaultValue`
       inicial — o `FormData` recebido pela action não muda.
-- [ ] Não usar somente cor para distinguir a opção ativa (peso, borda ou marcador).
-- [ ] Navegação por setas dentro do grupo, `Tab` entra e sai do grupo como um único
+- [x] Não usar somente cor para distinguir a opção ativa (peso, borda ou marcador).
+- [x] Navegação por setas dentro do grupo, `Tab` entra e sai do grupo como um único
       parada, conforme o padrão de radiogroup.
-- [ ] `aria-invalid` e a mensagem de erro (KUX-10) aplicados ao grupo, não a um rádio
+- [x] `aria-invalid` e a mensagem de erro (KUX-10) aplicados ao grupo, não a um rádio
       isolado.
-- [ ] Manter `<select>` onde a lista é longa ou vem de catálogo (Categoria, Área,
+- [x] Manter `<select>` onde a lista é longa ou vem de catálogo (Categoria, Área,
       Responsável, Status) — esses são escopo de KUX-14, não deste.
-- [ ] Avaliar se "Esforço" pode exibir o significado de P/M/G (tooltip ou texto de
+- [x] Avaliar se "Esforço" pode exibir o significado de P/M/G (tooltip ou texto de
       apoio); hoje as letras não são autoexplicativas.
 
 ## Aceite
 
-- [ ] Escolher prioridade ou esforço custa um clique.
-- [ ] Todas as opções de cada campo são visíveis sem abrir nada.
-- [ ] Navegação por setas funciona e o leitor de tela anuncia grupo, rótulo e opção
+- [x] Escolher prioridade ou esforço custa um clique.
+- [x] Todas as opções de cada campo são visíveis sem abrir nada.
+- [x] Navegação por setas funciona e o leitor de tela anuncia grupo, rótulo e opção
       selecionada.
 - [ ] Contraste AA da opção ativa em tema claro e escuro.
-- [ ] Trocar "Tipo" para Projeto continua revelando o seletor de projeto e aplicando o
+- [x] Trocar "Tipo" para Projeto continua revelando o seletor de projeto e aplicando o
       prefill.
-- [ ] Os testes de submissão do formulário passam sem alteração.
+- [x] Os testes de submissão do formulário passam sem alteração.
 
 ## Como validar
 

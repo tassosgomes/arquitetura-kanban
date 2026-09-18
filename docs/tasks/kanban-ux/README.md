@@ -26,7 +26,7 @@ de escrita paralelo nem contorna auditoria.
 | [KUX-06](KUX-06-drop-target-inicial-teclado.md) | Corrigir alvo inicial do drag por teclado | Espaço na alça já destaca a coluna seguinte | P2 | `mid` | ✅ `7a0e440` |
 | [KUX-07](KUX-07-busca-por-titulo.md) | Busca por título no board | 11 filtros de taxonomia e nenhum campo de texto | P2 | `mid` | ✅ `df2fa6d` |
 | [KUX-08](KUX-08-area-de-arraste.md) | Card arrastável e alvo de toque | Alça de 24px com `opacity-40`; card não arrasta | P2 | `low` | ✅ `24f040a` |
-| [KUX-09](KUX-09-prioridade-na-excecao.md) | Badge de prioridade só na exceção | Quase todo card é "Média": o badge não diferencia | P3 | `low` | — |
+| [KUX-09](KUX-09-prioridade-na-excecao.md) | Badge de prioridade só na exceção | Quase todo card é "Média": o badge não diferencia | P3 | `low` | ✅ `05ad5fe` |
 
 ## Onda 2 — Cadastro de atividade
 
@@ -38,7 +38,7 @@ de escrita paralelo nem contorna auditoria.
 | [KUX-13](KUX-13-agrupamento-e-acao-fixa-no-cadastro.md) | Agrupar o formulário e fixar a ação primária | ~1.900px de coluna única, sem hierarquia, com o CTA fora da viewport | P1 | `mid` | ✅ `6855d71` |
 | [KUX-14](KUX-14-selecao-de-pessoas-e-areas-por-busca.md) | Seleção de pessoas e áreas por busca | Grades de checkbox que renderizam o catálogo inteiro | P1 | `mid` | ✅ `2bcbae5` |
 | [KUX-15](KUX-15-fixtures-visiveis-nos-seletores.md) | Fixtures de teste visíveis nos seletores | `T12 actor` ×3 e um UUID como categoria em campos obrigatórios | P1 | `low` | ✅ `d3e0145` |
-| [KUX-16](KUX-16-controles-de-escolha-curta.md) | Controles de escolha curta | 5 `<select>` para conjuntos de 2 a 4 opções curtas | P2 | `low` | — |
+| [KUX-16](KUX-16-controles-de-escolha-curta.md) | Controles de escolha curta | 5 `<select>` para conjuntos de 2 a 4 opções curtas | P2 | `low` | ✅ `ef5ca3b` |
 | [KUX-17](KUX-17-cadastro-em-painel-sobre-o-board.md) | Cadastro completo em painel sobre o board | Cadastrar continua custando perder o board de vista | P3 | `high` | — |
 
 ## Arquivos tocados por esta iniciativa
