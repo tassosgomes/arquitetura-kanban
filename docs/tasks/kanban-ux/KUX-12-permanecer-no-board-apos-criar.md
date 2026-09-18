@@ -20,28 +20,28 @@ Para o modo `edit` o destino faz sentido e não deve mudar. O problema é o `cre
 
 ## Escopo
 
-- [ ] Na criação, voltar para a origem (`cancelHref` já carrega essa informação:
+- [x] Na criação, voltar para a origem (`cancelHref` já carrega essa informação:
       `/kanban` ou `/projects/:id/activities`) em vez de ir para o detalhe.
-- [ ] Confirmação não-bloqueante após a criação, nomeando a atividade e a coluna em que
+- [x] Confirmação não-bloqueante após a criação, nomeando a atividade e a coluna em que
       ela entrou, com ações "Abrir" e "Criar outra".
-- [ ] "Criar outra" reabre o formulário limpo preservando as escolhas de contexto
+- [x] "Criar outra" reabre o formulário limpo preservando as escolhas de contexto
       caras de repetir (área solicitante, projeto, categoria), zerando título e
       descrição.
-- [ ] Destacar por alguns segundos o card recém-criado no board, para o usuário
+- [x] Destacar por alguns segundos o card recém-criado no board, para o usuário
       localizar o resultado sem procurar.
-- [ ] Manter o comportamento atual do modo `edit`.
-- [ ] A confirmação precisa ser anunciada por leitor de tela e não pode ser o único
+- [x] Manter o comportamento atual do modo `edit`.
+- [x] A confirmação precisa ser anunciada por leitor de tela e não pode ser o único
       canal de uma informação necessária.
 
 ## Aceite
 
-- [ ] Criar a partir de `/kanban` devolve o usuário a `/kanban`, com os filtros que
+- [x] Criar a partir de `/kanban` devolve o usuário a `/kanban`, com os filtros que
       estavam aplicados.
-- [ ] Criar a partir de `/projects/:id/activities` devolve à lista do projeto.
-- [ ] "Criar outra" permite cadastrar três atividades seguidas sem navegar.
-- [ ] O card novo é localizável no board sem busca manual.
-- [ ] Editar uma atividade continua levando ao detalhe como hoje.
-- [ ] A confirmação some sozinha e não bloqueia interação com o board.
+- [x] Criar a partir de `/projects/:id/activities` devolve à lista do projeto.
+- [x] "Criar outra" permite cadastrar três atividades seguidas sem navegar.
+- [x] O card novo é localizável no board sem busca manual.
+- [x] Editar uma atividade continua levando ao detalhe como hoje.
+- [x] A confirmação some sozinha e não bloqueia interação com o board.
 
 ## Como validar
 

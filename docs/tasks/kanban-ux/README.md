@@ -34,7 +34,7 @@ de escrita paralelo nem contorna auditoria.
 | --- | --- | --- | --- | --- | --- |
 | [KUX-10](KUX-10-erros-do-cadastro-em-uma-rodada.md) | Erros do cadastro em uma única rodada | Submeter vazio devolve 2 de 7 erros; os outros 4 só na 2ª tentativa | P0 | `mid` | ✅ `703c3e2` |
 | [KUX-11](KUX-11-criacao-rapida-pela-coluna.md) | Criação rápida pela coluna do board | 16 campos para registrar uma demanda que ainda não foi classificada | P0 | `mid` | ✅ `415fcf4` |
-| [KUX-12](KUX-12-permanecer-no-board-apos-criar.md) | Permanecer no contexto depois de criar | Criar redireciona ao detalhe e abandona o board e seus filtros | P0 | `low` | — |
+| [KUX-12](KUX-12-permanecer-no-board-apos-criar.md) | Permanecer no contexto depois de criar | Criar redireciona ao detalhe e abandona o board e seus filtros | P0 | `low` | ✅ `519524d` |
 | [KUX-13](KUX-13-agrupamento-e-acao-fixa-no-cadastro.md) | Agrupar o formulário e fixar a ação primária | ~1.900px de coluna única, sem hierarquia, com o CTA fora da viewport | P1 | `mid` | ✅ `6855d71` |
 | [KUX-14](KUX-14-selecao-de-pessoas-e-areas-por-busca.md) | Seleção de pessoas e áreas por busca | Grades de checkbox que renderizam o catálogo inteiro | P1 | `mid` | ✅ `2bcbae5` |
 | [KUX-15](KUX-15-fixtures-visiveis-nos-seletores.md) | Fixtures de teste visíveis nos seletores | `T12 actor` ×3 e um UUID como categoria em campos obrigatórios | P1 | `low` | ✅ `d3e0145` |
@@ -93,3 +93,27 @@ Registradas na revisão, sem task própria por não serem decisões de UI:
 - O formulário de cadastro **não tem campo de checklist**, mas o card exibe progresso de
   checklist (`0/1`, `0/5`). O item nasce sem checklist e só ganha um no detalhe —
   vale confirmar se é intencional.
+
+## Achados durante a execução
+
+Não são tasks desta iniciativa; foram observados ao integrar as ondas e ficam
+registrados para quem for priorizar em seguida.
+
+- **`catalogs.test.ts` é instável sob carga e escreve na base da aplicação.** O caso
+  "audits create, rename and deactivate of area and domain" falhou 2 vezes em ~8
+  execuções da suíte completa e passa sempre que roda isolado. Ele ordena os eventos de
+  auditoria por `occurredAt` e só depois por `sequence`: com o banco sob concorrência,
+  dois eventos da mesma entidade caem no mesmo instante e a ordem esperada
+  (`created`, `field_changed`, `deactivated`) deixa de ser determinística. O arquivo é
+  anterior a esta branch e não foi tocado por ela. Além disso, ele cria fixtures
+  `T12 …` no banco lido pela aplicação — é o mesmo problema que KUX-15 resolveu para
+  `invariants` e `audited-transaction`, e responde ao item de escopo de KUX-15 que pedia
+  para procurar o resíduo em outros pontos: **sim, ainda existe aqui**.
+- **`middleware` está deprecado no Next 16** e deve virar `proxy`. O `next dev` emite o
+  aviso a cada boot, com codemod disponível (`npx @next/codemod@canary middleware-to-proxy .`).
+- **`react-hooks/set-state-in-effect` suprimido** em `ActivityForm.tsx`, no efeito que
+  abre os blocos colapsados quando o resumo de erros aponta para dentro deles (KUX-13).
+  Passa no lint porque a regra está desabilitada na linha, não porque o padrão é seguro.
+- **A suíte roda 63+ workers contra um único PostgreSQL.** As duas falhas intermitentes
+  observadas (`catalogs` e `management-snapshot`) têm essa origem comum. Vale considerar
+  `TEST_DATABASE_URL` para todos os testes de integração, não só os dois de KUX-15.
