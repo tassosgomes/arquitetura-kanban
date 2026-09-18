@@ -249,7 +249,11 @@ export function KanbanBoard({ activities }: KanbanBoardProps) {
     }
 
     setItems(activities);
-  }, [activities, isCreatePending]);
+    // Depende só de `activities`: reconciliar é tarefa de quando chega dado novo do
+    // servidor. Com `isCreatePending` aqui, encerrar a criação reexecutava o efeito
+    // ainda com a lista anterior — apagava o card recém-criado e trocava o aviso de
+    // sucesso por "não corresponde aos filtros ativos", que era falso.
+  }, [activities]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),

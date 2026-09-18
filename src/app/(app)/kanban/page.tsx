@@ -1,6 +1,6 @@
 import Link from "next/link";
 import NewActivityPage from "@/app/(app)/activities/new/page";
-import { ActivityModal } from "@/app/(app)/@modal/ActivityModal";
+import { ActivityModal } from "@/ui/activities/ActivityModal";
 import {
   hasActiveKanbanFilters,
   EFFORT_FILTER_UNSET,

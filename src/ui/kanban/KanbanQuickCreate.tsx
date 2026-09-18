@@ -19,7 +19,13 @@ import {
 import type { ActionErrorPayload } from "@/app/actions/action-result";
 import type { ActivityRecord } from "@/application/activities";
 import { ActivityStatus, ActivityType } from "@/domain/activity/enums";
-import { ArchitectureRole, Nature, Priority } from "@/domain/catalog/classifications";
+import {
+  ACTIVITY_NATURE_LABELS,
+  ARCHITECTURE_ROLE_LABELS,
+  ArchitectureRole,
+  Nature,
+  Priority,
+} from "@/domain/catalog/classifications";
 import { formatUserLabel } from "@/ui/projects/project-types";
 
 const QUICK_CREATE_ERROR_FIELDS = [
@@ -435,8 +441,23 @@ export function KanbanQuickCreate({
           ) : null}
         </label>
 
+        {/*
+          O texto precisa dizer o que de fato é gravado: natureza e papel são
+          obrigatórios no schema, então a criação rápida envia um valor inicial em vez
+          de deixá-los pendentes. Anunciar os três como "pendentes" escondia que dois
+          deles entram no banco, na auditoria e nos relatórios que agregam por
+          classificação, indistinguíveis de uma escolha deliberada.
+        */}
         <p className="rounded-lg bg-surface-container-low px-2.5 py-2 text-body-sm leading-5 text-on-surface-variant">
-          Natureza, papel da Arquitetura e esforço ficam pendentes. Complete esses campos em
+          Esforço fica pendente. Natureza e papel da Arquitetura entram como{" "}
+          <span className="font-semibold text-on-surface">
+            {ACTIVITY_NATURE_LABELS[Nature.OPERATIONAL]}
+          </span>{" "}
+          e{" "}
+          <span className="font-semibold text-on-surface">
+            {ARCHITECTURE_ROLE_LABELS[ArchitectureRole.RESPONSIBLE]}
+          </span>{" "}
+          e precisam de revisão. Ajuste os três em
           <span className="font-semibold text-on-surface"> Editar</span> no detalhe da atividade.
         </p>
 

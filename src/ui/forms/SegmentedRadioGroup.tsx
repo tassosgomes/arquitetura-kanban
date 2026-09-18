@@ -45,8 +45,14 @@ export function SegmentedRadioGroup({
   }
 
   return (
+    // `id` fica no grupo, nunca num rádio. O `FormField` renderiza
+    // `<label htmlFor={id}>`, e enquanto esse id pertencia ao primeiro rádio — que é
+    // `sr-only` — clicar no rótulo do campo ("Prioridade") selecionava a primeira
+    // opção sem nenhum sinal visível. `tabIndex={-1}` mantém o foco programático do
+    // resumo de erros de KUX-10 funcionando, e `:focus-within` já cobre o contorno.
     <div
-      id={`${id}-group`}
+      id={id}
+      tabIndex={-1}
       role="radiogroup"
       aria-label={ariaLabel}
       aria-describedby={ariaDescribedBy}
@@ -62,7 +68,7 @@ export function SegmentedRadioGroup({
         <input type="hidden" name={name} value="" />
       ) : null}
       {options.map((option, index) => {
-        const optionId = index === 0 ? id : `${id}-${index}`;
+        const optionId = `${id}-option-${index}`;
 
         return (
           <label
