@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import "dotenv/config";
 import { AuditAction, AuditEntityKind } from "@/domain/audit/audit-entity-kind";
@@ -6,7 +5,7 @@ import { ConflictError, InvariantError, NotFoundError } from "@/domain/errors";
 import { normalizeCatalogName } from "@/domain/catalog/normalize-catalog-name";
 import type { PrismaClient } from "@/generated/prisma/client";
 import type { Prisma } from "@/generated/prisma/client";
-import { connectPostgresForTests } from "@/infrastructure/db/connect-postgres-for-tests";
+import { createPrismaClient } from "@/infrastructure/db/create-prisma-client";
 import {
   runAuditedMutation,
   type AuditedPrismaClient,
@@ -15,8 +14,39 @@ import { buildCreatedChanges, buildUpdatedChanges } from "@/application/audit/ch
 import { PROJECT_AUDIT_FIELDS } from "@/application/audit/portrait";
 import { InfrastructureError } from "@/infrastructure/errors";
 
+const AUDITED_TEST_ISSUER = "https://integration-tests.invalid/kux-15/audited-transaction";
 const occurredAt = new Date("2026-09-10T23:00:00.000Z");
 const clock = { now: () => occurredAt };
+
+function isCiEnv(): boolean {
+  return process.env.CI === "true" || process.env.CI === "1";
+}
+
+/**
+ * Local integration tests must use a disposable database. CI already provides
+ * one through DATABASE_URL, so only CI may use that fallback.
+ */
+async function connectIntegrationDatabase(): Promise<PrismaClient | undefined> {
+  const url = process.env.TEST_DATABASE_URL?.trim() || (isCiEnv() ? process.env.DATABASE_URL : undefined);
+  if (!url) {
+    if (isCiEnv()) {
+      throw new Error("CI requires DATABASE_URL and a reachable PostgreSQL for integration tests.");
+    }
+    return undefined;
+  }
+
+  const client = createPrismaClient(url);
+  try {
+    await client.$queryRaw`SELECT 1`;
+    return client;
+  } catch {
+    await client.$disconnect().catch(() => undefined);
+    if (isCiEnv()) {
+      throw new Error("CI requires a reachable PostgreSQL for integration tests.");
+    }
+    return undefined;
+  }
+}
 
 function projectAuditFields(project: {
   name: string;
@@ -72,25 +102,27 @@ async function loadProject(tx: Prisma.TransactionClient, id: string) {
 
 async function createProjectFixture(
   prisma: PrismaClient,
-  suffix: string,
+  key: string,
 ): Promise<{ userId: string; areaId: string; projectId: string }> {
+  const prefix = `KUX-15 audited ${key}`;
+  await deleteFixtureByKey(prisma, key);
   const user = await prisma.user.create({
     data: {
-      oidcIssuer: `https://t12.test/${suffix}`,
-      oidcSubject: `sub-${suffix}`,
-      displayName: "T12 actor",
+      oidcIssuer: AUDITED_TEST_ISSUER,
+      oidcSubject: `project-${key}`,
+      displayName: `${prefix} actor`,
     },
   });
   const area = await prisma.area.create({
     data: {
-      name: `T12 Área ${suffix}`,
-      nameNormalized: normalizeCatalogName(`T12 Área ${suffix}`),
+      name: `${prefix} area`,
+      nameNormalized: normalizeCatalogName(`${prefix} area`),
     },
   });
   const project = await prisma.project.create({
     data: {
-      name: `T12 Projeto ${suffix}`,
-      nameNormalized: normalizeCatalogName(`T12 Projeto ${suffix}`),
+      name: `${prefix} project`,
+      nameNormalized: normalizeCatalogName(`${prefix} project`),
       responsibleAreaId: area.id,
       nature: "STRATEGIC",
       architectureRole: "RESPONSIBLE",
@@ -118,13 +150,77 @@ async function deleteFixture(
   prisma: PrismaClient,
   fixture: { userId: string; areaId: string; projectId: string },
 ): Promise<void> {
-  await prisma.auditEvent.deleteMany({
-    where: { OR: [{ actorUserId: fixture.userId }, { projectId: fixture.projectId }] },
+  const projects = await prisma.project.findMany({
+    where: {
+      OR: [
+        { id: fixture.projectId },
+        { createdById: fixture.userId },
+        { updatedById: fixture.userId },
+      ],
+    },
+    select: { id: true },
   });
-  await deleteRealtimeForEntity(prisma, fixture.projectId);
-  await prisma.project.deleteMany({ where: { id: fixture.projectId } });
+  const projectIds = projects.map(({ id }) => id);
+  await prisma.auditEvent.deleteMany({
+    where: {
+      OR: [{ actorUserId: fixture.userId }, { projectId: { in: projectIds } }],
+    },
+  });
+  for (const projectId of projectIds) {
+    await deleteRealtimeForEntity(prisma, projectId);
+  }
+  await prisma.projectParticipant.deleteMany({ where: { projectId: { in: projectIds } } });
+  await prisma.valueDelivery.deleteMany({ where: { projectId: { in: projectIds } } });
+  await prisma.project.deleteMany({ where: { id: { in: projectIds } } });
   await prisma.area.deleteMany({ where: { id: fixture.areaId } });
   await prisma.user.deleteMany({ where: { id: fixture.userId } });
+}
+
+async function deleteFixtureByKey(prisma: PrismaClient, key: string): Promise<void> {
+  const prefix = `KUX-15 audited ${key}`;
+  const user = await prisma.user.findFirst({
+    where: { oidcIssuer: AUDITED_TEST_ISSUER, oidcSubject: `project-${key}` },
+    select: { id: true },
+  });
+  const area = await prisma.area.findFirst({
+    where: { nameNormalized: normalizeCatalogName(`${prefix} area`) },
+    select: { id: true },
+  });
+
+  if (user && area) {
+    await deleteFixture(prisma, {
+      userId: user.id,
+      areaId: area.id,
+      projectId: "00000000-0000-4000-8000-000000000000",
+    });
+    return;
+  }
+
+  const projects = await prisma.project.findMany({
+    where: { nameNormalized: normalizeCatalogName(`${prefix} project`) },
+    select: { id: true },
+  });
+  const projectIds = projects.map(({ id }) => id);
+  await prisma.auditEvent.deleteMany({
+    where: {
+      OR: [
+        ...(user ? [{ actorUserId: user.id }] : []),
+        { projectId: { in: projectIds } },
+      ],
+    },
+  });
+  for (const projectId of projectIds) {
+    await deleteRealtimeForEntity(prisma, projectId);
+  }
+  await prisma.projectParticipant.deleteMany({ where: { projectId: { in: projectIds } } });
+  await prisma.valueDelivery.deleteMany({ where: { projectId: { in: projectIds } } });
+  await prisma.project.deleteMany({ where: { id: { in: projectIds } } });
+  if (area) {
+    await prisma.area.delete({ where: { id: area.id } });
+  }
+  if (user) {
+    await prisma.user.delete({ where: { id: user.id } });
+  }
 }
 
 describe("runAuditedMutation contract", () => {
@@ -155,7 +251,7 @@ describe("runAuditedMutation (postgres)", () => {
   let prisma: PrismaClient | undefined;
 
   beforeAll(async () => {
-    prisma = await connectPostgresForTests();
+    prisma = await connectIntegrationDatabase();
   });
 
   afterAll(async () => {
@@ -167,23 +263,24 @@ describe("runAuditedMutation (postgres)", () => {
       skip();
       return;
     }
-    const suffix = randomUUID();
+    const key = "create";
+    const prefix = `KUX-15 audited ${key}`;
+    await deleteFixtureByKey(prisma, key);
     const user = await prisma.user.create({
       data: {
-        oidcIssuer: `https://t12.test/${suffix}`,
-        oidcSubject: `sub-${suffix}`,
-        displayName: "T12 create actor",
+        oidcIssuer: AUDITED_TEST_ISSUER,
+        oidcSubject: `project-${key}`,
+        displayName: `${prefix} actor`,
       },
     });
     const area = await prisma.area.create({
       data: {
-        name: `T12 Área create ${suffix}`,
-        nameNormalized: normalizeCatalogName(`T12 Área create ${suffix}`),
+        name: `${prefix} area`,
+        nameNormalized: normalizeCatalogName(`${prefix} area`),
       },
     });
     const publishRealtime = vi.fn();
     const notifyRealtime = vi.fn();
-    let createdId: string | undefined;
 
     try {
       const created = await runAuditedMutation({
@@ -195,16 +292,16 @@ describe("runAuditedMutation (postgres)", () => {
         load: async () => null,
         mutate: (tx) =>
           tx.project.create({
-              data: {
-                name: `T12 created ${suffix}`,
-              nameNormalized: normalizeCatalogName(`T12 created ${suffix}`),
+            data: {
+              name: "KUX-15 audited create result",
+              nameNormalized: normalizeCatalogName("KUX-15 audited create result"),
               responsibleAreaId: area.id,
               nature: "OPERATIONAL",
               architectureRole: "CONTRIBUTOR",
               status: "PLANNED",
-                createdById: user.id,
-                updatedById: user.id,
-              },
+              createdById: user.id,
+              updatedById: user.id,
+            },
           }),
         audit: ({ result }) => ({
           entityKind: AuditEntityKind.Project,
@@ -215,7 +312,6 @@ describe("runAuditedMutation (postgres)", () => {
         }),
       });
 
-      createdId = created.id;
       expect(created.version).toBe(1);
       expect(publishRealtime).toHaveBeenCalledOnce();
       expect(notifyRealtime).toHaveBeenCalledOnce();
@@ -231,8 +327,8 @@ describe("runAuditedMutation (postgres)", () => {
       expect(events[0]?.occurredAt.toISOString()).toBe(occurredAt.toISOString());
       expect(events[0]?.action).toBe("created");
       expect(events[0]?.changes).toMatchObject({
-        snapshot: { name: `T12 created ${suffix}`, status: "PLANNED" },
-        fields: { name: { before: null, after: `T12 created ${suffix}` } },
+        snapshot: { name: "KUX-15 audited create result", status: "PLANNED" },
+        fields: { name: { before: null, after: "KUX-15 audited create result" } },
       });
 
       const realtime = await prisma.realtimeEvent.findMany({
@@ -245,13 +341,7 @@ describe("runAuditedMutation (postgres)", () => {
         entityId: created.id,
       });
     } finally {
-      await prisma.auditEvent.deleteMany({ where: { actorUserId: user.id } });
-      if (createdId) {
-        await deleteRealtimeForEntity(prisma, createdId);
-      }
-      await prisma.project.deleteMany({ where: { createdById: user.id } });
-      await prisma.area.delete({ where: { id: area.id } });
-      await prisma.user.delete({ where: { id: user.id } });
+      await deleteFixtureByKey(prisma, key);
     }
   });
 
@@ -262,8 +352,7 @@ describe("runAuditedMutation (postgres)", () => {
       skip();
       return;
     }
-    const suffix = randomUUID();
-    const fixture = await createProjectFixture(prisma, suffix);
+    const fixture = await createProjectFixture(prisma, "version");
 
     try {
       await runAuditedMutation({
@@ -280,8 +369,8 @@ describe("runAuditedMutation (postgres)", () => {
           return tx.project.update({
             where: { id: loaded.id },
             data: {
-              name: `T12 first ${suffix}`,
-              nameNormalized: normalizeCatalogName(`T12 first ${suffix}`),
+              name: "KUX-15 audited version first",
+              nameNormalized: normalizeCatalogName("KUX-15 audited version first"),
               updatedById: fixture.userId,
             },
           });
@@ -314,8 +403,8 @@ describe("runAuditedMutation (postgres)", () => {
             return tx.project.update({
               where: { id: loaded.id },
               data: {
-                name: `T12 stale ${suffix}`,
-                nameNormalized: normalizeCatalogName(`T12 stale ${suffix}`),
+                name: "KUX-15 audited version stale",
+                nameNormalized: normalizeCatalogName("KUX-15 audited version stale"),
                 updatedById: fixture.userId,
               },
             });
@@ -337,7 +426,7 @@ describe("runAuditedMutation (postgres)", () => {
       const project = await prisma.project.findUniqueOrThrow({
         where: { id: fixture.projectId },
       });
-      expect(project.name).toBe(`T12 first ${suffix}`);
+      expect(project.name).toBe("KUX-15 audited version first");
       expect(project.version).toBe(2);
 
       const events = await prisma.auditEvent.findMany({
@@ -357,10 +446,9 @@ describe("runAuditedMutation (postgres)", () => {
       return;
     }
     const db = prisma;
-    const suffix = randomUUID();
-    const fixture = await createProjectFixture(db, suffix);
-    const nameA = `T12 concurrent A ${suffix}`;
-    const nameB = `T12 concurrent B ${suffix}`;
+    const fixture = await createProjectFixture(db, "concurrent");
+    const nameA = "KUX-15 audited concurrent A";
+    const nameB = "KUX-15 audited concurrent B";
 
     const edit = (name: string) =>
       runAuditedMutation({
@@ -435,8 +523,7 @@ describe("runAuditedMutation (postgres)", () => {
       skip();
       return;
     }
-    const suffix = randomUUID();
-    const fixture = await createProjectFixture(prisma, suffix);
+    const fixture = await createProjectFixture(prisma, "rollback");
     const original = await prisma.project.findUniqueOrThrow({
       where: { id: fixture.projectId },
     });
@@ -460,8 +547,8 @@ describe("runAuditedMutation (postgres)", () => {
             return tx.project.update({
               where: { id: loaded.id },
               data: {
-                name: `T12 rolled back ${suffix}`,
-                nameNormalized: normalizeCatalogName(`T12 rolled back ${suffix}`),
+                name: "KUX-15 audited rollback result",
+                nameNormalized: normalizeCatalogName("KUX-15 audited rollback result"),
                 updatedById: fixture.userId,
               },
             });
