@@ -44,14 +44,14 @@ function DragHandleIcon() {
 
 export function KanbanCardBody({ activity }: { activity: ActivityListItem }) {
   const card = toKanbanCard(activity);
-  const tags = [card.projectName, card.areaLabel, card.roleLabel].filter(
-    (part): part is string => Boolean(part),
-  );
 
   return (
     <div className="flex flex-1 flex-col gap-2.5">
       <div className="flex items-start justify-between gap-2">
-        <h3 className="line-clamp-2 flex-1 text-headline-sm leading-tight text-on-surface transition-colors group-hover:text-primary">
+        <h3
+          title={card.title}
+          className="line-clamp-3 min-w-0 flex-1 text-headline-sm leading-tight text-on-surface transition-colors group-hover:text-primary"
+        >
           {card.title}
         </h3>
         <span
@@ -61,16 +61,32 @@ export function KanbanCardBody({ activity }: { activity: ActivityListItem }) {
         </span>
       </div>
 
-      {tags.length > 0 ? (
-        <div className="flex flex-wrap gap-1">
-          {tags.map((tag) => (
+      <div className="flex items-center justify-between gap-2 pt-1">
+        <div className="flex min-w-0 items-center gap-1.5">
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-secondary text-[10px] font-bold text-on-secondary">
+            {initials(card.ownerLabel)}
+          </div>
+          <span className="truncate text-body-sm text-on-surface-variant">{card.ownerLabel}</span>
+        </div>
+        <DeadlineIndicator card={card} />
+      </div>
+
+      {card.projectName || card.areaLabel ? (
+        <div className="flex min-w-0 flex-nowrap gap-1.5">
+          {card.projectName ? (
             <span
-              key={tag}
-              className="rounded-md bg-surface-container-low px-1.5 py-0.5 font-mono text-code-sm text-on-surface-variant"
+              title={card.projectName}
+              className="min-w-0 flex-1 truncate rounded-md bg-surface-container-low px-1.5 py-0.5 text-body-sm text-on-surface-variant"
             >
-              {tag}
+              {card.projectName}
             </span>
-          ))}
+          ) : null}
+          <span
+            title={card.areaLabel}
+            className="min-w-0 flex-1 truncate rounded-md bg-surface-container-low px-1.5 py-0.5 text-body-sm text-on-surface-variant"
+          >
+            {card.areaLabel}
+          </span>
         </div>
       ) : null}
 
@@ -92,16 +108,6 @@ export function KanbanCardBody({ activity }: { activity: ActivityListItem }) {
           ) : null}
         </div>
       ) : null}
-
-      <div className="flex items-center justify-between gap-2 pt-1">
-        <div className="flex min-w-0 items-center gap-1.5">
-          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-secondary text-[10px] font-bold text-on-secondary">
-            {initials(card.ownerLabel)}
-          </div>
-          <span className="truncate text-body-sm text-on-surface-variant">{card.ownerLabel}</span>
-        </div>
-        <DeadlineIndicator card={card} />
-      </div>
     </div>
   );
 }
