@@ -59,7 +59,7 @@ export async function renameDomain(
     load: async (tx) => {
       const existing = await domains.findById(input.id, tx);
       if (!existing) {
-        throw new NotFoundError("Domínio não encontrado.");
+        throw new NotFoundError("Categoria não encontrada.");
       }
       const duplicate = await domains.findActiveByNameNormalized(nameNormalized, tx);
       assertUniqueActiveName(trimmed, duplicate, input.id);
@@ -87,7 +87,7 @@ export async function deactivateDomain(
 ): Promise<CatalogItem> {
   const existing = await domains.findById(input.id);
   if (!existing) {
-    throw new NotFoundError("Domínio não encontrado.");
+    throw new NotFoundError("Categoria não encontrada.");
   }
 
   if (!existing.isActive) {
@@ -98,7 +98,7 @@ export async function deactivateDomain(
     load: async (tx) => {
       const row = await domains.findById(input.id, tx);
       if (!row) {
-        throw new NotFoundError("Domínio não encontrado.");
+        throw new NotFoundError("Categoria não encontrada.");
       }
       return row;
     },

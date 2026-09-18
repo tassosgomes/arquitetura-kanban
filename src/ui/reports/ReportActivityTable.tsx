@@ -29,13 +29,7 @@ export function ReportActivityTable({ activities, emptyMessage }: ReportActivity
         <thead className="bg-surface-container-low text-on-surface-variant">
           <tr>
             <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
-              Título
-            </th>
-            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Tipo
-            </th>
-            <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
-              Status (retrato)
             </th>
             <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Projeto
@@ -44,7 +38,7 @@ export function ReportActivityTable({ activities, emptyMessage }: ReportActivity
               Área solicitante
             </th>
             <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
-              Responsável
+              Status (retrato)
             </th>
             <th scope="col" className="px-4 py-3 text-label-sm font-semibold uppercase tracking-wider">
               Início
@@ -57,22 +51,7 @@ export function ReportActivityTable({ activities, emptyMessage }: ReportActivity
         <tbody className="divide-y divide-outline-variant/40">
           {activities.map((activity) => (
             <tr key={activity.id} className="transition-colors hover:bg-primary-container/5">
-              <td className="px-4 py-3">
-                <Link
-                  href={`/activities/${activity.id}`}
-                  className="font-semibold text-on-surface hover:text-primary"
-                >
-                  {activity.title || activity.id}
-                </Link>
-              </td>
               <td className="px-4 py-3 text-on-surface-variant">{cell(activity.type)}</td>
-              <td className="px-4 py-3">
-                {activity.statusKey ? (
-                  <ActivityStatusBadge status={activity.statusKey} />
-                ) : (
-                  <span className="text-outline">—</span>
-                )}
-              </td>
               <td className="px-4 py-3 text-on-surface-variant">
                 {activity.projectId ? (
                   <Link
@@ -86,7 +65,13 @@ export function ReportActivityTable({ activities, emptyMessage }: ReportActivity
                 )}
               </td>
               <td className="px-4 py-3 text-on-surface-variant">{cell(activity.requestingArea)}</td>
-              <td className="px-4 py-3 text-on-surface-variant">{cell(activity.owner)}</td>
+              <td className="px-4 py-3">
+                {activity.statusKey ? (
+                  <ActivityStatusBadge status={activity.statusKey} />
+                ) : (
+                  <span className="text-outline">—</span>
+                )}
+              </td>
               <td className="px-4 py-3 whitespace-nowrap font-mono text-code-sm text-on-surface-variant">
                 {dateCell(activity.startDate)}
               </td>

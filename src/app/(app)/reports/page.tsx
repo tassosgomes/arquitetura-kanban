@@ -122,17 +122,28 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
             </p>
           </InfoTooltip>
         </div>
-        {csvHref ? (
-          <a
-            href={csvHref}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary-container px-space-md py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/reports/executive"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-surface-container-lowest px-space-md py-2.5 text-label-md font-semibold text-primary shadow-sm hover:bg-surface-container focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-              file_download
+              menu_book
             </span>
-            Exportar CSV
-          </a>
-        ) : null}
+            Book executivo
+          </Link>
+          {csvHref ? (
+            <a
+              href={csvHref}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary-container px-space-md py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                file_download
+              </span>
+              Exportar CSV
+            </a>
+          ) : null}
+        </div>
       </header>
 
       <DashboardFilters
@@ -156,7 +167,7 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
         }))}
         domains={domains.map((domain) => ({
           id: domain.id,
-          label: domain.isActive ? domain.name : `${domain.name} (inativo)`,
+          label: domain.isActive ? domain.name : `${domain.name} (inativa)`,
         }))}
       />
 

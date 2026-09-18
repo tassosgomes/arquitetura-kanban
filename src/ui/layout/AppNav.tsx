@@ -30,10 +30,10 @@ const NAV_ITEMS: NavItem[] = [
     isActive: (pathname) => pathname.startsWith("/dashboard"),
   },
   {
-    href: "/reports",
-    label: "Relatórios",
-    icon: "analytics",
-    isActive: (pathname) => pathname.startsWith("/reports"),
+    href: "/reports/executive",
+    label: "Book",
+    icon: "menu_book",
+    isActive: (pathname) => pathname === "/reports" || pathname.startsWith("/reports/"),
   },
   {
     href: "/catalogs",

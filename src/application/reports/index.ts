@@ -76,3 +76,12 @@ export {
 } from "@/application/reports/report-rows";
 export { REPORT_PAGE_SIZE, paginateItems } from "@/application/reports/pagination";
 export type { PageSlice } from "@/application/reports/pagination";
+export {
+  buildExecutiveBook,
+  type ExecutiveBook,
+  type ExecutiveBookActivity,
+  type ExecutiveBookArea,
+  type ExecutiveBookDeadlineSummary,
+  type ExecutiveBookDeps,
+  type ExecutiveBookStatusSummary,
+} from "@/application/reports/executive-book";

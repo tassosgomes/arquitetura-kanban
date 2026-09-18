@@ -94,6 +94,7 @@ export type ManagementFilterValues = {
   from: string;
   to: string;
   areaId?: string;
+  requestingAreaId?: string;
   projectId?: string;
   ownerId?: string;
   participantId?: string;
@@ -202,6 +203,9 @@ export function toManagementDimensionFilters(
   if (values.areaId) {
     filters.areaId = values.areaId;
   }
+  if (values.requestingAreaId) {
+    filters.requestingAreaId = values.requestingAreaId;
+  }
   if (values.projectId) {
     filters.projectId = values.projectId;
   }
@@ -265,6 +269,7 @@ export function parseManagementSearchParams(
     from,
     to,
     areaId: optionalUuid(params, "area"),
+    requestingAreaId: optionalUuid(params, "requestingArea"),
     projectId: optionalUuid(params, "project"),
     ownerId: optionalUuid(params, "owner"),
     participantId: optionalUuid(params, "participant"),
@@ -304,6 +309,7 @@ export function parseManagementSearchParams(
 export function hasDimensionFilters(values: ManagementFilterValues): boolean {
   return Boolean(
     values.areaId ||
+      values.requestingAreaId ||
       values.projectId ||
       values.ownerId ||
       values.participantId ||
@@ -351,6 +357,9 @@ export function serializeManagementFilterValues(
   }
   if (values.areaId) {
     params.set("area", values.areaId);
+  }
+  if (values.requestingAreaId) {
+    params.set("requestingArea", values.requestingAreaId);
   }
   if (values.projectId) {
     params.set("project", values.projectId);
@@ -416,6 +425,7 @@ export function serializeManagementQuery(query: ManagementQuery): URLSearchParam
     from,
     to,
     areaId: filters.areaId,
+    requestingAreaId: filters.requestingAreaId,
     projectId: filters.projectId,
     ownerId: filters.ownerId,
     participantId: filters.participantId,

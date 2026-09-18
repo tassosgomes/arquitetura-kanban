@@ -142,7 +142,7 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
         }))}
         domains={domains.map((domain) => ({
           id: domain.id,
-          label: domain.isActive ? domain.name : `${domain.name} (inativo)`,
+          label: domain.isActive ? domain.name : `${domain.name} (inativa)`,
         }))}
       />
 

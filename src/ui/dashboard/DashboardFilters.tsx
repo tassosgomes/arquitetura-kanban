@@ -46,6 +46,8 @@ type DashboardFiltersProps = {
   domains: DashboardFilterOption[];
   /** Dashboard (T26) or reports (T27) — same ManagementQuery. */
   basePath?: string;
+  /** Keep the legacy area-union filter, use the Book's requester filter, or hide it. */
+  areaFilterMode?: "union" | "requesting" | "hidden";
 };
 
 function appendIfPresent(params: URLSearchParams, key: string, value: FormDataEntryValue | null) {
@@ -61,6 +63,7 @@ export function DashboardFilters({
   users,
   domains,
   basePath = "/dashboard",
+  areaFilterMode = "union",
 }: DashboardFiltersProps) {
   const router = useRouter();
   const [period, setPeriod] = useState<ManagementPeriodOption>(values.period);
@@ -107,7 +110,13 @@ export function DashboardFilters({
       appendIfPresent(params, "from", data.get("from"));
       appendIfPresent(params, "to", data.get("to"));
     }
-    appendIfPresent(params, "area", data.get("area"));
+    if (areaFilterMode === "union") {
+      appendIfPresent(params, "area", data.get("area"));
+    } else if (areaFilterMode === "requesting") {
+      appendIfPresent(params, "requestingArea", data.get("requestingArea"));
+    } else if (values.requestingAreaId) {
+      params.set("requestingArea", values.requestingAreaId);
+    }
     appendIfPresent(params, "project", data.get("project"));
     appendIfPresent(params, "owner", data.get("owner"));
     appendIfPresent(params, "participant", data.get("participant"));
@@ -218,17 +227,31 @@ export function DashboardFilters({
               </>
             ) : null}
 
-            <label className="flex flex-col gap-1.5">
-              <span className="text-label-sm text-on-surface-variant">Área</span>
-              <select name="area" className={CONTROL_CLASS_NAME} defaultValue={values.areaId ?? ""}>
-                <option value="">Todas</option>
-                {areas.map((area) => (
-                  <option key={area.id} value={area.id}>
-                    {area.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            {areaFilterMode !== "hidden" ? (
+              <label className="flex flex-col gap-1.5">
+                <span className="text-label-sm text-on-surface-variant">
+                  {areaFilterMode === "requesting" ? "Área solicitante" : "Área"}
+                </span>
+                <select
+                  name={areaFilterMode === "requesting" ? "requestingArea" : "area"}
+                  className={CONTROL_CLASS_NAME}
+                  defaultValue={
+                    areaFilterMode === "requesting"
+                      ? (values.requestingAreaId ?? "")
+                      : (values.areaId ?? "")
+                  }
+                >
+                  <option value="">Todas</option>
+                  {areas.map((area) => (
+                    <option key={area.id} value={area.id}>
+                      {area.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : values.requestingAreaId ? (
+              <input type="hidden" name="requestingArea" value={values.requestingAreaId} />
+            ) : null}
 
             <label className="flex flex-col gap-1.5">
               <span className="text-label-sm text-on-surface-variant">Projeto</span>
@@ -275,7 +298,7 @@ export function DashboardFilters({
             </label>
 
             <label className="flex flex-col gap-1.5">
-              <span className="text-label-sm text-on-surface-variant">Domínio</span>
+              <span className="text-label-sm text-on-surface-variant">Categoria</span>
               <select
                 name="domain"
                 className={CONTROL_CLASS_NAME}

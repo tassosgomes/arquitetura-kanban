@@ -67,11 +67,11 @@ export default async function NewActivityPage({ searchParams }: NewActivityPageP
   if (domains.length === 0) {
     return (
       <EmptyState
-        title="Cadastre um domínio primeiro"
-        message="É necessário ao menos um domínio ativo para classificar a atividade."
+        title="Cadastre uma categoria primeiro"
+        message="É necessário ao menos uma categoria ativa para classificar a atividade."
         action={
           <Link href="/catalogs/domains" className="text-label-md font-semibold text-primary underline">
-            Ir para domínios
+            Ir para categorias
           </Link>
         }
       />

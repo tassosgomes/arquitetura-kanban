@@ -110,9 +110,9 @@ export function ActivityDetail({
                 .map((area) => `${area.name}${area.isActive ? "" : " (inativa)"}`)
                 .join(", ")}
         </Item>
-        <Item label="Domínio">
+        <Item label="Categoria">
           {activity.domain.name}
-          {activity.domain.isActive ? null : " (inativo)"}
+          {activity.domain.isActive ? null : " (inativa)"}
         </Item>
         <Item label="Natureza">{ACTIVITY_NATURE_LABELS[activity.nature]}</Item>
         <Item label="Papel da Arquitetura">

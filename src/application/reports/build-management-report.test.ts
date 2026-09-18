@@ -28,6 +28,7 @@ function listItem(
 ): ActivityListItem {
   return {
     title: overrides.id,
+    description: null,
     type: ActivityType.AD_HOC,
     priority: Priority.MEDIUM,
     effort: null,

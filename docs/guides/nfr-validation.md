@@ -71,8 +71,8 @@ Login real, provisionamento no primeiro SSO e recusa pelo allowlist do IdP **nã
 
 | Spec | O que cobre | Aceite |
 | --- | --- | --- |
-| `e2e/public-routes.spec.ts` | `/login` (botão SSO e alerta `AccessDenied`), `/403`, redirect de `/kanban` `/dashboard` `/reports` `/projects` para `/login`, `GET /api/reports/csv` e `GET /api/realtime/sse` **sem** cookie → **401** e sem CSV/event-stream | Automatizado na CI |
-| `e2e/authenticated-flow.spec.ts` | Roteiro login → projeto → atividade → checklist → Kanban → entrega → relatório/CSV | **Skipped** até OIDC real. Não reativar com sessão forjada. |
+| `e2e/public-routes.spec.ts` | `/login` (botão SSO e alerta `AccessDenied`), `/403`, redirect de `/kanban` `/dashboard` `/reports` `/reports/executive` `/projects` para `/login`, `GET /api/reports/csv` e `GET /api/realtime/sse` **sem** cookie → **401** e sem CSV/event-stream | Automatizado na CI |
+| `e2e/authenticated-flow.spec.ts` | Roteiro login → projeto → atividade → checklist → Kanban → entrega → Book/CSV | **Skipped** até OIDC real. Não reativar com sessão forjada. |
 
 O clique em “Entrar com SSO” **não** é exercitado no spec público: o issuer dummy da CI não é um IdP. Isso evitaria um falso vermelho e também um falso aceite.
 
@@ -89,7 +89,7 @@ Páginas M4 conferidas (todas sob `(app)`, nenhuma fora do layout):
 | Tela | Rota |
 | --- | --- |
 | Dashboard (T26) | `/dashboard` |
-| Relatório e CSV (T27) | `/reports`, `/api/reports/csv` |
+| Relatório, Book e CSV (T27/T31) | `/reports`, `/reports/executive`, `/api/reports/csv` |
 | Página do projeto (T24) | `/projects/[id]` e subrotas |
 | Entregas de Valor (T23) | `/projects/[id]/value-deliveries…` |
 
@@ -149,7 +149,7 @@ Marque na homologação (data / quem / URL). Itens de código já presentes; **n
 | # | Verificação | Onde | Status lab | Status com login real |
 | --- | --- | --- | --- | --- |
 | K1 | Skip link “Ir para o conteúdo” visível no primeiro Tab e leva a `#conteudo-principal` | `SkipLink` + `AppShell` | Código presente | Pendente |
-| K2 | Nav principal (Kanban, Projetos, Dashboard, Relatórios, Cadastros) operável por Tab/Enter; `aria-current` na rota ativa | `AppNav` | Código presente | Pendente |
+| K2 | Nav principal (Kanban, Projetos, Dashboard, Book, Cadastros) operável por Tab/Enter; `aria-current` na rota ativa | `AppNav` | Código presente | Pendente |
 | K3 | Login: Tab no botão “Entrar com SSO”; 403: “Voltar ao login” | Playwright público + páginas | Público ok | SSO pendente |
 | K4 | Kanban: alça com Espaço + setas; seletor “Mover para”; anúncios do DnD | `KanbanBoard` / `kanban-keyboard-coordinates` | Código presente | Pendente |
 | K5 | Formulários (projeto, atividade, entrega): labels, submit, erro junto ao campo, `focus-visible` | padrões T08 | Código presente | Pendente |

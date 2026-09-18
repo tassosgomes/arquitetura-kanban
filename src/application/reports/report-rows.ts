@@ -27,7 +27,7 @@ export const REPORT_CSV_HEADERS = [
   "status",
   "projeto",
   "área solicitante",
-  "domínio",
+  "categoria",
   "natureza",
   "papel",
   "responsável",
@@ -127,7 +127,7 @@ export function toManagementReportRow(input: {
   const statusText = portraitString(portrait.status);
   const project = labeledId(portrait.projetoId, labels.projects, "Projeto sem identificação");
   const area = labeledId(portrait.areaSolicitanteId, labels.areas, "Área sem identificação");
-  const domain = labeledId(portrait.dominioId, labels.domains, "Domínio sem identificação");
+  const domain = labeledId(portrait.dominioId, labels.domains, "Categoria sem identificação");
   const owner = labeledId(portrait.responsavelId, labels.users, "Usuário sem identificação");
 
   return {

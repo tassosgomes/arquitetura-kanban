@@ -21,7 +21,7 @@ describe("middleware (T28)", () => {
   });
 
   it("redirects anonymous HTML app routes to login", () => {
-    for (const path of ["/kanban", "/dashboard", "/reports", "/projects"]) {
+    for (const path of ["/kanban", "/dashboard", "/reports", "/reports/executive", "/projects"]) {
       const response = dispatch(path);
       expect(response.status).toBe(307);
       expect(locationOf(response)).toMatch(/\/login$/);

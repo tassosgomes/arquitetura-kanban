@@ -190,7 +190,7 @@ export function aggregateManagementSnapshot(
       labelOrFallback(labels.areas, id, "Área sem identificação"),
     ),
     "D-DOMINIO": bucketsFromCountMap(domainCounts, (id) =>
-      labelOrFallback(labels.domains, id, "Domínio sem identificação"),
+      labelOrFallback(labels.domains, id, "Categoria sem identificação"),
     ),
     "D-RESPONSAVEL": bucketsFromCountMap(ownerCounts, (id) =>
       labelOrFallback(labels.users, id, "Usuário sem identificação"),

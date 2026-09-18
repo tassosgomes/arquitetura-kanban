@@ -18,6 +18,7 @@ import {
 } from "@/application/reports/search-params";
 
 const AREA_ID = "33333333-3333-4333-8333-333333333333";
+const REQUESTING_AREA_ID = "44444444-4444-4444-8444-444444444444";
 const OWNER_ID = "11111111-1111-4111-8111-111111111111";
 const PARTICIPANT_ID = "22222222-2222-4222-8222-222222222222";
 
@@ -118,15 +119,44 @@ describe("management search params (T26)", () => {
     expect(activeManagementShortcut(parsed.values)).toBeNull();
   });
 
+  it("parses and roundtrips requestingArea separately from the area union filter", () => {
+    const parsed = parseManagementSearchParams({
+      area: AREA_ID,
+      requestingArea: REQUESTING_AREA_ID,
+    });
+
+    expect(parsed.values.areaId).toBe(AREA_ID);
+    expect(parsed.values.requestingAreaId).toBe(REQUESTING_AREA_ID);
+    expect(parsed.query.filters).toEqual({
+      areaId: AREA_ID,
+      requestingAreaId: REQUESTING_AREA_ID,
+    });
+    expect(hasActiveManagementFilters(parsed.values)).toBe(true);
+
+    const serializedQuery = serializeManagementQuery(parsed.query);
+    expect(serializedQuery.get("area")).toBe(AREA_ID);
+    expect(serializedQuery.get("requestingArea")).toBe(REQUESTING_AREA_ID);
+    expect(
+      parseManagementSearchParams(Object.fromEntries(serializedQuery.entries())).query,
+    ).toEqual(parsed.query);
+
+    const serializedValues = serializeManagementFilterValues(parsed.values);
+    expect(
+      parseManagementSearchParams(Object.fromEntries(serializedValues.entries())).values,
+    ).toEqual(parsed.values);
+  });
+
   it("accepts effort unset and ignores invalid ids", () => {
     const parsed = parseManagementSearchParams({
       area: "not-a-uuid",
+      requestingArea: "not-a-uuid",
       project: "",
       nature: "NOPE",
       effort: EFFORT_FILTER_UNSET,
       type: "NOPE",
     });
     expect(parsed.values.areaId).toBeUndefined();
+    expect(parsed.values.requestingAreaId).toBeUndefined();
     expect(parsed.values.projectId).toBeUndefined();
     expect(parsed.values.nature).toBeUndefined();
     expect(parsed.values.type).toBeUndefined();

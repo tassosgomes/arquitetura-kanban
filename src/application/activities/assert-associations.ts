@@ -38,18 +38,18 @@ export async function assertUsableDomain(
 ): Promise<void> {
   const domain = await domains.findById(domainId, tx);
   if (!domain) {
-    throw new ValidationError("Domínio inválido.", {
-      domainId: ["Selecione um domínio válido."],
+    throw new ValidationError("Categoria inválida.", {
+      domainId: ["Selecione uma categoria válida."],
     });
   }
   if (domain.isActive) {
     return;
   }
-  throw new ValidationError("O domínio precisa estar ativo.", {
+  throw new ValidationError("A categoria precisa estar ativa.", {
     domainId: [
       currentDomainId === domainId
-        ? "O domínio ficou inativo. Selecione um domínio ativo para salvar."
-        : "Selecione um domínio ativo.",
+        ? "A categoria ficou inativa. Selecione uma categoria ativa para salvar."
+        : "Selecione uma categoria ativa.",
     ],
   });
 }
