@@ -24,9 +24,8 @@ import { EmptyState } from "@/ui/feedback/EmptyState";
 import { ErrorState } from "@/ui/feedback/ErrorState";
 import { InfoTooltip } from "@/ui/feedback/InfoTooltip";
 import { DashboardFilters } from "@/ui/dashboard/DashboardFilters";
-import { ReportActivityTable, AssociatedProjectsList } from "@/ui/reports/ReportActivityTable";
+import { ReportActivityTable } from "@/ui/reports/ReportActivityTable";
 import { ReportPagination } from "@/ui/reports/ReportPagination";
-import { ReportSummaryTable } from "@/ui/reports/ReportSummaryTable";
 import { formatUserLabel } from "@/ui/projects/project-types";
 
 type ReportsPageProps = {
@@ -172,8 +171,6 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
 
       {report && pageSlice ? (
         <>
-          <ReportSummaryTable indicators={report.snapshot.indicators} />
-          <AssociatedProjectsList projects={report.associatedProjects} />
           <section className="flex flex-col gap-3" aria-labelledby="relatorio-atividades">
             <div className="flex flex-col gap-1">
               <h2 id="relatorio-atividades" className="text-headline-md text-on-surface">
