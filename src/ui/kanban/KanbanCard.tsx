@@ -4,7 +4,9 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { useDraggable } from "@dnd-kit/core";
 import { toKanbanCard } from "@/application/activities/kanban-board";
+import type { KanbanCardData } from "@/application/activities/kanban-board";
 import type { ActivityListItem } from "@/application/activities/types";
+import { DeadlineStatus } from "@/application/reports/deadline-status";
 import {
   ACTIVITY_STATUS_LABELS,
   ActivityStatus,
@@ -98,15 +100,40 @@ export function KanbanCardBody({ activity }: { activity: ActivityListItem }) {
           </div>
           <span className="truncate text-body-sm text-on-surface-variant">{card.ownerLabel}</span>
         </div>
-        {card.expectedEndDate ? (
-          <div className="flex shrink-0 items-center gap-1 font-mono text-code-sm text-outline">
-            <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
-              calendar_today
-            </span>
-            <time dateTime={card.expectedEndDate}>{formatCivilDatePtBr(card.expectedEndDate)}</time>
-          </div>
-        ) : null}
+        <DeadlineIndicator card={card} />
       </div>
+    </div>
+  );
+}
+
+function DeadlineIndicator({ card }: { card: KanbanCardData }) {
+  const isOverdue = card.deadlineStatus === DeadlineStatus.OVERDUE;
+  const isNoForecast = card.deadlineStatus === DeadlineStatus.NO_FORECAST;
+  const hasSemanticLabel = isOverdue || card.deadlineIsDueToday || isNoForecast;
+  const tone = isOverdue
+    ? "rounded-md bg-error/10 px-1.5 py-0.5 text-error"
+    : card.deadlineIsDueToday
+      ? "rounded-md bg-amber-500/10 px-1.5 py-0.5 text-amber-700 dark:text-amber-300"
+      : isNoForecast
+        ? "rounded-md bg-surface-container-low px-1.5 py-0.5 text-on-surface-variant"
+        : "text-outline";
+  const icon = isOverdue
+    ? "warning"
+    : card.deadlineIsDueToday
+      ? "event"
+      : isNoForecast
+        ? "event_busy"
+        : "calendar_today";
+
+  return (
+    <div className={`flex min-w-0 shrink-0 items-center gap-1 font-mono text-code-sm ${tone}`}>
+      <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
+        {icon}
+      </span>
+      {hasSemanticLabel ? <span className="font-semibold">{card.deadlineStatusLabel}</span> : null}
+      {card.expectedEndDate ? (
+        <time dateTime={card.expectedEndDate}>{formatCivilDatePtBr(card.expectedEndDate)}</time>
+      ) : null}
     </div>
   );
 }
@@ -114,12 +141,21 @@ export function KanbanCardBody({ activity }: { activity: ActivityListItem }) {
 const CARD_SURFACE_CLASS =
   "group flex flex-col gap-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-space-md shadow-sm transition-all hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
+function cardDeadlineAccent(card: KanbanCardData): string {
+  return card.deadlineStatus === DeadlineStatus.OVERDUE
+    ? "border-l-4 border-l-error"
+    : "";
+}
+
 /** Presentational card (T17 / lista de canceladas da T20). Sem DnD — pode ficar fora de DndContext. */
 export function KanbanCard({ activity }: KanbanCardProps) {
   const card = toKanbanCard(activity);
 
   return (
-    <Link href={`/activities/${card.activityId}`} className={CARD_SURFACE_CLASS}>
+    <Link
+      href={`/activities/${card.activityId}`}
+      className={`${CARD_SURFACE_CLASS} ${cardDeadlineAccent(card)}`}
+    >
       <KanbanCardBody activity={activity} />
     </Link>
   );
@@ -197,9 +233,9 @@ export function DraggableKanbanCard({
     <article
       ref={setNodeRef}
       aria-labelledby={titleId}
-      className={`group flex flex-col rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-sm transition-shadow hover:shadow-md ${
-        isDragging ? "opacity-40" : ""
-      }`}
+      className={`group flex flex-col rounded-xl border border-outline-variant/60 bg-surface-container-lowest shadow-sm transition-shadow hover:shadow-md ${cardDeadlineAccent(
+        card,
+      )} ${isDragging ? "opacity-40" : ""}`}
     >
       <div className="flex items-start gap-1">
         {handle}
