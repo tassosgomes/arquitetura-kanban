@@ -117,3 +117,31 @@ registrados para quem for priorizar em seguida.
 - **A suíte roda 63+ workers contra um único PostgreSQL.** As duas falhas intermitentes
   observadas (`catalogs` e `management-snapshot`) têm essa origem comum. Vale considerar
   `TEST_DATABASE_URL` para todos os testes de integração, não só os dois de KUX-15.
+
+## Pendências abertas após a revisão independente
+
+A revisão encontrou 10 defeitos; os 4 graves foram corrigidos em `c416ec5`. O que
+segue em aberto, por ordem de gravidade, para entrar como follow-up:
+
+- **KUX-17 não está completo.** A abordagem de rota interceptada foi removida por não
+  funcionar (o layout nunca renderizou o slot). O painel atual usa `pushState` e, por
+  causa disso, fechar depois de criar pode levar a `/activities/new` em página cheia em
+  vez do board, e um `closingRef` que nunca é zerado faz o Voltar do navegador pular a
+  confirmação de descarte, perdendo formulário preenchido. Itens 2, 3 e 5 do Escopo e
+  2, 3, 4 e 7 do Aceite seguem desmarcados.
+- **"Mover para" inalcançável no último card de coluna rolada** (KUX-01 × KUX-03): o
+  painel é `absolute top-full` dentro do contêiner de `overflow-y-auto`; ao rolar para
+  vê-lo, o ponteiro sai do card e ele some. Só afeta mouse.
+- **Prazo sem caminho em toque** (KUX-02): rótulo e data estão em `title` e
+  `group-hover`, que não existem em toque; falta o escape `pointer-coarse:` que o
+  KUX-03 usa no botão de mover.
+- **Busca por título sobrescreve digitação** (KUX-07): o efeito de sincronização com o
+  servidor reescreve o input quando a resposta chega, descartando o que foi digitado
+  durante o voo.
+- **`Enter` sem resultados submete o formulário** (KUX-14): falta `preventDefault` no
+  ramo de lista vazia do `SearchableSelect`.
+- **KUX-10 ainda cobra duas rodadas no caminho de projeto:** o `superRefine` só valida
+  os obrigatórios quando `type === AD_HOC`; para `PROJECT` eles continuam caindo em
+  `requireInheritedFields`, que roda depois do schema.
+- **`SearchableSelect` mostra UUID cru** quando um id selecionado não está nas opções
+  (participante herdado que ficou inativo) — é o sintoma que KUX-15 queria eliminar.
