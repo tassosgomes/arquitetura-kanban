@@ -3,17 +3,14 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  closestCorners,
   DndContext,
   DragOverlay,
   KeyboardSensor,
   PointerSensor,
-  pointerWithin,
   useDroppable,
   useSensor,
   useSensors,
   type Announcements,
-  type CollisionDetection,
   type DragEndEvent,
   type DragStartEvent,
   type UniqueIdentifier,
@@ -28,32 +25,41 @@ import {
   type KanbanColumn,
 } from "@/application/activities/kanban-board";
 import type { ActivityListItem } from "@/application/activities/types";
-import { ACTIVITY_STATUS_LABELS, type ActivityStatus } from "@/domain/activity/enums";
+import {
+  ACTIVITY_STATUS_LABELS,
+  isKanbanColumnStatus,
+  type ActivityStatus,
+} from "@/domain/activity/enums";
 import { ACTIVITY_STATUS_DOT } from "@/ui/activities/ActivityStatusBadge";
 import { DraggableKanbanCard, KanbanCardBody } from "@/ui/kanban/KanbanCard";
-import { kanbanKeyboardCoordinates } from "@/ui/kanban/kanban-keyboard-coordinates";
+import {
+  kanbanCollisionDetection,
+  kanbanKeyboardCoordinates,
+} from "@/ui/kanban/kanban-keyboard-coordinates";
 import { useProtectOpenEdit } from "@/ui/realtime/useProtectOpenEdit";
 
 type KanbanBoardProps = {
   activities: ActivityListItem[];
 };
 
-const collisionDetection: CollisionDetection = (args) => {
-  const pointerHits = pointerWithin(args);
-  if (pointerHits.length > 0) {
-    return pointerHits;
-  }
-  return closestCorners(args);
-};
-
 function activityTitle(items: readonly ActivityListItem[], id: UniqueIdentifier): string {
   return items.find((item) => item.id === String(id))?.title ?? "atividade";
+}
+
+function activityColumnStatus(
+  items: readonly ActivityListItem[],
+  id: UniqueIdentifier,
+): ActivityStatus | null {
+  const status = items.find((item) => item.id === String(id))?.status;
+  return status && isKanbanColumnStatus(status) ? status : null;
 }
 
 function kanbanAnnouncements(items: readonly ActivityListItem[]): Announcements {
   return {
     onDragStart({ active }) {
-      return `Atividade ${activityTitle(items, active.id)} selecionada. Use as setas para mudar de coluna e Espaço para soltar.`;
+      const status = activityColumnStatus(items, active.id);
+      const columnMessage = status ? ` na coluna ${ACTIVITY_STATUS_LABELS[status]}` : "";
+      return `Atividade ${activityTitle(items, active.id)} selecionada${columnMessage}. Use as setas para mudar de coluna e Espaço para soltar.`;
     },
     onDragOver({ active, over }) {
       const status = resolveKanbanDropStatus(over?.id, items);
@@ -239,7 +245,7 @@ export function KanbanBoard({ activities }: KanbanBoardProps) {
       ) : null}
       <DndContext
         sensors={sensors}
-        collisionDetection={collisionDetection}
+        collisionDetection={kanbanCollisionDetection}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
         onDragCancel={onDragCancel}
