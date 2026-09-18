@@ -23,20 +23,20 @@ correção, não como ajuste cosmético.
 
 ## Escopo
 
-- [ ] Reproduzir com teste automatizado antes de corrigir.
-- [ ] Garantir que, ao pegar o card, o alvo destacado seja a coluna de origem.
-- [ ] Confirmar que soltar sobre a coluna de origem não dispara mutação
+- [x] Reproduzir com teste automatizado antes de corrigir.
+- [x] Garantir que, ao pegar o card, o alvo destacado seja a coluna de origem.
+- [x] Confirmar que soltar sobre a coluna de origem não dispara mutação
       (`planKanbanStatusMove` deve resultar em no-op).
-- [ ] Revisar a `collisionDetection` (`pointerWithin` → `closestCorners`) para o caso
+- [x] Revisar a `collisionDetection` (`pointerWithin` → `closestCorners`) para o caso
       do drag iniciado por teclado, em que não há ponteiro.
-- [ ] Verificar o comportamento nas colunas das pontas (Backlog e Concluído): `←` no
+- [x] Verificar o comportamento nas colunas das pontas (Backlog e Concluído): `←` no
       primeiro e `→` no último não devem sair do board.
 
 ## Aceite
 
-- [ ] `Espaço` na alça destaca a coluna atual do card.
-- [ ] `Espaço` → `Espaço` mantém o card onde estava e não gera evento de auditoria.
-- [ ] `→` move exatamente uma coluna por vez, em todas as colunas.
+- [x] `Espaço` na alça destaca a coluna atual do card.
+- [x] `Espaço` → `Espaço` mantém o card onde estava e não gera evento de auditoria.
+- [x] `→` move exatamente uma coluna por vez, em todas as colunas.
 - [ ] `Escape` continua cancelando e devolvendo o card à origem.
 - [ ] Os anúncios de leitor de tela (`kanbanAnnouncements`) refletem a coluna correta
       em `onDragStart` e `onDragOver`.

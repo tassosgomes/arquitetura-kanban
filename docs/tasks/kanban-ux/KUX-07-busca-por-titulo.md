@@ -15,27 +15,27 @@ ausente.
 
 ## Escopo
 
-- [ ] Campo de busca por título na barra de filtros, sempre visível (não atrás do
+- [x] Campo de busca por título na barra de filtros, sempre visível (não atrás do
       "Expandir").
-- [ ] Termo persistido na URL como os demais filtros, para compartilhamento e reload.
-- [ ] Busca case-insensitive e sem sensibilidade a acento, combinando com os filtros
+- [x] Termo persistido na URL como os demais filtros, para compartilhamento e reload.
+- [x] Busca case-insensitive e sem sensibilidade a acento, combinando com os filtros
       já aplicados (não os substitui).
-- [ ] Aplicar com debounce, sem exigir Enter, mantendo o foco no campo.
-- [ ] Definir e documentar o escopo do termo: apenas título, ou título + descrição.
-- [ ] Estado vazio específico: "Nenhuma atividade corresponde a «termo»", com ação de
+- [x] Aplicar com debounce, sem exigir Enter, mantendo o foco no campo.
+- [x] Definir e documentar o escopo do termo: apenas título, ou título + descrição.
+- [x] Estado vazio específico: "Nenhuma atividade corresponde a «termo»", com ação de
       limpar apenas a busca.
-- [ ] Filtrar no servidor, junto da consulta existente — não filtrar no cliente sobre
+- [x] Filtrar no servidor, junto da consulta existente — não filtrar no cliente sobre
       um recorte já paginado.
 
 ## Aceite
 
-- [ ] Digitar "MFA" reduz o board às atividades com o termo no título, preservando os
+- [x] Digitar "MFA" reduz o board às atividades com o termo no título, preservando os
       demais filtros.
-- [ ] Acento e caixa não alteram o resultado ("relatorio" encontra "Relatório").
-- [ ] A URL resultante, colada em outra aba, reproduz o mesmo recorte.
-- [ ] Limpar a busca restaura o recorte anterior sem perder os outros filtros.
-- [ ] O termo aparece como chip removível (KUX-04) e entra na contagem de filtros ativos.
-- [ ] O campo tem rótulo acessível e é alcançável por teclado.
+- [x] Acento e caixa não alteram o resultado ("relatorio" encontra "Relatório").
+- [x] A URL resultante, colada em outra aba, reproduz o mesmo recorte.
+- [x] Limpar a busca restaura o recorte anterior sem perder os outros filtros.
+- [x] O termo aparece como chip removível (KUX-04) e entra na contagem de filtros ativos.
+- [x] O campo tem rótulo acessível e é alcançável por teclado.
 
 ## Como validar
 

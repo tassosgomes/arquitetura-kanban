@@ -17,12 +17,12 @@ milhares de pixels com o card na mão.
 
 ## Escopo
 
-- [ ] Dar ao contêiner do board altura de viewport (`h-[calc(100dvh-<offset do header>)]`),
+- [x] Dar ao contêiner do board altura de viewport (`h-[calc(100dvh-<offset do header>)]`),
       de modo que a página em si não role.
-- [ ] `<section>` da coluna com `max-h-full` e a `<ul>` de cards com `overflow-y-auto`.
-- [ ] `<header>` da coluna com `sticky top-0` e fundo opaco, para o nome e a contagem
+- [x] `<section>` da coluna com `max-h-full` e a `<ul>` de cards com `overflow-y-auto`.
+- [x] `<header>` da coluna com `sticky top-0` e fundo opaco, para o nome e a contagem
       ficarem visíveis durante o scroll interno.
-- [ ] Preservar o scroll horizontal existente do board (`overflow-x-auto`) para telas
+- [x] Preservar o scroll horizontal existente do board (`overflow-x-auto`) para telas
       estreitas — as duas direções coexistem.
 - [ ] Verificar que o auto-scroll do `@dnd-kit` funciona dentro da coluna com scroll
       próprio ao arrastar um card para perto da borda.
