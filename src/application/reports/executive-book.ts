@@ -14,8 +14,8 @@ import {
 } from "@/application/audit/reconstruct-portrait";
 import {
   classifyDeadlineStatus,
+  DeadlineStatus,
   DEADLINE_STATUS_LABELS,
-  type DeadlineStatus,
 } from "@/application/reports/deadline-status";
 import {
   aggregateManagementSnapshot,
@@ -80,10 +80,51 @@ export type ExecutiveBookArea = {
   deliveries: ValueDeliveryListItem[];
 };
 
+export type ExecutiveBookNatureSummary = Array<{
+  key: NatureValue;
+  label: string;
+  count: number;
+  percentage: number;
+}>;
+
+/** One row of the "Áreas em um olhar" table on the consolidated view. */
+export type ExecutiveBookAreaOverview = {
+  id: string | null;
+  name: string;
+  activityCount: number;
+  totalProjects: number;
+  inProgress: number;
+  done: number;
+  overdue: number;
+  onTime: number;
+  eligible: number;
+  onTimePercentage: number | null;
+};
+
+/** Numbers for the whole slice (every area together), not a sum of pages. */
+export type ExecutiveBookConsolidated = {
+  totalActivities: number;
+  totalAreas: number;
+  totalProjects: number;
+  done: number;
+  donePercentage: number;
+  blocked: number;
+  overdue: number;
+  onTime: number;
+  eligible: number;
+  onTimePercentage: number | null;
+  deliveriesCount: number;
+  statusSummary: ExecutiveBookStatusSummary[];
+  deadlineSummary: ExecutiveBookDeadlineSummary;
+  natureSummary: ExecutiveBookNatureSummary;
+  areas: ExecutiveBookAreaOverview[];
+};
+
 export type ExecutiveBook = {
   dataBase: string;
   fechamento: Instant;
   geral: ManagementSnapshot;
+  consolidated: ExecutiveBookConsolidated;
   areas: ExecutiveBookArea[];
 };
 
@@ -181,6 +222,77 @@ function natureSummary(activities: readonly ExecutiveBookActivity[]) {
   }));
 }
 
+function countStatus(
+  summary: readonly ExecutiveBookStatusSummary[],
+  status: ActivityStatus,
+): number {
+  return summary.find((item) => item.status === status)?.count ?? 0;
+}
+
+function countDeadline(
+  summary: ExecutiveBookDeadlineSummary,
+  status: DeadlineStatus,
+): number {
+  return summary.byStatus.find((item) => item.status === status)?.count ?? 0;
+}
+
+function toAreaOverview(area: ExecutiveBookArea): ExecutiveBookAreaOverview {
+  return {
+    id: area.id,
+    name: area.name,
+    activityCount: area.activities.length,
+    totalProjects: area.totalProjects,
+    inProgress: countStatus(area.statusSummary, ActivityStatus.IN_PROGRESS),
+    done: countStatus(area.statusSummary, ActivityStatus.DONE),
+    overdue: countDeadline(area.deadlineSummary, DeadlineStatus.OVERDUE),
+    onTime: area.deadlineSummary.onTime,
+    eligible: area.deadlineSummary.eligible,
+    onTimePercentage: area.deadlineSummary.percentage,
+  };
+}
+
+/**
+ * Consolidates every area of the slice. Projects and value deliveries are
+ * de-duplicated by id because the same one can show up on more than one area
+ * page, so a naive sum would over-count them.
+ */
+function consolidate(
+  entries: ReadonlyArray<{ area: ExecutiveBookArea; projectIds: ReadonlySet<string> }>,
+): ExecutiveBookConsolidated {
+  const activities = entries.flatMap((entry) => entry.area.activities);
+  const status = statusSummary(activities);
+  const deadline = deadlineSummary(activities);
+  const projectIds = new Set<string>();
+  const deliveryIds = new Set<string>();
+  for (const entry of entries) {
+    for (const projectId of entry.projectIds) {
+      projectIds.add(projectId);
+    }
+    for (const delivery of entry.area.deliveries) {
+      deliveryIds.add(delivery.id);
+    }
+  }
+  const done = countStatus(status, ActivityStatus.DONE);
+
+  return {
+    totalActivities: activities.length,
+    totalAreas: entries.length,
+    totalProjects: projectIds.size,
+    done,
+    donePercentage: percentage(done, activities.length),
+    blocked: countStatus(status, ActivityStatus.BLOCKED),
+    overdue: countDeadline(deadline, DeadlineStatus.OVERDUE),
+    onTime: deadline.onTime,
+    eligible: deadline.eligible,
+    onTimePercentage: deadline.percentage,
+    deliveriesCount: deliveryIds.size,
+    statusSummary: status,
+    deadlineSummary: deadline,
+    natureSummary: natureSummary(activities),
+    areas: entries.map((entry) => toAreaOverview(entry.area)),
+  };
+}
+
 function toBookActivity(
   row: ManagementPopulationRow,
   listed: {
@@ -253,8 +365,11 @@ export async function buildExecutiveBook(
     activitiesByArea.set(areaId, activities);
   }
 
-  const areas = [...activitiesByArea.entries()]
+  const areaEntries = [...activitiesByArea.entries()]
     .map(([id, activities]) => {
+      // TODO: `pageProjectIds` filters projects by RESPONSIBLE area while the
+      // pages group activities by REQUESTING area. Kept as-is on purpose so the
+      // consolidated view matches the current per-area numbers; fix separately.
       const responsibleProjectIds = pageProjectIds(projects, id);
       const pageDeliveries = [...responsibleProjectIds]
         .flatMap((projectId) => deliveriesByProject.get(projectId) ?? [])
@@ -264,22 +379,33 @@ export async function buildExecutiveBook(
       );
       const snapshot = aggregateManagementSnapshot(pageRows, loaded.labels, loaded.fechamento);
       return {
-        id,
-        name: areaName(id, loaded.labels.areas),
-        activities,
-        snapshot,
-        totalProjects: responsibleProjectIds.size,
-        statusSummary: statusSummary(activities),
-        deadlineSummary: deadlineSummary(activities),
-        natureSummary: natureSummary(activities),
-        deliveries: pageDeliveries,
-      } satisfies ExecutiveBookArea;
+        projectIds: responsibleProjectIds,
+        area: {
+          id,
+          name: areaName(id, loaded.labels.areas),
+          activities,
+          snapshot,
+          totalProjects: responsibleProjectIds.size,
+          statusSummary: statusSummary(activities),
+          deadlineSummary: deadlineSummary(activities),
+          natureSummary: natureSummary(activities),
+          deliveries: pageDeliveries,
+        } satisfies ExecutiveBookArea,
+      };
     })
     .sort((left, right) => {
-      if (left.id === null) return 1;
-      if (right.id === null) return -1;
-      return left.name.localeCompare(right.name, "pt-BR");
+      if (left.area.id === null) return 1;
+      if (right.area.id === null) return -1;
+      return left.area.name.localeCompare(right.area.name, "pt-BR");
     });
 
-  return { dataBase, fechamento: loaded.fechamento, geral, areas };
+  const areas = areaEntries.map((entry) => entry.area);
+
+  return {
+    dataBase,
+    fechamento: loaded.fechamento,
+    geral,
+    consolidated: consolidate(areaEntries),
+    areas,
+  };
 }

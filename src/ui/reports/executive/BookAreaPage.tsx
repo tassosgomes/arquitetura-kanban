@@ -6,7 +6,9 @@ import { ActivityType } from "@/domain/activity/enums";
 import { AreaIndicators } from "@/ui/reports/executive/AreaIndicators";
 import { AreaSummary } from "@/ui/reports/executive/AreaSummary";
 import { BookLegend } from "@/ui/reports/executive/BookLegend";
+import { ChecklistProgress } from "@/ui/reports/executive/ChecklistProgress";
 import { DeadlineBadge } from "@/ui/reports/executive/DeadlineBadge";
+import { PriorityBadge } from "@/ui/reports/executive/PriorityBadge";
 
 function cell(value: string): string {
   return value === "" ? "—" : value;
@@ -22,6 +24,17 @@ function descriptionCell(value: string | null): string {
   }
   const normalized = value.replace(/\s+/g, " ").trim();
   return normalized.length > 150 ? `${normalized.slice(0, 147)}…` : normalized;
+}
+
+/** First letter of the first and last name segments, e.g. "Ana Beatriz Souza" → "AS". */
+function ownerInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) {
+    return "";
+  }
+  const first = parts[0]?.[0] ?? "";
+  const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? "") : "";
+  return (first + last).toUpperCase();
 }
 
 export function BookAreaPage({
@@ -40,7 +53,10 @@ export function BookAreaPage({
           <p className="text-label-sm font-semibold uppercase tracking-wider text-outline">
             Página {pageNumber} de {totalPages}
           </p>
-          <h2 id={`book-area-${pageNumber}`} className="text-headline-lg text-on-surface">
+          <h2 id={`book-area-${pageNumber}`} className="flex items-center gap-2 text-headline-md text-on-surface">
+            <span className="material-symbols-outlined text-[18px] text-on-surface-variant" aria-hidden="true">
+              apartment
+            </span>
             {area.name}
           </h2>
         </div>
@@ -51,7 +67,10 @@ export function BookAreaPage({
 
       {area.deliveries.length > 0 ? (
         <section className="rounded-xl bg-primary-container/10 p-space-md" aria-labelledby={`book-deliveries-${pageNumber}`}>
-          <h3 id={`book-deliveries-${pageNumber}`} className="text-headline-sm text-on-surface">
+          <h3 id={`book-deliveries-${pageNumber}`} className="flex items-center gap-1.5 text-headline-sm text-on-surface">
+            <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+              emoji_events
+            </span>
             Destaques da área
           </h3>
           <ul className="mt-2 flex flex-col gap-1 text-body-sm">
@@ -110,20 +129,49 @@ export function BookAreaPage({
                   </Link>
                   <p className="mt-1 max-w-md text-body-sm text-on-surface-variant">{descriptionCell(activity.description)}</p>
                 </td>
-                <td className="whitespace-nowrap px-3 py-3 text-on-surface-variant">{cell(activity.priority)}</td>
+                <td className="whitespace-nowrap px-3 py-3 text-on-surface-variant">
+                  <PriorityBadge priority={activity.priorityKey} label={activity.priority} />
+                </td>
                 <td className="whitespace-nowrap px-3 py-3">
-                  {activity.statusKey ? <ActivityStatusBadge status={activity.statusKey} /> : <span className="text-outline">—</span>}
+                  {activity.statusKey ? (
+                    <ActivityStatusBadge status={activity.statusKey} withIcon />
+                  ) : (
+                    <span className="text-outline">—</span>
+                  )}
                 </td>
                 <td className="whitespace-nowrap px-3 py-3">
                   <DeadlineBadge status={activity.deadlineStatus} label={activity.deadlineStatusLabel} />
                 </td>
-                <td className="whitespace-nowrap px-3 py-3 font-mono text-code-sm text-on-surface-variant">
-                  {activity.checklistTotalCount > 0
-                    ? `${activity.checklistDoneCount}/${activity.checklistTotalCount}`
-                    : "—"}
+                <td className="whitespace-nowrap px-3 py-3">
+                  <ChecklistProgress done={activity.checklistDoneCount} total={activity.checklistTotalCount} />
                 </td>
-                <td className="whitespace-nowrap px-3 py-3 font-mono text-code-sm text-on-surface-variant">{dateCell(activity.forecastDate)}</td>
-                <td className="px-3 py-3 text-on-surface-variant">{cell(activity.owner)}</td>
+                <td className="whitespace-nowrap px-3 py-3 font-mono text-code-sm text-on-surface-variant">
+                  {activity.forecastDate ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[18px] text-outline" aria-hidden="true">
+                        calendar_month
+                      </span>
+                      {dateCell(activity.forecastDate)}
+                    </span>
+                  ) : (
+                    dateCell(activity.forecastDate)
+                  )}
+                </td>
+                <td className="px-3 py-3 text-on-surface-variant">
+                  {activity.owner ? (
+                    <span className="inline-flex items-center gap-2">
+                      <span
+                        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-secondary-fixed text-label-sm font-semibold text-secondary"
+                        aria-hidden="true"
+                      >
+                        {ownerInitials(activity.owner)}
+                      </span>
+                      {activity.owner}
+                    </span>
+                  ) : (
+                    cell(activity.owner)
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

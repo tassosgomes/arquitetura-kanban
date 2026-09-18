@@ -223,4 +223,119 @@ describe("buildExecutiveBook", () => {
     expect(result.areas.map((area) => area.id)).toEqual([FINANCE]);
     expect(result.areas[0]?.activities.map((activity) => activity.id)).toEqual(["activity-finance"]);
   });
+
+  it("consolidates every area without double counting projects or deliveries", async () => {
+    const listed = [
+      activity("activity-finance", FINANCE, PROJECT_FINANCE),
+      activity("activity-technology", TECHNOLOGY, PROJECT_TECHNOLOGY),
+    ];
+    const events = [
+      eventFor(
+        "activity-finance",
+        1n,
+        emptyActivityPortrait({
+          status: ActivityStatus.IN_PROGRESS,
+          responsavelId: actor.id,
+          tipo: ActivityType.PROJECT,
+          natureza: Nature.STRATEGIC,
+          papelArquitetura: ArchitectureRole.RESPONSIBLE,
+          prioridade: Priority.HIGH,
+          dominioId: "domain",
+          areaSolicitanteId: FINANCE,
+          projetoId: PROJECT_FINANCE,
+          dataInicio: "2026-09-05",
+          previsaoTermino: "2026-09-20",
+        }),
+      ),
+      eventFor(
+        "activity-technology",
+        2n,
+        emptyActivityPortrait({
+          status: ActivityStatus.DONE,
+          responsavelId: actor.id,
+          tipo: ActivityType.PROJECT,
+          natureza: Nature.OPERATIONAL,
+          papelArquitetura: ArchitectureRole.RESPONSIBLE,
+          prioridade: Priority.HIGH,
+          dominioId: "domain",
+          areaSolicitanteId: TECHNOLOGY,
+          projetoId: PROJECT_TECHNOLOGY,
+          dataInicio: "2026-09-05",
+          dataConclusao: "2026-09-25",
+          previsaoTermino: "2026-09-20",
+        }),
+      ),
+    ];
+
+    const result = await buildExecutiveBook(
+      actor,
+      {
+        temporal: {
+          mode: TemporalQueryMode.PERIOD,
+          period: { from: "2026-09-01", to: "2026-09-30" },
+        },
+      },
+      { ...deps(listed, events), clock: { now: () => new Date("2026-09-15T12:00:00-03:00") } },
+    );
+
+    const consolidated = result.consolidated;
+
+    expect(consolidated.totalActivities).toBe(2);
+    expect(consolidated.totalAreas).toBe(2);
+    // Each area owns one project and one is outside the period: both must be
+    // counted once, never summed per page.
+    expect(consolidated.totalProjects).toBe(2);
+    expect(consolidated.deliveriesCount).toBe(1);
+
+    expect(consolidated.done).toBe(1);
+    expect(consolidated.donePercentage).toBe(50);
+    expect(consolidated.blocked).toBe(0);
+    expect(consolidated.overdue).toBe(1);
+
+    // OVERDUE + COMPLETED_LATE are both eligible, so nothing landed on time.
+    expect(consolidated.onTime).toBe(0);
+    expect(consolidated.eligible).toBe(2);
+    expect(consolidated.onTimePercentage).toBe(0);
+
+    expect(
+      consolidated.statusSummary
+        .filter((item) => item.count > 0)
+        .map((item) => [item.status, item.count]),
+    ).toEqual([
+      [ActivityStatus.IN_PROGRESS, 1],
+      [ActivityStatus.DONE, 1],
+    ]);
+
+    expect(consolidated.areas.map((area) => area.name)).toEqual(["Financeiro", "Tecnologia"]);
+    expect(consolidated.areas.map((area) => area.activityCount)).toEqual([1, 1]);
+    expect(consolidated.areas[0]?.overdue).toBe(1);
+    expect(consolidated.areas[1]?.done).toBe(1);
+  });
+
+  it("reports no deadline percentage when nothing is eligible", async () => {
+    const listed = [activity("activity-finance", FINANCE, PROJECT_FINANCE)];
+    const events = [
+      eventFor(
+        "activity-finance",
+        1n,
+        emptyActivityPortrait({
+          status: ActivityStatus.BACKLOG,
+          tipo: ActivityType.PROJECT,
+          areaSolicitanteId: FINANCE,
+          projetoId: PROJECT_FINANCE,
+          dataInicio: "2026-09-05",
+        }),
+      ),
+    ];
+
+    const result = await buildExecutiveBook(
+      actor,
+      { temporal: { mode: TemporalQueryMode.ALL } },
+      { ...deps(listed, events), clock: { now: () => new Date("2026-09-15T12:00:00-03:00") } },
+    );
+
+    expect(result.consolidated.eligible).toBe(0);
+    expect(result.consolidated.onTimePercentage).toBeNull();
+    expect(result.consolidated.areas[0]?.onTimePercentage).toBeNull();
+  });
 });

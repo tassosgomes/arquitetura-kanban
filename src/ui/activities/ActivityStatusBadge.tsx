@@ -20,12 +20,39 @@ export const ACTIVITY_STATUS_DOT: Record<ActivityStatus, string> = {
   CANCELLED: "bg-error",
 };
 
-export function ActivityStatusBadge({ status }: { status: ActivityStatus }) {
+export const ACTIVITY_STATUS_ICON: Record<ActivityStatus, string> = {
+  BACKLOG: "circle",
+  TODO: "radio_button_unchecked",
+  IN_PROGRESS: "play_circle",
+  WAITING: "schedule",
+  BLOCKED: "block",
+  DONE: "check_circle",
+  CANCELLED: "do_not_disturb_on",
+};
+
+/**
+ * Shared across Kanban, activity list/detail, the reports table and the
+ * Book. `withIcon` defaults to false so every existing caller keeps the
+ * plain colored-dot look; only the Book opts into the icon variant.
+ */
+export function ActivityStatusBadge({
+  status,
+  withIcon = false,
+}: {
+  status: ActivityStatus;
+  withIcon?: boolean;
+}) {
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-label-sm font-semibold ${ACTIVITY_STATUS_TONE[status]}`}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${ACTIVITY_STATUS_DOT[status]}`} aria-hidden="true" />
+      {withIcon ? (
+        <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+          {ACTIVITY_STATUS_ICON[status]}
+        </span>
+      ) : (
+        <span className={`h-1.5 w-1.5 rounded-full ${ACTIVITY_STATUS_DOT[status]}`} aria-hidden="true" />
+      )}
       {ACTIVITY_STATUS_LABELS[status]}
     </span>
   );
