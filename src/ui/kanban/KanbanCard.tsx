@@ -147,14 +147,33 @@ function DeadlineIndicator({ card }: { card: KanbanCardData }) {
         ? "event_busy"
         : "calendar_today";
 
+  const formattedDate = card.expectedEndDate ? formatCivilDatePtBr(card.expectedEndDate) : null;
+  const fullLabel = [hasSemanticLabel ? card.deadlineStatusLabel : null, formattedDate]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
-    <div className={`flex min-w-0 shrink-0 items-center gap-1 font-mono text-code-sm ${tone}`}>
-      <span className="material-symbols-outlined text-[14px]" aria-hidden="true">
+    // Em repouso ficam só o ícone e a data: ambos têm largura limitada. O rótulo
+    // verbal ("Atrasado há 11 dias") estourava o card e invadia o nome do
+    // responsável, então ele fica `sr-only` — presente para leitor de tela — e é
+    // revelado no hover/foco, como o "Mover para" de KUX-03. `title` cobre o
+    // repouso do mouse; nada de `shrink-0`, para não voltar a transbordar.
+    <div
+      title={fullLabel || undefined}
+      className={`flex min-w-0 items-center gap-1 font-mono text-code-sm ${tone}`}
+    >
+      <span className="material-symbols-outlined shrink-0 text-[14px]" aria-hidden="true">
         {icon}
       </span>
-      {hasSemanticLabel ? <span className="font-semibold">{card.deadlineStatusLabel}</span> : null}
-      {card.expectedEndDate ? (
-        <time dateTime={card.expectedEndDate}>{formatCivilDatePtBr(card.expectedEndDate)}</time>
+      {hasSemanticLabel ? (
+        <span className="sr-only truncate font-semibold group-focus-within:not-sr-only group-hover:not-sr-only">
+          {card.deadlineStatusLabel}
+        </span>
+      ) : null}
+      {formattedDate ? (
+        <time className="shrink-0" dateTime={card.expectedEndDate ?? undefined}>
+          {formattedDate}
+        </time>
       ) : null}
     </div>
   );
