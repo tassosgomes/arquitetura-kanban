@@ -32,7 +32,7 @@ function activityInput(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe("KUX-10 activity validation", () => {
+describe("createActivitySchema: erros obrigatórios em uma rodada", () => {
   it("returns every required ad hoc field error in one parse", () => {
     const result = createActivitySchema.safeParse(
       activityInput({

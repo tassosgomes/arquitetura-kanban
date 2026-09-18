@@ -9,12 +9,12 @@ import { normalizeCatalogName } from "@/domain/catalog/normalize-catalog-name";
 const INVARIANTS_TEST_ISSUER = "https://integration-tests.invalid/kux-15/invariants";
 const UNIQUE_IDENTITY_ISSUER = `${INVARIANTS_TEST_ISSUER}/unique-identity`;
 const CHECK_FIXTURE_ISSUER = `${INVARIANTS_TEST_ISSUER}/activity-check`;
-const CHECK_AREA_NAME = "KUX-15 integration check area";
-const CHECK_DOMAIN_NAME = "KUX-15 integration check domain";
-const CHECK_PROJECT_NAME = "KUX-15 integration check project";
-const CHECK_ACTIVITY_TITLE = "KUX-15 integration check activity";
-const CHECK_AD_HOC_TITLE = "KUX-15 integration ad hoc activity";
-const REUSABLE_AREA_NAME = "KUX-15 integration reusable area";
+const CHECK_AREA_NAME = "vitest fixture integration check area";
+const CHECK_DOMAIN_NAME = "vitest fixture integration check domain";
+const CHECK_PROJECT_NAME = "vitest fixture integration check project";
+const CHECK_ACTIVITY_TITLE = "vitest fixture integration check activity";
+const CHECK_AD_HOC_TITLE = "vitest fixture integration ad hoc activity";
+const REUSABLE_AREA_NAME = "vitest fixture integration reusable area";
 
 function isCiEnv(): boolean {
   return process.env.CI === "true" || process.env.CI === "1";
@@ -142,7 +142,7 @@ describe("relational invariants (postgres)", () => {
           oidcIssuer: issuer,
           oidcSubject: "subject-a",
           email,
-          displayName: "KUX-15 integration identity A",
+          displayName: "vitest fixture integration identity A",
         },
       });
       createdIds.push(first.id);
@@ -152,7 +152,7 @@ describe("relational invariants (postgres)", () => {
           oidcIssuer: issuer,
           oidcSubject: "subject-b",
           email,
-          displayName: "KUX-15 integration identity B",
+          displayName: "vitest fixture integration identity B",
         },
       });
       createdIds.push(second.id);
@@ -181,7 +181,7 @@ describe("relational invariants (postgres)", () => {
       data: {
         oidcIssuer: CHECK_FIXTURE_ISSUER,
         oidcSubject: "activity-check",
-        displayName: "KUX-15 integration activity actor",
+        displayName: "vitest fixture integration activity actor",
       },
     });
     const area = await prisma.area.create({

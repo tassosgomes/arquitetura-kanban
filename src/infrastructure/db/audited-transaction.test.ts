@@ -104,7 +104,7 @@ async function createProjectFixture(
   prisma: PrismaClient,
   key: string,
 ): Promise<{ userId: string; areaId: string; projectId: string }> {
-  const prefix = `KUX-15 audited ${key}`;
+  const prefix = `vitest fixture audited ${key}`;
   await deleteFixtureByKey(prisma, key);
   const user = await prisma.user.create({
     data: {
@@ -177,7 +177,7 @@ async function deleteFixture(
 }
 
 async function deleteFixtureByKey(prisma: PrismaClient, key: string): Promise<void> {
-  const prefix = `KUX-15 audited ${key}`;
+  const prefix = `vitest fixture audited ${key}`;
   const user = await prisma.user.findFirst({
     where: { oidcIssuer: AUDITED_TEST_ISSUER, oidcSubject: `project-${key}` },
     select: { id: true },
@@ -264,7 +264,7 @@ describe("runAuditedMutation (postgres)", () => {
       return;
     }
     const key = "create";
-    const prefix = `KUX-15 audited ${key}`;
+    const prefix = `vitest fixture audited ${key}`;
     await deleteFixtureByKey(prisma, key);
     const user = await prisma.user.create({
       data: {
@@ -293,8 +293,8 @@ describe("runAuditedMutation (postgres)", () => {
         mutate: (tx) =>
           tx.project.create({
             data: {
-              name: "KUX-15 audited create result",
-              nameNormalized: normalizeCatalogName("KUX-15 audited create result"),
+              name: "vitest fixture audited create result",
+              nameNormalized: normalizeCatalogName("vitest fixture audited create result"),
               responsibleAreaId: area.id,
               nature: "OPERATIONAL",
               architectureRole: "CONTRIBUTOR",
@@ -327,8 +327,8 @@ describe("runAuditedMutation (postgres)", () => {
       expect(events[0]?.occurredAt.toISOString()).toBe(occurredAt.toISOString());
       expect(events[0]?.action).toBe("created");
       expect(events[0]?.changes).toMatchObject({
-        snapshot: { name: "KUX-15 audited create result", status: "PLANNED" },
-        fields: { name: { before: null, after: "KUX-15 audited create result" } },
+        snapshot: { name: "vitest fixture audited create result", status: "PLANNED" },
+        fields: { name: { before: null, after: "vitest fixture audited create result" } },
       });
 
       const realtime = await prisma.realtimeEvent.findMany({
@@ -369,8 +369,8 @@ describe("runAuditedMutation (postgres)", () => {
           return tx.project.update({
             where: { id: loaded.id },
             data: {
-              name: "KUX-15 audited version first",
-              nameNormalized: normalizeCatalogName("KUX-15 audited version first"),
+              name: "vitest fixture audited version first",
+              nameNormalized: normalizeCatalogName("vitest fixture audited version first"),
               updatedById: fixture.userId,
             },
           });
@@ -403,8 +403,8 @@ describe("runAuditedMutation (postgres)", () => {
             return tx.project.update({
               where: { id: loaded.id },
               data: {
-                name: "KUX-15 audited version stale",
-                nameNormalized: normalizeCatalogName("KUX-15 audited version stale"),
+                name: "vitest fixture audited version stale",
+                nameNormalized: normalizeCatalogName("vitest fixture audited version stale"),
                 updatedById: fixture.userId,
               },
             });
@@ -426,7 +426,7 @@ describe("runAuditedMutation (postgres)", () => {
       const project = await prisma.project.findUniqueOrThrow({
         where: { id: fixture.projectId },
       });
-      expect(project.name).toBe("KUX-15 audited version first");
+      expect(project.name).toBe("vitest fixture audited version first");
       expect(project.version).toBe(2);
 
       const events = await prisma.auditEvent.findMany({
@@ -447,8 +447,8 @@ describe("runAuditedMutation (postgres)", () => {
     }
     const db = prisma;
     const fixture = await createProjectFixture(db, "concurrent");
-    const nameA = "KUX-15 audited concurrent A";
-    const nameB = "KUX-15 audited concurrent B";
+    const nameA = "vitest fixture audited concurrent A";
+    const nameB = "vitest fixture audited concurrent B";
 
     const edit = (name: string) =>
       runAuditedMutation({
@@ -547,8 +547,8 @@ describe("runAuditedMutation (postgres)", () => {
             return tx.project.update({
               where: { id: loaded.id },
               data: {
-                name: "KUX-15 audited rollback result",
-                nameNormalized: normalizeCatalogName("KUX-15 audited rollback result"),
+                name: "vitest fixture audited rollback result",
+                nameNormalized: normalizeCatalogName("vitest fixture audited rollback result"),
                 updatedById: fixture.userId,
               },
             });
