@@ -95,11 +95,11 @@ function KanbanColumnView({
     <section
       ref={setNodeRef}
       aria-labelledby={headingId}
-      className={`flex min-w-0 flex-col gap-space-sm rounded-2xl p-space-sm shadow-sm transition-colors ${
+      className={`flex min-h-0 max-h-full min-w-0 flex-col gap-space-sm rounded-2xl p-space-sm shadow-sm transition-colors ${
         isOver ? "bg-primary/10 ring-2 ring-primary ring-offset-2 ring-offset-surface" : "bg-surface-container-low"
       }`}
     >
-      <header className="flex items-center justify-between gap-2 px-2 py-1.5">
+      <header className="sticky top-0 z-10 flex items-center justify-between gap-2 bg-surface-container-low px-2 py-1.5">
         <div className="flex items-center gap-2">
           <span className={`h-2.5 w-2.5 rounded-full ${ACTIVITY_STATUS_DOT[column.status]}`} aria-hidden="true" />
           <h2 id={headingId} className="text-headline-sm font-semibold text-on-surface">
@@ -115,7 +115,7 @@ function KanbanColumnView({
           Nenhuma atividade nesta coluna.
         </p>
       ) : (
-        <ul className="flex min-h-24 flex-col gap-space-sm">
+        <ul className="flex min-h-0 flex-1 flex-col gap-space-sm overflow-y-auto">
           {column.activities.map((activity) => (
             <li key={activity.id}>
               <DraggableKanbanCard activity={activity} disabled={disabled} onMove={onMove} />
@@ -252,12 +252,12 @@ export function KanbanBoard({ activities }: KanbanBoardProps) {
         }}
       >
         <div
-          className="-mx-4 overflow-x-auto px-4 lg:-mx-8 lg:px-8"
+          className="-mx-4 h-[calc(100dvh-27rem)] min-h-0 overflow-x-auto overflow-y-hidden px-4 sm:h-[calc(100dvh-23rem)] lg:-mx-8 lg:h-[calc(100dvh-15rem)] lg:px-8"
           role="region"
           aria-label="Kanban da equipe"
           aria-busy={isPending || undefined}
         >
-          <div className="grid auto-cols-[minmax(280px,1fr)] grid-flow-col items-start gap-space-md pb-2">
+          <div className="grid h-full min-h-0 auto-cols-[minmax(280px,1fr)] grid-flow-col items-start gap-space-md pb-2">
             {columns.map((column) => (
               <KanbanColumnView
                 key={column.status}
