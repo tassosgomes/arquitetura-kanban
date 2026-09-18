@@ -13,6 +13,7 @@ import {
   isKanbanColumnStatus,
   KANBAN_COLUMN_STATUSES,
 } from "@/domain/activity/enums";
+import { Priority } from "@/domain/catalog/classifications";
 import { PRIORITY_TONE } from "@/ui/activities/priority-tone";
 import { formatCivilDatePtBr } from "@/ui/projects/project-types";
 
@@ -44,6 +45,9 @@ function DragHandleIcon() {
 
 export function KanbanCardBody({ activity }: { activity: ActivityListItem }) {
   const card = toKanbanCard(activity);
+  const isPriorityException =
+    activity.priority === Priority.HIGH || activity.priority === Priority.CRITICAL;
+  const priorityLabel = `Prioridade ${card.priorityLabel}`;
 
   return (
     <div className="flex flex-1 flex-col gap-2.5">
@@ -55,9 +59,21 @@ export function KanbanCardBody({ activity }: { activity: ActivityListItem }) {
           {card.title}
         </h3>
         <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-label-sm font-semibold ${PRIORITY_TONE[activity.priority]}`}
+          title={priorityLabel}
+          className={`${
+            isPriorityException
+              ? "inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-label-sm font-semibold"
+              : "inline-flex size-2.5 shrink-0 rounded-full border border-outline-variant"
+          } ${PRIORITY_TONE[activity.priority]}`}
         >
-          {card.priorityLabel}
+          {isPriorityException ? (
+            <>
+              <span className="sr-only">Prioridade </span>
+              {card.priorityLabel}
+            </>
+          ) : (
+            <span className="sr-only">{priorityLabel}</span>
+          )}
         </span>
       </div>
 
