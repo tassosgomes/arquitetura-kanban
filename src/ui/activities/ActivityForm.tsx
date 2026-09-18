@@ -601,6 +601,12 @@ export function ActivityForm({
     }
   }, [formResetKey]);
 
+  useEffect(() => {
+    if (state?.ok) {
+      window.dispatchEvent(new Event("activity-form-saved"));
+    }
+  }, [state]);
+
   return (
     <form
       key={formResetKey}

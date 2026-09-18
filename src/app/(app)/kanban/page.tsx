@@ -1,4 +1,6 @@
 import Link from "next/link";
+import NewActivityPage from "@/app/(app)/activities/new/page";
+import { ActivityModal } from "@/app/(app)/@modal/ActivityModal";
 import {
   hasActiveKanbanFilters,
   EFFORT_FILTER_UNSET,
@@ -258,7 +260,10 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
     .join(", ");
 
   return (
-    <div className="kanban-created-context flex flex-col gap-space-lg">
+    <div
+      data-kanban-background="true"
+      className="kanban-created-context flex flex-col gap-space-lg"
+    >
       {createdActivity ? (
         <style>{`
           @keyframes kanban-created-card-highlight {
@@ -321,15 +326,12 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
             </p>
           </InfoTooltip>
         </div>
-        <Link
+        <ActivityModal
           href={newActivityHref(rawParams)}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary-container px-space-md py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          triggerClassName="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary-container px-space-md py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
-            add_circle
-          </span>
-          Nova atividade
-        </Link>
+          <NewActivityPage searchParams={Promise.resolve({})} presentation="panel" />
+        </ActivityModal>
       </header>
 
       {createdActivity && createAnotherHref ? (
@@ -357,12 +359,19 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
             >
               Abrir
             </Link>
-            <Link
+            <ActivityModal
               href={createAnotherHref}
-              className="rounded-lg border border-outline-variant px-3 py-2 text-label-sm font-semibold text-on-surface hover:bg-surface-container-high focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              triggerLabel="Criar outra"
+              triggerIcon="add"
+              triggerClassName="rounded-lg border border-outline-variant px-3 py-2 text-label-sm font-semibold text-on-surface hover:bg-surface-container-high focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              Criar outra
-            </Link>
+              <NewActivityPage
+                searchParams={Promise.resolve({
+                  projectId: createdActivity.project?.id,
+                })}
+                presentation="panel"
+              />
+            </ActivityModal>
           </div>
         </aside>
       ) : null}
