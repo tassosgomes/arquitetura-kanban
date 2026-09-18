@@ -7,6 +7,7 @@ type FormFieldProps = {
   error?: string;
   required?: boolean;
   description?: string;
+  className?: string;
   children: ReactNode;
 };
 
@@ -50,13 +51,14 @@ export function FormField({
   error,
   required = false,
   description,
+  className,
   children,
 }: FormFieldProps) {
   const errorId = `${id}-error`;
   const descriptionId = description ? `${id}-description` : undefined;
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className={`flex flex-col gap-1.5 ${className ?? ""}`}>
       <label htmlFor={id} className="text-label-md font-semibold text-on-surface">
         {label}
         {required ? (
