@@ -81,7 +81,10 @@ export {
   type ExecutiveBook,
   type ExecutiveBookActivity,
   type ExecutiveBookArea,
+  type ExecutiveBookAreaOverview,
+  type ExecutiveBookConsolidated,
   type ExecutiveBookDeadlineSummary,
+  type ExecutiveBookNatureSummary,
   type ExecutiveBookDeps,
   type ExecutiveBookStatusSummary,
 } from "@/application/reports/executive-book";

@@ -8,6 +8,7 @@ import {
   ACTIVITY_NATURE_LABELS,
   ARCHITECTURE_ROLE_LABELS,
   Effort,
+  Priority,
   PRIORITY_LABELS,
 } from "@/domain/catalog/classifications";
 import {
@@ -54,6 +55,7 @@ export type ManagementReportRow = {
   role: string;
   owner: string;
   priority: string;
+  priorityKey: Priority | null;
   effort: string;
   startDate: string;
   completedDate: string;
@@ -106,6 +108,10 @@ function isActivityType(value: string): value is ActivityType {
   return Object.values(ActivityType).includes(value as ActivityType);
 }
 
+function isPriority(value: string): value is Priority {
+  return Object.values(Priority).includes(value as Priority);
+}
+
 function effortLabel(value: PortraitFieldValue): string {
   if (isPortraitAbsent(value)) {
     return "";
@@ -125,6 +131,7 @@ export function toManagementReportRow(input: {
   const { portrait, labels } = input;
   const typeText = portraitString(portrait.tipo);
   const statusText = portraitString(portrait.status);
+  const priorityText = portraitString(portrait.prioridade);
   const project = labeledId(portrait.projetoId, labels.projects, "Projeto sem identificação");
   const area = labeledId(portrait.areaSolicitanteId, labels.areas, "Área sem identificação");
   const domain = labeledId(portrait.dominioId, labels.domains, "Categoria sem identificação");
@@ -145,6 +152,7 @@ export function toManagementReportRow(input: {
     role: labeledEnum(portrait.papelArquitetura, ARCHITECTURE_ROLE_LABELS),
     owner: owner.label,
     priority: labeledEnum(portrait.prioridade, PRIORITY_LABELS),
+    priorityKey: priorityText && isPriority(priorityText) ? priorityText : null,
     effort: effortLabel(portrait.esforco),
     startDate: portraitCivilDate(portrait.dataInicio),
     completedDate: portraitCivilDate(portrait.dataConclusao),

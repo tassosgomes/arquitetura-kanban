@@ -8,16 +8,22 @@ export function BookLegend({
   summary: ExecutiveBookDeadlineSummary;
   headingId?: string;
 }) {
+  // Zero-count deadline statuses add noise without adding information.
+  const visibleStatuses = summary.byStatus.filter((item) => item.count > 0);
+
   return (
     <section
       className="rounded-xl bg-surface-container-lowest p-space-md shadow-sm"
       aria-labelledby={headingId}
     >
-      <h3 id={headingId} className="text-headline-sm text-on-surface">
+      <h3 id={headingId} className="flex items-center gap-1.5 text-headline-sm text-on-surface">
+        <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+          rule
+        </span>
         Status prazo
       </h3>
       <ul className="mt-3 grid gap-2 text-body-sm sm:grid-cols-2">
-        {summary.byStatus.map((item) => (
+        {visibleStatuses.map((item) => (
           <li key={item.status} className="flex items-center justify-between gap-2">
             <DeadlineBadge status={item.status} label={item.label} />
             <span className="font-mono text-code-sm text-on-surface-variant">{item.count}</span>

@@ -23,7 +23,10 @@ import { ErrorState } from "@/ui/feedback/ErrorState";
 import { InfoTooltip } from "@/ui/feedback/InfoTooltip";
 import { DashboardFilters } from "@/ui/dashboard/DashboardFilters";
 import { BookAreaPage } from "@/ui/reports/executive/BookAreaPage";
-import { BookSidebar } from "@/ui/reports/executive/BookSidebar";
+import { BookAreaNav } from "@/ui/reports/executive/BookAreaNav";
+import { BookConsolidated } from "@/ui/reports/executive/BookConsolidated";
+import { BookIconLegend } from "@/ui/reports/executive/BookIconLegend";
+import { BookPrintButton } from "@/ui/reports/executive/BookPrintButton";
 import { formatCivilDatePtBr } from "@/application/reports/period-view";
 import { formatUserLabel } from "@/ui/projects/project-types";
 
@@ -102,11 +105,17 @@ export default async function ExecutiveBookPage({ searchParams }: ExecutiveBookP
   }
 
   const filtersActive = hasActiveManagementFilters(parsed.values);
-  const allAreasHref = managementHref(
-    "/reports/executive",
-    { ...parsed.values, requestingAreaId: undefined },
-    1,
-  );
+  const areaHref = (areaId: string | null): string =>
+    managementHref("/reports/executive", { ...parsed.values, requestingAreaId: areaId ?? undefined }, 1);
+  const allAreasHref = areaHref(null);
+  const selectedAreaId = parsed.values.requestingAreaId ?? null;
+  // Counts only make sense while every area is in the slice. Once one is
+  // selected the Book holds that area alone, so every other chip would read
+  // zero and lie about it — we drop the counts instead.
+  const activityCountByArea =
+    selectedAreaId === null
+      ? new Map((book?.areas ?? []).map((area) => [area.id, area.activities.length]))
+      : null;
 
   return (
     <div className="flex flex-col gap-space-lg">
@@ -131,12 +140,15 @@ export default async function ExecutiveBookPage({ searchParams }: ExecutiveBookP
             </p>
           </div>
         </div>
-        <Link
-          href="/reports"
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-surface-container-lowest px-space-md py-2.5 text-label-md font-semibold text-primary shadow-sm hover:bg-surface-container focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Relatório detalhado
-        </Link>
+        <div className="flex shrink-0 items-center gap-space-sm">
+          <BookPrintButton />
+          <Link
+            href="/reports"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-surface-container-lowest px-space-md py-2.5 text-label-md font-semibold text-primary shadow-sm hover:bg-surface-container focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary print:hidden"
+          >
+            Relatório detalhado
+          </Link>
+        </div>
       </header>
 
       <DashboardFilters
@@ -172,18 +184,16 @@ export default async function ExecutiveBookPage({ searchParams }: ExecutiveBookP
       ) : null}
 
       {book ? (
-        <div className="grid gap-space-lg lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
-          <BookSidebar
-            selectedAreaId={parsed.values.requestingAreaId ?? null}
+        <div className="flex flex-col gap-space-lg">
+          <BookAreaNav
+            selectedAreaId={selectedAreaId}
             allAreasHref={allAreasHref}
+            totalCount={activityCountByArea ? book.consolidated.totalActivities : undefined}
             areas={areas.map((area) => ({
               id: area.id,
               label: area.name,
-              href: managementHref(
-                "/reports/executive",
-                { ...parsed.values, requestingAreaId: area.id },
-                1,
-              ),
+              href: areaHref(area.id),
+              count: activityCountByArea?.get(area.id) ?? undefined,
             }))}
           />
 
@@ -215,14 +225,26 @@ export default async function ExecutiveBookPage({ searchParams }: ExecutiveBookP
                 }
               />
             ) : (
-              book.areas.map((area, index) => (
-                <BookAreaPage
-                  key={area.id ?? "missing-area"}
-                  area={area}
-                  pageNumber={index + 1}
-                  totalPages={book.areas.length}
-                />
-              ))
+              <>
+                {selectedAreaId === null ? (
+                  <BookConsolidated
+                    consolidated={book.consolidated}
+                    dataBase={book.dataBase}
+                    areaHref={areaHref}
+                  />
+                ) : null}
+
+                {book.areas.map((area, index) => (
+                  <BookAreaPage
+                    key={area.id ?? "missing-area"}
+                    area={area}
+                    pageNumber={index + 1}
+                    totalPages={book.areas.length}
+                  />
+                ))}
+
+                <BookIconLegend />
+              </>
             )}
           </main>
         </div>
