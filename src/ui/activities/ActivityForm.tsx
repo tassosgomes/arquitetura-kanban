@@ -27,6 +27,7 @@ import { FormField, getFormFieldAriaProps } from "@/ui/forms/FormField";
 import { PrimaryButton } from "@/ui/forms/PrimaryButton";
 import { FieldError } from "@/ui/forms/FieldError";
 import { SearchableSelect } from "@/ui/forms/SearchableSelect";
+import { SegmentedRadioGroup } from "@/ui/forms/SegmentedRadioGroup";
 import { CONTROL_CLASS_NAME, formatUserLabel } from "@/ui/projects/project-types";
 import { useMarkFormDirty } from "@/ui/realtime/useProtectOpenEdit";
 import type {
@@ -567,21 +568,19 @@ export function ActivityForm({
           </FormField>
 
           <FormField id="activity-type" label="Tipo" required error={fieldError(state, "type")}>
-            <select
+            <SegmentedRadioGroup
               id="activity-type"
               name="type"
+              aria-label="Tipo"
+              options={Object.values(ActivityType).map((value) => ({
+                value,
+                label: ACTIVITY_TYPE_LABELS[value],
+              }))}
               required
               value={type}
-              onChange={(event) => onTypeChange(event.target.value)}
+              onChange={onTypeChange}
               {...getFormFieldAriaProps("activity-type", fieldError(state, "type"))}
-              className={CONTROL_CLASS_NAME}
-            >
-              {Object.values(ActivityType).map((value) => (
-                <option key={value} value={value}>
-                  {ACTIVITY_TYPE_LABELS[value]}
-                </option>
-              ))}
-            </select>
+            />
           </FormField>
 
           {type === ActivityType.PROJECT ? (
@@ -668,22 +667,19 @@ export function ActivityForm({
             error={fieldError(state, "nature")}
             className="min-w-0"
           >
-            <select
+            <SegmentedRadioGroup
               id="activity-nature"
               name="nature"
+              aria-label="Natureza"
+              options={Object.values(Nature).map((value) => ({
+                value,
+                label: ACTIVITY_NATURE_LABELS[value],
+              }))}
               required
               value={nature}
-              onChange={(event) => setNature(event.target.value)}
+              onChange={setNature}
               {...getFormFieldAriaProps("activity-nature", fieldError(state, "nature"))}
-              className={CONTROL_CLASS_NAME}
-            >
-              <option value="">Selecione a natureza</option>
-              {Object.values(Nature).map((value) => (
-                <option key={value} value={value}>
-                  {ACTIVITY_NATURE_LABELS[value]}
-                </option>
-              ))}
-            </select>
+            />
           </FormField>
 
           <FormField
@@ -693,22 +689,19 @@ export function ActivityForm({
             error={fieldError(state, "architectureRole")}
             className="min-w-0"
           >
-            <select
+            <SegmentedRadioGroup
               id="activity-role"
               name="architectureRole"
+              aria-label="Papel da Arquitetura"
+              options={Object.values(ArchitectureRole).map((value) => ({
+                value,
+                label: ARCHITECTURE_ROLE_LABELS[value],
+              }))}
               required
               value={architectureRole}
-              onChange={(event) => setArchitectureRole(event.target.value)}
+              onChange={setArchitectureRole}
               {...getFormFieldAriaProps("activity-role", fieldError(state, "architectureRole"))}
-              className={CONTROL_CLASS_NAME}
-            >
-              <option value="">Selecione o papel</option>
-              {Object.values(ArchitectureRole).map((role) => (
-                <option key={role} value={role}>
-                  {ARCHITECTURE_ROLE_LABELS[role]}
-                </option>
-              ))}
-            </select>
+            />
           </FormField>
 
           <FormField
@@ -718,20 +711,18 @@ export function ActivityForm({
             error={fieldError(state, "priority")}
             className="min-w-0"
           >
-            <select
+            <SegmentedRadioGroup
               id="activity-priority"
               name="priority"
+              aria-label="Prioridade"
+              options={Object.values(Priority).map((value) => ({
+                value,
+                label: PRIORITY_LABELS[value],
+              }))}
               required
               defaultValue={initial.priority}
               {...getFormFieldAriaProps("activity-priority", fieldError(state, "priority"))}
-              className={CONTROL_CLASS_NAME}
-            >
-              {Object.values(Priority).map((value) => (
-                <option key={value} value={value}>
-                  {PRIORITY_LABELS[value]}
-                </option>
-              ))}
-            </select>
+            />
           </FormField>
 
           <FormField
@@ -739,21 +730,22 @@ export function ActivityForm({
             label="Esforço"
             error={fieldError(state, "effort")}
             className="min-w-0"
+            description="— não informado · P pequeno · M médio · G grande"
           >
-            <select
+            <SegmentedRadioGroup
               id="activity-effort"
               name="effort"
+              aria-label="Esforço"
+              options={[
+                { value: "", label: "—" },
+                ...Object.values(Effort).map((value) => ({
+                  value,
+                  label: EFFORT_LABELS[value],
+                })),
+              ]}
               defaultValue={initial.effort}
-              {...getFormFieldAriaProps("activity-effort", fieldError(state, "effort"))}
-              className={CONTROL_CLASS_NAME}
-            >
-              <option value="">Não informado</option>
-              {Object.values(Effort).map((value) => (
-                <option key={value} value={value}>
-                  {EFFORT_LABELS[value]}
-                </option>
-              ))}
-            </select>
+              {...getFormFieldAriaProps("activity-effort", fieldError(state, "effort"), true)}
+            />
           </FormField>
 
         </div>
