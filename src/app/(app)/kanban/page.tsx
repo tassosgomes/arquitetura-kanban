@@ -12,7 +12,7 @@ import {
 } from "@/application/activities";
 import { listAreas, listDomains, listUsers } from "@/application/catalogs";
 import { listProjects } from "@/application/projects";
-import { ActivityStatus } from "@/domain/activity/enums";
+import { ACTIVITY_STATUS_LABELS, ActivityStatus } from "@/domain/activity/enums";
 import { ArchitectureRole, Effort, Nature, Priority } from "@/domain/catalog/classifications";
 import { ProjectStatus } from "@/domain/project/project-status";
 import {
@@ -48,6 +48,12 @@ const ROLE_VALUES = new Set<string>(Object.values(ArchitectureRole));
 const EFFORT_VALUES = new Set<string>([...Object.values(Effort), EFFORT_FILTER_UNSET]);
 const STATUS_VALUES = new Set<string>(Object.values(ActivityStatus));
 const BOOLEAN_VALUES = new Set(["0", "1", "false", "true", "off", "on"]);
+const TRANSIENT_BOARD_PARAMS = new Set([
+  "created",
+  "createdAreaId",
+  "createdDomainId",
+  "createdProjectId",
+]);
 
 function paramValues(
   searchParams: Record<string, string | string[] | undefined>,
@@ -115,7 +121,7 @@ function retryHref(searchParams: Record<string, string | string[] | undefined>):
 function clearTitleHref(searchParams: Record<string, string | string[] | undefined>): string {
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(searchParams)) {
-    if (key === "title") {
+    if (key === "title" || TRANSIENT_BOARD_PARAMS.has(key)) {
       continue;
     }
     if (Array.isArray(value)) {
@@ -130,6 +136,53 @@ function clearTitleHref(searchParams: Record<string, string | string[] | undefin
   }
   const query = params.toString();
   return query ? `/kanban?${query}` : "/kanban";
+}
+
+export function boardReturnHref(
+  searchParams: Record<string, string | string[] | undefined>,
+): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (TRANSIENT_BOARD_PARAMS.has(key)) {
+      continue;
+    }
+    const values = Array.isArray(value) ? value : [value];
+    for (const raw of values) {
+      if (raw) {
+        params.append(key, raw);
+      }
+    }
+  }
+  const query = params.toString();
+  return query ? `/kanban?${query}` : "/kanban";
+}
+
+export function newActivityHref(
+  searchParams: Record<string, string | string[] | undefined>,
+): string {
+  const params = new URLSearchParams();
+  params.set("returnTo", boardReturnHref(searchParams));
+  return `/activities/new?${params.toString()}`;
+}
+
+export function createAnotherActivityHref(
+  searchParams: Record<string, string | string[] | undefined>,
+  activity: {
+    project: { id: string } | null;
+    requestingArea: { id: string };
+  },
+  domainId: string | undefined,
+): string {
+  const params = new URLSearchParams();
+  if (activity.project) {
+    params.set("projectId", activity.project.id);
+  }
+  params.set("prefillAreaId", activity.requestingArea.id);
+  if (domainId) {
+    params.set("prefillDomainId", domainId);
+  }
+  params.set("returnTo", boardReturnHref(searchParams));
+  return `/activities/new?${params.toString()}`;
 }
 
 export default async function KanbanPage({ searchParams }: KanbanPageProps) {
@@ -178,6 +231,22 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
   const total = activities.length;
   const denominator = allActivities.length;
   const filtersActive = hasActiveKanbanFilters(parsed.values);
+  const createdActivityId = paramValues(rawParams, "created")[0];
+  const createdActivity =
+    createdActivityId && UUID_PATTERN.test(createdActivityId)
+      ? allActivities.find((activity) => activity.id === createdActivityId)
+      : undefined;
+  const createdActivityInBoard = createdActivity
+    ? board.some((activity) => activity.id === createdActivity.id)
+    : false;
+  const createdDomainId = paramValues(rawParams, "createdDomainId")[0];
+  const createAnotherHref = createdActivity
+    ? createAnotherActivityHref(
+        rawParams,
+        createdActivity,
+        createdDomainId && UUID_PATTERN.test(createdDomainId) ? createdDomainId : undefined,
+      )
+    : undefined;
   const emptyMessage = parsed.values.titleQuery
     ? `Nenhuma atividade corresponde a «${parsed.values.titleQuery}».`
     : filtersActive
@@ -189,7 +258,49 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
     .join(", ");
 
   return (
-    <div className="flex flex-col gap-space-lg">
+    <div className="kanban-created-context flex flex-col gap-space-lg">
+      {createdActivity ? (
+        <style>{`
+          @keyframes kanban-created-card-highlight {
+            0%, 100% {
+              box-shadow: 0 0 0 0 transparent;
+            }
+            10%, 35% {
+              box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 45%, transparent), 0 0 24px color-mix(in srgb, var(--color-primary) 28%, transparent);
+            }
+            70% {
+              box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent);
+            }
+          }
+
+          @keyframes kanban-created-notice-dismiss {
+            0%, 84% {
+              opacity: 1;
+              visibility: visible;
+            }
+            100% {
+              opacity: 0;
+              pointer-events: none;
+              visibility: hidden;
+            }
+          }
+
+          .kanban-created-notice {
+            animation: kanban-created-notice-dismiss 10s ease-out forwards;
+          }
+
+          .kanban-created-context article:has(a[href="/activities/${createdActivity.id}"]) {
+            animation: kanban-created-card-highlight 7s ease-out both;
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .kanban-created-notice,
+            .kanban-created-context article:has(a[href="/activities/${createdActivity.id}"]) {
+              animation-duration: 0.01ms;
+            }
+          }
+        `}</style>
+      ) : null}
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-center gap-1.5">
           <h1 className="text-headline-lg text-on-surface">Kanban</h1>
@@ -211,7 +322,7 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
           </InfoTooltip>
         </div>
         <Link
-          href="/activities/new"
+          href={newActivityHref(rawParams)}
           className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary-container px-space-md py-2.5 text-label-md font-semibold text-on-primary shadow-md shadow-primary/20 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
@@ -220,6 +331,41 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
           Nova atividade
         </Link>
       </header>
+
+      {createdActivity && createAnotherHref ? (
+        <aside
+          className="kanban-created-notice flex flex-col gap-space-md rounded-xl border border-tertiary/40 bg-tertiary/10 p-space-md text-body-sm text-on-surface"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <div>
+            <p>
+              Atividade <strong>“{createdActivity.title}”</strong> criada na coluna{" "}
+              <strong>{ACTIVITY_STATUS_LABELS[createdActivity.status]}</strong>.
+            </p>
+            <p className="mt-1 text-on-surface-variant">
+              {createdActivityInBoard
+                ? "O card recém-criado está destacado no board."
+                : "Ela não aparece no recorte atual; abra a atividade para conferir ou ajuste os filtros."}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/activities/${createdActivity.id}`}
+              className="rounded-lg bg-primary-container px-3 py-2 text-label-sm font-semibold text-on-primary hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Abrir
+            </Link>
+            <Link
+              href={createAnotherHref}
+              className="rounded-lg border border-outline-variant px-3 py-2 text-label-sm font-semibold text-on-surface hover:bg-surface-container-high focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Criar outra
+            </Link>
+          </div>
+        </aside>
+      ) : null}
 
       <KanbanFilters
         key={JSON.stringify({ ...parsed.values, titleQuery: undefined })}

@@ -52,6 +52,46 @@ type ActivityFormProps = {
 
 type FormState = ActionResult<ActivityRecord> | null;
 
+const SUCCESS_REDIRECT_DELAY_MS = 6000;
+
+function resolveReturnHref(cancelHref: string): string {
+  if (typeof window === "undefined") {
+    return cancelHref;
+  }
+
+  const returnTo = new URLSearchParams(window.location.search).get("returnTo");
+  if (!returnTo) {
+    return cancelHref;
+  }
+
+  try {
+    const url = new URL(returnTo, window.location.origin);
+    if (url.origin !== window.location.origin || url.pathname !== "/kanban") {
+      return cancelHref;
+    }
+    return `${url.pathname}${url.search}`;
+  } catch {
+    return cancelHref;
+  }
+}
+
+function createdActivityReturnHref(href: string, activity: ActivityRecord): string {
+  const url = new URL(href, "http://activity-form.local");
+  if (url.pathname !== "/kanban") {
+    return `${url.pathname}${url.search}`;
+  }
+
+  url.searchParams.set("created", activity.id);
+  url.searchParams.set("createdAreaId", activity.requestingArea.id);
+  url.searchParams.set("createdDomainId", activity.domain.id);
+  if (activity.project) {
+    url.searchParams.set("createdProjectId", activity.project.id);
+  } else {
+    url.searchParams.delete("createdProjectId");
+  }
+  return `${url.pathname}${url.search}`;
+}
+
 function fieldError(state: FormState, field: string): string | undefined {
   if (!state || state.ok) {
     return undefined;
@@ -239,6 +279,7 @@ export function ActivityForm({
   const { formProps } = useMarkFormDirty();
   const [type, setType] = useState(initial.type);
   const [projectId, setProjectId] = useState(initial.projectId);
+  const [domainId, setDomainId] = useState(initial.domainId);
   const [ownerId, setOwnerId] = useState(initial.ownerId);
   const [ownerWasEdited, setOwnerWasEdited] = useState(false);
   const [participantIds, setParticipantIds] = useState(initial.participantIds);
@@ -254,12 +295,16 @@ export function ActivityForm({
   const [peopleOpen, setPeopleOpen] = useState(
     () => mode === "edit" || PEOPLE_REQUIRED_FIELDS.some((field) => !initialRequiredCompletion[field]),
   );
+  const [returnHref, setReturnHref] = useState(cancelHref);
+  const [dismissedSuccessId, setDismissedSuccessId] = useState<string | null>(null);
+  const [formResetKey, setFormResetKey] = useState(0);
   const lastAutoOpenedError = useRef<FormState>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   const ownerInactive = users.some((user) => user.id === ownerId && !user.isActive);
   const areaInactive = areas.some((area) => area.id === requestingAreaId && !area.isActive);
   const domainInactive = domains.some(
-    (domain) => domain.id === initial.domainId && !domain.isActive,
+    (domain) => domain.id === domainId && !domain.isActive,
   );
 
   function setRequiredFieldFilled(field: RequiredFieldName, value: string) {
@@ -347,11 +392,52 @@ export function ActivityForm({
   );
 
   useEffect(() => {
-    if (state?.ok) {
+    if (mode !== "create") {
+      return;
+    }
+
+    // The originating board carries its filters in a validated internal URL.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setReturnHref(resolveReturnHref(cancelHref));
+
+    const params = new URLSearchParams(window.location.search);
+    const prefillAreaId = params.get("prefillAreaId");
+    const prefillDomainId = params.get("prefillDomainId");
+    const prefilledArea = areas.find(
+      (area) => area.id === prefillAreaId && area.isActive,
+    );
+    const prefilledDomain = domains.find(
+      (domain) => domain.id === prefillDomainId && domain.isActive,
+    );
+
+    if (prefilledArea) {
+      setRequestingAreaId(prefilledArea.id);
+      setRequiredCompletion((current) => ({ ...current, requestingAreaId: true }));
+    }
+    if (prefilledDomain) {
+      setDomainId(prefilledDomain.id);
+      setRequiredCompletion((current) => ({ ...current, domainId: true }));
+    }
+  }, [areas, cancelHref, domains, mode]);
+
+  useEffect(() => {
+    if (state?.ok && mode === "edit") {
       router.push(`/activities/${state.data.id}`);
       router.refresh();
     }
-  }, [state, router]);
+  }, [mode, router, state]);
+
+  useEffect(() => {
+    if (mode !== "create" || !state?.ok || dismissedSuccessId === state.data.id) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      router.push(createdActivityReturnHref(returnHref, state.data));
+    }, SUCCESS_REDIRECT_DELAY_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [dismissedSuccessId, mode, returnHref, router, state]);
 
   useEffect(() => {
     if (!state || state.ok || state === lastAutoOpenedError.current) {
@@ -468,9 +554,56 @@ export function ActivityForm({
     (field) => requiredCompletion[field],
   ).length;
   const peopleCompleted = PEOPLE_REQUIRED_FIELDS.filter((field) => requiredCompletion[field]).length;
+  const successfulCreation =
+    mode === "create" && state?.ok && dismissedSuccessId !== state.data.id ? state.data : null;
+  const successfulReturnHref = successfulCreation
+    ? createdActivityReturnHref(returnHref, successfulCreation)
+    : returnHref;
+
+  function handleCreateAnother() {
+    if (!successfulCreation) {
+      return;
+    }
+
+    const preservedProjectId = projectId;
+    const preservedAreaId = requestingAreaId;
+    const preservedDomainId = domainId;
+    const resetOwnerId = preservedProjectId ? (defaultOwnerId ?? initial.ownerId) : initial.ownerId;
+
+    setDismissedSuccessId(successfulCreation.id);
+    setType(preservedProjectId ? ActivityType.PROJECT : initial.type);
+    setProjectId(preservedProjectId);
+    setDomainId(preservedDomainId);
+    setOwnerId(resetOwnerId);
+    setOwnerWasEdited(false);
+    setParticipantIds([...initial.participantIds]);
+    setInvolvedAreaIds([...initial.involvedAreaIds]);
+    setNature(initial.nature);
+    setArchitectureRole(initial.architectureRole);
+    setRequestingAreaId(preservedAreaId);
+    setRequiredCompletion({
+      domainId: Boolean(preservedDomainId.trim()),
+      nature: Boolean(initial.nature.trim()),
+      architectureRole: Boolean(initial.architectureRole.trim()),
+      priority: Boolean(initial.priority.trim()),
+      requestingAreaId: Boolean(preservedAreaId.trim()),
+      ownerId: Boolean(resetOwnerId.trim()),
+      status: Boolean(initial.status.trim()),
+    });
+    setClassificationOpen(true);
+    setPeopleOpen(true);
+    setFormResetKey((current) => current + 1);
+  }
+
+  useEffect(() => {
+    if (formResetKey > 0) {
+      titleInputRef.current?.focus();
+    }
+  }, [formResetKey]);
 
   return (
     <form
+      key={formResetKey}
       action={submit}
       className="flex max-w-4xl flex-col gap-space-lg pb-24"
       noValidate
@@ -505,6 +638,35 @@ export function ActivityForm({
         <p className="text-body-sm text-error" role="alert">
           {globalError}
         </p>
+      ) : null}
+
+      {successfulCreation ? (
+        <div
+          className="flex flex-col gap-space-md rounded-xl border border-tertiary/40 bg-tertiary/10 p-space-md text-body-sm text-on-surface"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <p>
+            Atividade <strong>“{successfulCreation.title}”</strong> criada na coluna{" "}
+            <strong>{ACTIVITY_STATUS_LABELS[successfulCreation.status]}</strong>.
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/activities/${successfulCreation.id}`}
+              className="rounded-lg bg-primary-container px-3 py-2 text-label-sm font-semibold text-on-primary hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Abrir
+            </Link>
+            <button
+              type="button"
+              onClick={handleCreateAnother}
+              className="rounded-lg border border-outline-variant px-3 py-2 text-label-sm font-semibold text-on-surface hover:bg-surface-container-high focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              Criar outra
+            </button>
+          </div>
+        </div>
       ) : null}
 
       {errorEntries.length > 0 ? (
@@ -542,6 +704,7 @@ export function ActivityForm({
             error={fieldError(state, "title")}
           >
             <input
+              ref={titleInputRef}
               id="activity-title"
               name="title"
               type="text"
@@ -643,7 +806,11 @@ export function ActivityForm({
               id="activity-domain"
               name="domainId"
               required
-              defaultValue={initial.domainId}
+              value={domainId}
+              onChange={(event) => {
+                setDomainId(event.target.value);
+                setRequiredFieldFilled("domainId", event.target.value);
+              }}
               {...getFormFieldAriaProps(
                 "activity-domain",
                 fieldError(state, "domainId"),
@@ -988,7 +1155,7 @@ export function ActivityForm({
           {mode === "create" ? "Criar atividade" : "Salvar alterações"}
         </PrimaryButton>
         <Link
-          href={cancelHref}
+          href={successfulCreation ? successfulReturnHref : returnHref}
           className="rounded-lg px-3 py-2 text-label-md font-semibold text-on-surface-variant underline hover:text-on-surface"
         >
           Voltar
