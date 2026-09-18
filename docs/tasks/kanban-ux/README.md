@@ -39,7 +39,7 @@ de escrita paralelo nem contorna auditoria.
 | [KUX-14](KUX-14-selecao-de-pessoas-e-areas-por-busca.md) | Seleção de pessoas e áreas por busca | Grades de checkbox que renderizam o catálogo inteiro | P1 | `mid` | ✅ `2bcbae5` |
 | [KUX-15](KUX-15-fixtures-visiveis-nos-seletores.md) | Fixtures de teste visíveis nos seletores | `T12 actor` ×3 e um UUID como categoria em campos obrigatórios | P1 | `low` | ✅ `d3e0145` |
 | [KUX-16](KUX-16-controles-de-escolha-curta.md) | Controles de escolha curta | 5 `<select>` para conjuntos de 2 a 4 opções curtas | P2 | `low` | ✅ `ef5ca3b` |
-| [KUX-17](KUX-17-cadastro-em-painel-sobre-o-board.md) | Cadastro completo em painel sobre o board | Cadastrar continua custando perder o board de vista | P3 | `high` | — |
+| [KUX-17](KUX-17-cadastro-em-painel-sobre-o-board.md) | Cadastro completo em painel sobre o board | Cadastrar continua custando perder o board de vista | P3 | `high` | ✅ `b81d6ee` |
 
 ## Arquivos tocados por esta iniciativa
 
