@@ -60,4 +60,12 @@ describe("KanbanFilters chips (KUX-04)", () => {
       removeKeys: ["period", "from", "to"],
     });
   });
+
+  it("exposes the title query as an independently removable chip", () => {
+    const title = buildActiveFilterChips(values({ titleQuery: "MFA" }), options).find(
+      (chip) => chip.id === "title",
+    );
+
+    expect(title).toEqual({ id: "title", label: "Título: MFA", removeKeys: ["title"] });
+  });
 });

@@ -1,7 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import Link from "next/link";
 import {
   ACTIVITY_NATURE_LABELS,
@@ -84,6 +91,9 @@ export function buildActiveFilterChips(
   if (includePeriod && values.period !== KanbanPeriodOption.ALL) {
     add("period", `Período: ${periodLabel(values)}`, ["period", "from", "to"]);
   }
+  if (values.titleQuery) {
+    add("title", `Título: ${values.titleQuery}`);
+  }
   if (values.areaId) {
     add("area", `Área: ${optionLabel(options.areas, values.areaId)}`);
   }
@@ -139,7 +149,9 @@ export function KanbanFilters({
 }: KanbanFiltersProps) {
   const router = useRouter();
   const [period, setPeriod] = useState<KanbanPeriodOption>(values.period);
+  const [titleQuery, setTitleQuery] = useState(values.titleQuery ?? "");
   const [expanded, setExpanded] = useState(false);
+  const titleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeShortcut = activeKanbanShortcut(values);
   const activeFilterChips = buildActiveFilterChips(
     values,
@@ -148,6 +160,19 @@ export function KanbanFilters({
   );
   const canClear = activeFilterChips.length > 0 || hasFilterWarning;
   const bodyId = useId();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTitleQuery(values.titleQuery ?? "");
+  }, [values.titleQuery]);
+
+  useEffect(() => {
+    return () => {
+      if (titleDebounceRef.current !== null) {
+        clearTimeout(titleDebounceRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -187,6 +212,7 @@ export function KanbanFilters({
       appendIfPresent(params, "from", includePendingCustomPeriod ? data.get("from") : values.from);
       appendIfPresent(params, "to", includePendingCustomPeriod ? data.get("to") : values.to);
     }
+    appendIfPresent(params, "title", titleQuery);
     appendIfPresent(params, "area", data.get("area"));
     appendIfPresent(params, "project", data.get("project"));
     appendIfPresent(params, "owner", data.get("owner"));
@@ -206,6 +232,29 @@ export function KanbanFilters({
 
     const query = params.toString();
     router.push(query ? `/kanban?${query}` : "/kanban");
+  }
+
+  function navigateToTitleQuery(nextValue: string) {
+    const params = new URLSearchParams(window.location.search);
+    const trimmed = nextValue.trim();
+    if (trimmed) {
+      params.set("title", trimmed);
+    } else {
+      params.delete("title");
+    }
+    const query = params.toString();
+    router.replace(query ? `/kanban?${query}` : "/kanban", { scroll: false });
+  }
+
+  function handleTitleQueryChange(event: ChangeEvent<HTMLInputElement>) {
+    const nextValue = event.currentTarget.value;
+    setTitleQuery(nextValue);
+    if (titleDebounceRef.current !== null) {
+      clearTimeout(titleDebounceRef.current);
+    }
+    titleDebounceRef.current = setTimeout(() => {
+      navigateToTitleQuery(nextValue);
+    }, 300);
   }
 
   function submitFilters(event: FormEvent<HTMLFormElement>) {
@@ -234,6 +283,12 @@ export function KanbanFilters({
   }
 
   function removeFilter(removeKeys: readonly string[]) {
+    if (removeKeys.includes("title")) {
+      setTitleQuery("");
+      if (titleDebounceRef.current !== null) {
+        clearTimeout(titleDebounceRef.current);
+      }
+    }
     const params = new URLSearchParams(window.location.search);
     for (const key of removeKeys) {
       params.delete(key);
@@ -295,6 +350,23 @@ export function KanbanFilters({
           </button>
         </div>
       </div>
+
+      <label className="flex max-w-xl flex-col gap-1.5">
+        <span className="text-label-sm text-on-surface-variant">Buscar por título</span>
+        <input
+          id="kanban-title-search"
+          name="title"
+          type="search"
+          value={titleQuery}
+          onChange={handleTitleQueryChange}
+          placeholder="Ex.: MFA, dashboard ou relatório"
+          className={CONTROL_CLASS_NAME}
+          aria-describedby="kanban-title-search-help"
+        />
+        <span id="kanban-title-search-help" className="text-body-sm text-on-surface-variant">
+          Busca somente no título da atividade; ignora caixa e acentos.
+        </span>
+      </label>
 
       {activeFilterChips.length > 0 ? (
         <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filtros ativos">

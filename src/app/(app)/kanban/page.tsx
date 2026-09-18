@@ -112,6 +112,26 @@ function retryHref(searchParams: Record<string, string | string[] | undefined>):
   return query ? `/kanban?${query}` : "/kanban";
 }
 
+function clearTitleHref(searchParams: Record<string, string | string[] | undefined>): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (key === "title") {
+      continue;
+    }
+    if (Array.isArray(value)) {
+      for (const raw of value) {
+        if (raw) {
+          params.append(key, raw);
+        }
+      }
+    } else if (value) {
+      params.set(key, value);
+    }
+  }
+  const query = params.toString();
+  return query ? `/kanban?${query}` : "/kanban";
+}
+
 export default async function KanbanPage({ searchParams }: KanbanPageProps) {
   const actor = await requireActiveUser();
   const rawParams = await searchParams;
@@ -158,9 +178,11 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
   const total = activities.length;
   const denominator = allActivities.length;
   const filtersActive = hasActiveKanbanFilters(parsed.values);
-  const emptyMessage = filtersActive
-    ? "Nenhuma atividade corresponde aos filtros."
-    : "Nenhuma atividade no recorte. Cadastre uma atividade para começar.";
+  const emptyMessage = parsed.values.titleQuery
+    ? `Nenhuma atividade corresponde a «${parsed.values.titleQuery}».`
+    : filtersActive
+      ? "Nenhuma atividade corresponde aos filtros."
+      : "Nenhuma atividade no recorte. Cadastre uma atividade para começar.";
   const hasFilterWarning = Boolean(parsed.error || invalidFilterParams.length > 0);
   const invalidFilterDescription = invalidFilterParams
     .map((filter) => `${filter.label} (${filter.value})`)
@@ -200,7 +222,7 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
       </header>
 
       <KanbanFilters
-        key={JSON.stringify(parsed.values)}
+        key={JSON.stringify({ ...parsed.values, titleQuery: undefined })}
         values={parsed.values}
         hasFilterWarning={hasFilterWarning}
         periodError={Boolean(parsed.error)}
@@ -251,14 +273,22 @@ export default async function KanbanPage({ searchParams }: KanbanPageProps) {
 
       {total === 0 && filtersActive ? (
         <EmptyState
-          title="Nenhuma atividade encontrada"
-          message="Ajuste ou limpe os filtros para ver o trabalho da equipe."
+          title={
+            parsed.values.titleQuery
+              ? `Nenhuma atividade corresponde a «${parsed.values.titleQuery}»`
+              : "Nenhuma atividade encontrada"
+          }
+          message={
+            parsed.values.titleQuery
+              ? "Limpe a busca para restaurar os demais filtros."
+              : "Ajuste ou limpe os filtros para ver o trabalho da equipe."
+          }
           action={
             <Link
-              href="/kanban"
+              href={parsed.values.titleQuery ? clearTitleHref(rawParams) : "/kanban"}
               className="inline-flex rounded-xl bg-primary px-4 py-2.5 text-label-md font-semibold text-on-primary shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              Limpar filtros
+              {parsed.values.titleQuery ? "Limpar busca" : "Limpar filtros"}
             </Link>
           }
         />
