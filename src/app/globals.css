@@ -259,6 +259,28 @@ body {
   padding: 0;
 }
 
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  .book-area-page {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .book-area-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}
+
 .markdown-body blockquote {
   border-left: 3px solid var(--color-outline-variant);
   color: var(--color-on-surface-variant);

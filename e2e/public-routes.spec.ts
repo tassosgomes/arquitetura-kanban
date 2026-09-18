@@ -22,7 +22,7 @@ test.describe("rotas públicas e recusa sem sessão (T28)", () => {
   });
 
   test("redireciona páginas autenticadas para /login", async ({ page }) => {
-    for (const path of ["/kanban", "/dashboard", "/reports", "/projects"]) {
+    for (const path of ["/kanban", "/dashboard", "/reports", "/reports/executive", "/projects"]) {
       await page.goto(path);
       await expect(page).toHaveURL(/\/login$/);
     }

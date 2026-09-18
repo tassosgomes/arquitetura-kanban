@@ -264,7 +264,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
             </label>
 
             <label className="flex flex-col gap-1.5">
-              <span className="text-label-sm text-on-surface-variant">Domínio</span>
+              <span className="text-label-sm text-on-surface-variant">Categoria</span>
               <select
                 name="domain"
                 className={CONTROL_CLASS_NAME}

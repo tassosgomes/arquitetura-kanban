@@ -43,7 +43,7 @@ const FIELD_LABELS: Record<string, string> = {
   participanteIds: "Participantes",
   areaSolicitanteId: "Área solicitante",
   areaEnvolvidaIds: "Áreas envolvidas",
-  dominioId: "Domínio",
+  dominioId: "Categoria",
   natureza: "Natureza",
   papelArquitetura: "Papel da Arquitetura",
   tipo: "Tipo",

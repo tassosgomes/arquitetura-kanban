@@ -27,6 +27,7 @@ function listItem(
   overrides: Partial<ActivityListItem> & Pick<ActivityListItem, "id" | "title" | "status">,
 ): ActivityListItem {
   return {
+    description: null,
     type: ActivityType.AD_HOC,
     priority: Priority.MEDIUM,
     effort: null,

@@ -293,13 +293,13 @@ Papéis iguais no MVP (sem RBAC sofisticado). O gestor faz os mesmos passos oper
 
 | # | Passo | O que fazer | Ok quando |
 | --- | --- | --- | --- |
-| U1 | Login SSO | `/login` → Entrar com SSO → shell com Kanban, Projetos, Dashboard, Relatórios, Cadastros | identidade visível; logout existe; quem não está na allowlist **não** entra |
+| U1 | Login SSO | `/login` → Entrar com SSO → shell com Kanban, Projetos, Dashboard, Book, Cadastros | identidade visível; logout existe; quem não está na allowlist **não** entra |
 | U2 | Kanban | `/kanban`: ver as seis colunas; filtrar (ex. responsável = eu, Este mês / Todas); abrir um card | o card é uma atividade; não há board por pessoa/projeto |
 | U3 | Atualizar status | arrastar o **próprio** card para outro status **real** do trabalho de hoje, ou no detalhe usar Mover para / Reabrir | a coluna persiste ao recarregar; conflito visível se dois editarem o mesmo card; **não** usar este passo para fabricar histórico da planilha |
 | U4 | Checklist | no detalhe: adicionar, marcar ou reordenar um item (RN-06/07) | progresso X/Y muda; status da atividade **não** muda sozinho |
 | U5 | Entrega de Valor | num projeto real: aba Entregas de valor → Nova entrega de valor (título, Markdown, data de referência) | visualização renderizada; projeto não muda de status sozinho |
 | U6 | Dashboard | `/dashboard`, atalho **Este mês** ou **Este ano**; olhar I-01…I-07 e I-09 e as sete distribuições | totais batem com o recorte; tempo de gerar a visão gerencial anotado (meta PRD: menos de 10 min para o relatório gerencial, incluindo o passo seguinte se for o pacote do gestor) |
-| U7 | Relatório e CSV | `/reports` com **os mesmos** período/filtros do dashboard → conferir resumo → **Exportar CSV** | arquivo UTF-8 com BOM abre no Excel/LibreOffice com acentos; colunas (`id`, `título`, `tipo`, `status`, `projeto`, …); CSV é a seleção completa, não só a página |
+| U7 | Relatório, Book e CSV | `/reports` e `/reports/executive` com **os mesmos** período/filtros do dashboard → conferir resumo, páginas por área solicitante e **Exportar CSV** | arquivo UTF-8 com BOM abre no Excel/LibreOffice com acentos; colunas (`id`, `título`, `tipo`, `status`, `projeto`, …); CSV é a seleção completa, não só a página |
 
 Complementos da rotina do PRD §24, no mesmo dia ou no dia seguinte:
 

@@ -64,6 +64,13 @@ export function matchesManagementFilters(
     return false;
   }
 
+  if (
+    filters.requestingAreaId &&
+    asPortraitId(portrait.areaSolicitanteId) !== filters.requestingAreaId
+  ) {
+    return false;
+  }
+
   if (filters.participantId) {
     const participants = asPortraitIdList(portrait.participanteIds);
     if (!participants.includes(filters.participantId)) {

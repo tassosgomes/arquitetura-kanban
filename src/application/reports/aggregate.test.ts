@@ -252,4 +252,15 @@ describe("matchesManagementFilters (DE-17)", () => {
     expect(matchesManagementFilters(portrait, { areaId: "ar-ti" })).toBe(true);
     expect(matchesManagementFilters(portrait, { areaId: "ar-rh" })).toBe(false);
   });
+
+  it("matches requesting area only against the historical solicitante", () => {
+    const portrait = present({
+      areaSolicitanteId: "ar-fin",
+      areaEnvolvidaIds: ["ar-ti"],
+    });
+
+    expect(matchesManagementFilters(portrait, { requestingAreaId: "ar-fin" })).toBe(true);
+    expect(matchesManagementFilters(portrait, { requestingAreaId: "ar-ti" })).toBe(false);
+    expect(matchesManagementFilters(absent(), { requestingAreaId: "ar-fin" })).toBe(false);
+  });
 });

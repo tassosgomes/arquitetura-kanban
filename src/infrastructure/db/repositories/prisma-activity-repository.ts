@@ -144,6 +144,7 @@ function mapActivityRecord(row: ActivityRow): ActivityRecord {
 function mapListItem(row: {
   id: string;
   title: string;
+  description: string | null;
   type: ActivityRow["type"];
   status: ActivityRow["status"];
   priority: ActivityRow["priority"];
@@ -169,6 +170,7 @@ function mapListItem(row: {
   return {
     id: row.id,
     title: row.title,
+    description: row.description,
     type: row.type as ActivityType,
     status: row.status as ActivityStatus,
     priority: row.priority as Priority,
@@ -289,6 +291,7 @@ export function createPrismaActivityRepository(prisma: PrismaClient): ActivityRe
           select: {
             id: true,
             title: true,
+            description: true,
             type: true,
             status: true,
             priority: true,

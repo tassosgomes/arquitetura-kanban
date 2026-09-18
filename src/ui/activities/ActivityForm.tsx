@@ -361,12 +361,12 @@ export function ActivityForm({
 
       <FormField
         id="activity-domain"
-        label="Domínio"
+        label="Categoria"
         required
         error={fieldError(state, "domainId")}
         description={
           domainInactive
-            ? "O domínio atual está inativo. Selecione um domínio ativo para salvar."
+            ? "A categoria atual está inativa. Selecione uma categoria ativa para salvar."
             : undefined
         }
       >
@@ -377,10 +377,10 @@ export function ActivityForm({
           defaultValue={initial.domainId}
           className={CONTROL_CLASS_NAME}
         >
-          <option value="">Selecione um domínio</option>
+          <option value="">Selecione uma categoria</option>
           {domains.map((domain) => (
             <option key={domain.id} value={domain.id}>
-              {domain.isActive ? domain.name : `${domain.name} (inativo)`}
+              {domain.isActive ? domain.name : `${domain.name} (inativa)`}
             </option>
           ))}
         </select>

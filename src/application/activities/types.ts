@@ -52,6 +52,8 @@ export type ActivityListFilter = {
 export type ActivityListItem = {
   id: string;
   title: string;
+  /** Current description used by the executive Book; audit portraits do not retain it. */
+  description: string | null;
   type: ActivityType;
   status: ActivityStatus;
   priority: Priority;

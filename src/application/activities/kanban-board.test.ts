@@ -20,6 +20,7 @@ function listItem(
 ): ActivityListItem {
   return {
     type: ActivityType.AD_HOC,
+    description: null,
     priority: Priority.HIGH,
     effort: Effort.M,
     architectureRole: ArchitectureRole.CONTRIBUTOR,

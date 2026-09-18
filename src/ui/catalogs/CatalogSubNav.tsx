@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const LINKS = [
   { href: "/catalogs", label: "Visão geral", exact: true },
   { href: "/catalogs/areas", label: "Áreas", exact: false },
-  { href: "/catalogs/domains", label: "Domínios", exact: false },
+  { href: "/catalogs/domains", label: "Categorias", exact: false },
 ];
 
 export function CatalogSubNav() {

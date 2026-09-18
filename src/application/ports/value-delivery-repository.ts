@@ -11,6 +11,7 @@ export type ValueDeliveryTx = Prisma.TransactionClient;
 export interface ValueDeliveryRepository {
   findById(id: string, tx?: ValueDeliveryTx): Promise<ValueDeliveryRecord | null>;
   listByProjectId(projectId: string): Promise<ValueDeliveryListItem[]>;
+  listByProjectIds(projectIds: readonly string[]): Promise<ValueDeliveryListItem[]>;
   create(
     data: ValueDeliveryCreateData,
     authorId: string,

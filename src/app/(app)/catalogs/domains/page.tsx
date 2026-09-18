@@ -43,14 +43,14 @@ export default async function DomainsPage({ searchParams }: DomainsPageProps) {
       <CatalogManager
         items={domains.map(toItemDto)}
         labels={{
-          singular: "domínio",
-          plural: "domínios",
-          createHeading: "Novo domínio",
-          emptyTitle: filter === "inactive" ? "Nenhum domínio inativo" : "Nenhum domínio cadastrado",
+          singular: "categoria",
+          plural: "categorias",
+          createHeading: "Nova categoria",
+          emptyTitle: filter === "inactive" ? "Nenhuma categoria inativa" : "Nenhuma categoria cadastrada",
           emptyMessage:
             filter === "inactive"
-              ? "Domínios inativados permanecem visíveis para referências históricas."
-              : "Os seis domínios iniciais podem ser renomeados ou inativados conforme necessário.",
+              ? "Categorias inativadas permanecem visíveis para referências históricas."
+              : "As seis categorias iniciais podem ser renomeadas ou inativadas conforme necessário.",
         }}
         actions={{
           create: createDomainAction,

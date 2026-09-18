@@ -48,6 +48,7 @@ export type ManagementDistributions = Record<
  */
 export type ManagementDimensionFilters = {
   areaId?: string;
+  requestingAreaId?: string;
   projectId?: string;
   ownerId?: string;
   participantId?: string;

@@ -29,7 +29,7 @@ export const MANAGEMENT_INDICATOR_HINTS: Record<ManagementIndicatorId, string> =
 /** PRD §18 distribution titles. */
 export const MANAGEMENT_DISTRIBUTION_LABELS: Record<ManagementDistributionId, string> = {
   "D-AREA": "Atuação por área",
-  "D-DOMINIO": "Atuação por domínio",
+  "D-DOMINIO": "Atuação por categoria",
   "D-RESPONSAVEL": "Atuação por responsável",
   "D-NATUREZA": "Estratégico × operacional",
   "D-TIPO": "Projeto × ad hoc",

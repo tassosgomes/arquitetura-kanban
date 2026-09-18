@@ -78,6 +78,19 @@ export function createPrismaValueDeliveryRepository(
         .then((rows) => rows.map(mapListItem));
     },
 
+    listByProjectIds(projectIds) {
+      if (projectIds.length === 0) {
+        return Promise.resolve([]);
+      }
+      return prisma.valueDelivery
+        .findMany({
+          where: { projectId: { in: [...projectIds] } },
+          include: deliveryInclude,
+          orderBy: [{ referenceDate: "desc" }, { createdAt: "desc" }],
+        })
+        .then((rows) => rows.map(mapListItem));
+    },
+
     create(data: ValueDeliveryCreateData, authorId, tx) {
       return client(prisma, tx)
         .valueDelivery.create({
