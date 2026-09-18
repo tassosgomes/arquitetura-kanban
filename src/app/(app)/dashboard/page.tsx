@@ -4,11 +4,9 @@ import { listProjects } from "@/application/projects";
 import { ProjectStatus } from "@/domain/project/project-status";
 import {
   computeManagementSnapshot,
-  describeManagementPeriod,
   hasActiveManagementFilters,
   parseManagementSearchParams,
 } from "@/application/reports";
-import { resolveTemporalQuery } from "@/application/temporal";
 import {
   activityRepository,
   areaRepository,
@@ -23,7 +21,6 @@ import { EmptyState } from "@/ui/feedback/EmptyState";
 import { ErrorState } from "@/ui/feedback/ErrorState";
 import { InfoTooltip } from "@/ui/feedback/InfoTooltip";
 import { DashboardFilters } from "@/ui/dashboard/DashboardFilters";
-import { DashboardPeriodBanner } from "@/ui/dashboard/DashboardPeriodBanner";
 import { DistributionBars } from "@/ui/dashboard/DistributionBars";
 import { IndicatorCards } from "@/ui/dashboard/IndicatorCards";
 import { formatUserLabel } from "@/ui/projects/project-types";
@@ -102,11 +99,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   }
 
   const filtersActive = hasActiveManagementFilters(parsed.values);
-  const resolved = parsed.error ? null : resolveTemporalQuery(parsed.query.temporal, now);
-  const periodView =
-    resolved === null
-      ? null
-      : describeManagementPeriod({ period: parsed.values.period, resolved });
   const empty = snapshot !== null && snapshot.indicators["I-01"] === 0;
 
   return (
@@ -159,8 +151,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           {parsed.error} Os indicadores não foram calculados.
         </p>
       ) : null}
-
-      {periodView ? <DashboardPeriodBanner view={periodView} /> : null}
 
       {snapshot ? (
         <>

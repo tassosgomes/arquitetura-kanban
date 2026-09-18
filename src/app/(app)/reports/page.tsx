@@ -4,14 +4,12 @@ import { listProjects } from "@/application/projects";
 import { ProjectStatus } from "@/domain/project/project-status";
 import {
   buildManagementReport,
-  describeManagementPeriod,
   hasActiveManagementFilters,
   managementHref,
   parseManagementSearchParams,
   reportsCsvHref,
 } from "@/application/reports";
 import { paginateItems } from "@/application/reports/pagination";
-import { resolveTemporalQuery } from "@/application/temporal";
 import { systemClock } from "@/application/ports/clock";
 import {
   activityRepository,
@@ -28,7 +26,6 @@ import { InfoTooltip } from "@/ui/feedback/InfoTooltip";
 import { DashboardFilters } from "@/ui/dashboard/DashboardFilters";
 import { ReportActivityTable, AssociatedProjectsList } from "@/ui/reports/ReportActivityTable";
 import { ReportPagination } from "@/ui/reports/ReportPagination";
-import { ReportPeriodBanner } from "@/ui/reports/ReportPeriodBanner";
 import { ReportSummaryTable } from "@/ui/reports/ReportSummaryTable";
 import { formatUserLabel } from "@/ui/projects/project-types";
 
@@ -106,11 +103,6 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
   }
 
   const filtersActive = hasActiveManagementFilters(parsed.values);
-  const resolved = parsed.error ? null : resolveTemporalQuery(parsed.query.temporal, now);
-  const periodView =
-    resolved === null
-      ? null
-      : describeManagementPeriod({ period: parsed.values.period, resolved });
   const pageSlice = report ? paginateItems(report.activities, parsed.page) : null;
   const csvHref = parsed.error ? null : reportsCsvHref(parsed.query);
 
@@ -177,8 +169,6 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
           {parsed.error} O relatório não foi gerado.
         </p>
       ) : null}
-
-      {periodView ? <ReportPeriodBanner view={periodView} /> : null}
 
       {report && pageSlice ? (
         <>
