@@ -34,7 +34,7 @@ function initials(label: string): string {
 function DragHandleIcon() {
   return (
     <span
-      className="material-symbols-outlined text-[16px] text-outline transition-opacity group-hover:opacity-100 sm:opacity-40"
+      className="material-symbols-outlined text-[16px] text-outline opacity-70 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
       aria-hidden="true"
     >
       drag_indicator
@@ -235,7 +235,7 @@ export function DraggableKanbanCard({
     <button
       type="button"
       ref={setActivatorNodeRef}
-      className="mt-space-md ml-1 shrink-0 cursor-grab touch-none rounded px-1 py-1 text-outline hover:text-on-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-40"
+      className="mt-space-md ml-1 inline-flex size-11 shrink-0 cursor-grab touch-pan-y items-center justify-center rounded-lg text-outline hover:bg-surface-container-low hover:text-on-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-40"
       aria-label={`Arrastar ${card.title}`}
       disabled={disabled}
       {...listeners}
@@ -253,7 +253,12 @@ export function DraggableKanbanCard({
         card,
       )} ${isDragging ? "opacity-40" : ""}`}
     >
-      <div className="flex items-start gap-1">
+      <div
+        {...listeners}
+        className={`flex items-start gap-1 touch-pan-y active:cursor-grabbing ${
+          isDragging ? "cursor-grabbing" : "cursor-grab"
+        }`}
+      >
         {handle}
         <Link
           href={`/activities/${card.activityId}`}
