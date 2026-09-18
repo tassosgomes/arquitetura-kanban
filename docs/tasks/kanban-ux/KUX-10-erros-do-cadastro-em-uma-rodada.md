@@ -34,33 +34,33 @@ Dois agravantes no mesmo fluxo:
 
 ## Escopo
 
-- [ ] Fazer com que uma única submissão retorne **todos** os campos inválidos, sem
+- [x] Fazer com que uma única submissão retorne **todos** os campos inválidos, sem
       regredir a herança de projeto: quando `type = PROJECT` com projeto escolhido, os
       quatro campos continuam podendo vir do projeto; quando `type = AD_HOC`, são
       obrigatórios e devem falhar já na primeira validação.
-- [ ] Reaproveitar as mensagens estritas já existentes (`"Selecione a natureza."`,
+- [x] Reaproveitar as mensagens estritas já existentes (`"Selecione a natureza."`,
       `"Selecione o papel da Arquitetura."`) em vez de duplicá-las.
-- [ ] Substituir `"Identificador inválido."` por mensagem de domínio do usuário quando o
+- [x] Substituir `"Identificador inválido."` por mensagem de domínio do usuário quando o
       campo está vazio (`"Selecione uma categoria."`, `"Selecione a área solicitante."`),
       preservando a mensagem técnica para valor presente e malformado.
-- [ ] Após submit com erro: rolar até o primeiro campo inválido e mover o foco para ele.
-- [ ] Resumo dos erros no topo do formulário, com âncoras clicáveis para cada campo,
+- [x] Após submit com erro: rolar até o primeiro campo inválido e mover o foco para ele.
+- [x] Resumo dos erros no topo do formulário, com âncoras clicáveis para cada campo,
       anunciado por leitor de tela (`role="alert"` / região com `aria-live`).
-- [ ] Corrigir a ligação de acessibilidade dos campos: hoje o formulário tem **zero**
+- [x] Corrigir a ligação de acessibilidade dos campos: hoje o formulário tem **zero**
       `aria-describedby` e um único `aria-invalid` (no título), embora `FormField` já
       renderize o erro com `id` previsível e documente esse contrato no próprio JSDoc.
       Aplicar `aria-invalid` e `aria-describedby` em todos os controles com erro.
 
 ## Aceite
 
-- [ ] Submeter o formulário vazio marca de uma vez os sete campos obrigatórios.
-- [ ] Nenhuma mensagem exibida ao usuário contém o termo "identificador".
-- [ ] Após submit inválido, o primeiro campo com erro está visível e com foco, sem o
+- [x] Submeter o formulário vazio marca de uma vez os sete campos obrigatórios.
+- [x] Nenhuma mensagem exibida ao usuário contém o termo "identificador".
+- [x] Após submit inválido, o primeiro campo com erro está visível e com foco, sem o
       usuário rolar.
-- [ ] Criar atividade de tipo Projeto com Natureza/Papel/Área/Responsável em branco
+- [x] Criar atividade de tipo Projeto com Natureza/Papel/Área/Responsável em branco
       continua funcionando quando o projeto fornece esses valores.
-- [ ] Leitor de tela anuncia a falha e associa cada mensagem ao seu campo.
-- [ ] Os testes existentes de `createActivity` e do schema continuam passando.
+- [x] Leitor de tela anuncia a falha e associa cada mensagem ao seu campo.
+- [x] Os testes existentes de `createActivity` e do schema continuam passando.
 
 ## Como validar
 

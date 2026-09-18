@@ -16,30 +16,30 @@ de escrita paralelo nem contorna auditoria.
 
 ## Onda 1 — Board
 
-| # | Task | Problema que resolve | Prio | Complexidade |
-| --- | --- | --- | --- | --- |
-| [KUX-01](KUX-01-altura-board-scroll-coluna.md) | Altura fixa do board, scroll por coluna e header fixo | A coluna mais cheia estica a página e o board deixa de ser board | P0 | `low` |
-| [KUX-02](KUX-02-sinal-de-prazo-no-card.md) | Sinal de prazo no card | Nenhum card indica atraso; regra já existe e não é usada | P0 | `low` |
-| [KUX-03](KUX-03-mover-para-sob-demanda.md) | "Mover para" sob demanda | Select permanente consome ~35% da altura de 47 cards | P0 | `low` |
-| [KUX-04](KUX-04-estado-de-filtro-visivel.md) | Estado de filtro visível e aplicação imediata | Filtro recolhido não diz o que está filtrando | P1 | `mid` |
-| [KUX-05](KUX-05-legibilidade-do-card.md) | Legibilidade do título e poda de tags | Títulos truncados indistinguíveis; tags roubam espaço | P1 | `low` |
-| [KUX-06](KUX-06-drop-target-inicial-teclado.md) | Corrigir alvo inicial do drag por teclado | Espaço na alça já destaca a coluna seguinte | P2 | `mid` |
-| [KUX-07](KUX-07-busca-por-titulo.md) | Busca por título no board | 11 filtros de taxonomia e nenhum campo de texto | P2 | `mid` |
-| [KUX-08](KUX-08-area-de-arraste.md) | Card arrastável e alvo de toque | Alça de 24px com `opacity-40`; card não arrasta | P2 | `low` |
-| [KUX-09](KUX-09-prioridade-na-excecao.md) | Badge de prioridade só na exceção | Quase todo card é "Média": o badge não diferencia | P3 | `low` |
+| # | Task | Problema que resolve | Prio | Complexidade | Status |
+| --- | --- | --- | --- | --- | --- |
+| [KUX-01](KUX-01-altura-board-scroll-coluna.md) | Altura fixa do board, scroll por coluna e header fixo | A coluna mais cheia estica a página e o board deixa de ser board | P0 | `low` | ✅ `4be3b6e` |
+| [KUX-02](KUX-02-sinal-de-prazo-no-card.md) | Sinal de prazo no card | Nenhum card indica atraso; regra já existe e não é usada | P0 | `low` | ✅ `01952ba` |
+| [KUX-03](KUX-03-mover-para-sob-demanda.md) | "Mover para" sob demanda | Select permanente consome ~35% da altura de 47 cards | P0 | `low` | ✅ `8cb4c67` |
+| [KUX-04](KUX-04-estado-de-filtro-visivel.md) | Estado de filtro visível e aplicação imediata | Filtro recolhido não diz o que está filtrando | P1 | `mid` | ✅ `28ce262` |
+| [KUX-05](KUX-05-legibilidade-do-card.md) | Legibilidade do título e poda de tags | Títulos truncados indistinguíveis; tags roubam espaço | P1 | `low` | ✅ `4526307` |
+| [KUX-06](KUX-06-drop-target-inicial-teclado.md) | Corrigir alvo inicial do drag por teclado | Espaço na alça já destaca a coluna seguinte | P2 | `mid` | ✅ `7a0e440` |
+| [KUX-07](KUX-07-busca-por-titulo.md) | Busca por título no board | 11 filtros de taxonomia e nenhum campo de texto | P2 | `mid` | ✅ `df2fa6d` |
+| [KUX-08](KUX-08-area-de-arraste.md) | Card arrastável e alvo de toque | Alça de 24px com `opacity-40`; card não arrasta | P2 | `low` | ✅ `24f040a` |
+| [KUX-09](KUX-09-prioridade-na-excecao.md) | Badge de prioridade só na exceção | Quase todo card é "Média": o badge não diferencia | P3 | `low` | ✅ `05ad5fe` |
 
 ## Onda 2 — Cadastro de atividade
 
-| # | Task | Problema que resolve | Prio | Complexidade |
-| --- | --- | --- | --- | --- |
-| [KUX-10](KUX-10-erros-do-cadastro-em-uma-rodada.md) | Erros do cadastro em uma única rodada | Submeter vazio devolve 2 de 7 erros; os outros 4 só na 2ª tentativa | P0 | `mid` |
-| [KUX-11](KUX-11-criacao-rapida-pela-coluna.md) | Criação rápida pela coluna do board | 16 campos para registrar uma demanda que ainda não foi classificada | P0 | `mid` |
-| [KUX-12](KUX-12-permanecer-no-board-apos-criar.md) | Permanecer no contexto depois de criar | Criar redireciona ao detalhe e abandona o board e seus filtros | P0 | `low` |
-| [KUX-13](KUX-13-agrupamento-e-acao-fixa-no-cadastro.md) | Agrupar o formulário e fixar a ação primária | ~1.900px de coluna única, sem hierarquia, com o CTA fora da viewport | P1 | `mid` |
-| [KUX-14](KUX-14-selecao-de-pessoas-e-areas-por-busca.md) | Seleção de pessoas e áreas por busca | Grades de checkbox que renderizam o catálogo inteiro | P1 | `mid` |
-| [KUX-15](KUX-15-fixtures-visiveis-nos-seletores.md) | Fixtures de teste visíveis nos seletores | `T12 actor` ×3 e um UUID como categoria em campos obrigatórios | P1 | `low` |
-| [KUX-16](KUX-16-controles-de-escolha-curta.md) | Controles de escolha curta | 5 `<select>` para conjuntos de 2 a 4 opções curtas | P2 | `low` |
-| [KUX-17](KUX-17-cadastro-em-painel-sobre-o-board.md) | Cadastro completo em painel sobre o board | Cadastrar continua custando perder o board de vista | P3 | `high` |
+| # | Task | Problema que resolve | Prio | Complexidade | Status |
+| --- | --- | --- | --- | --- | --- |
+| [KUX-10](KUX-10-erros-do-cadastro-em-uma-rodada.md) | Erros do cadastro em uma única rodada | Submeter vazio devolve 2 de 7 erros; os outros 4 só na 2ª tentativa | P0 | `mid` | ✅ `703c3e2` |
+| [KUX-11](KUX-11-criacao-rapida-pela-coluna.md) | Criação rápida pela coluna do board | 16 campos para registrar uma demanda que ainda não foi classificada | P0 | `mid` | ✅ `415fcf4` |
+| [KUX-12](KUX-12-permanecer-no-board-apos-criar.md) | Permanecer no contexto depois de criar | Criar redireciona ao detalhe e abandona o board e seus filtros | P0 | `low` | ✅ `519524d` |
+| [KUX-13](KUX-13-agrupamento-e-acao-fixa-no-cadastro.md) | Agrupar o formulário e fixar a ação primária | ~1.900px de coluna única, sem hierarquia, com o CTA fora da viewport | P1 | `mid` | ✅ `6855d71` |
+| [KUX-14](KUX-14-selecao-de-pessoas-e-areas-por-busca.md) | Seleção de pessoas e áreas por busca | Grades de checkbox que renderizam o catálogo inteiro | P1 | `mid` | ✅ `2bcbae5` |
+| [KUX-15](KUX-15-fixtures-visiveis-nos-seletores.md) | Fixtures de teste visíveis nos seletores | `T12 actor` ×3 e um UUID como categoria em campos obrigatórios | P1 | `low` | ✅ `d3e0145` |
+| [KUX-16](KUX-16-controles-de-escolha-curta.md) | Controles de escolha curta | 5 `<select>` para conjuntos de 2 a 4 opções curtas | P2 | `low` | ✅ `ef5ca3b` |
+| [KUX-17](KUX-17-cadastro-em-painel-sobre-o-board.md) | Cadastro completo em painel sobre o board | Cadastrar continua custando perder o board de vista | P3 | `high` | ✅ `b81d6ee` |
 
 ## Arquivos tocados por esta iniciativa
 
@@ -74,7 +74,7 @@ momento — é o menor esforço da onda 2.
 
 ## Critério comum de conclusão
 
-- [ ] Verificações automatizadas existentes passam (`npm test`, lint, typecheck).
+- [x] Verificações automatizadas existentes passam (`npm test`, lint, typecheck).
 - [ ] Nenhuma regressão de acessibilidade: a rota por teclado e os anúncios de
       leitor de tela do board continuam funcionando como antes da mudança.
 - [ ] Validado em tema claro e escuro (`docs/design/DESIGN-CLARO.md` / `DESIGN-ESCURO.md`).
@@ -93,3 +93,55 @@ Registradas na revisão, sem task própria por não serem decisões de UI:
 - O formulário de cadastro **não tem campo de checklist**, mas o card exibe progresso de
   checklist (`0/1`, `0/5`). O item nasce sem checklist e só ganha um no detalhe —
   vale confirmar se é intencional.
+
+## Achados durante a execução
+
+Não são tasks desta iniciativa; foram observados ao integrar as ondas e ficam
+registrados para quem for priorizar em seguida.
+
+- **`catalogs.test.ts` é instável sob carga e escreve na base da aplicação.** O caso
+  "audits create, rename and deactivate of area and domain" falhou 2 vezes em ~8
+  execuções da suíte completa e passa sempre que roda isolado. Ele ordena os eventos de
+  auditoria por `occurredAt` e só depois por `sequence`: com o banco sob concorrência,
+  dois eventos da mesma entidade caem no mesmo instante e a ordem esperada
+  (`created`, `field_changed`, `deactivated`) deixa de ser determinística. O arquivo é
+  anterior a esta branch e não foi tocado por ela. Além disso, ele cria fixtures
+  `T12 …` no banco lido pela aplicação — é o mesmo problema que KUX-15 resolveu para
+  `invariants` e `audited-transaction`, e responde ao item de escopo de KUX-15 que pedia
+  para procurar o resíduo em outros pontos: **sim, ainda existe aqui**.
+- **`middleware` está deprecado no Next 16** e deve virar `proxy`. O `next dev` emite o
+  aviso a cada boot, com codemod disponível (`npx @next/codemod@canary middleware-to-proxy .`).
+- **`react-hooks/set-state-in-effect` suprimido** em `ActivityForm.tsx`, no efeito que
+  abre os blocos colapsados quando o resumo de erros aponta para dentro deles (KUX-13).
+  Passa no lint porque a regra está desabilitada na linha, não porque o padrão é seguro.
+- **A suíte roda 63+ workers contra um único PostgreSQL.** As duas falhas intermitentes
+  observadas (`catalogs` e `management-snapshot`) têm essa origem comum. Vale considerar
+  `TEST_DATABASE_URL` para todos os testes de integração, não só os dois de KUX-15.
+
+## Pendências abertas após a revisão independente
+
+A revisão encontrou 10 defeitos; os 4 graves foram corrigidos em `c416ec5`. O que
+segue em aberto, por ordem de gravidade, para entrar como follow-up:
+
+- **KUX-17 não está completo.** A abordagem de rota interceptada foi removida por não
+  funcionar (o layout nunca renderizou o slot). O painel atual usa `pushState` e, por
+  causa disso, fechar depois de criar pode levar a `/activities/new` em página cheia em
+  vez do board, e um `closingRef` que nunca é zerado faz o Voltar do navegador pular a
+  confirmação de descarte, perdendo formulário preenchido. Itens 2, 3 e 5 do Escopo e
+  2, 3, 4 e 7 do Aceite seguem desmarcados.
+- **"Mover para" inalcançável no último card de coluna rolada** (KUX-01 × KUX-03): o
+  painel é `absolute top-full` dentro do contêiner de `overflow-y-auto`; ao rolar para
+  vê-lo, o ponteiro sai do card e ele some. Só afeta mouse.
+- **Prazo sem caminho em toque** (KUX-02): rótulo e data estão em `title` e
+  `group-hover`, que não existem em toque; falta o escape `pointer-coarse:` que o
+  KUX-03 usa no botão de mover.
+- **Busca por título sobrescreve digitação** (KUX-07): o efeito de sincronização com o
+  servidor reescreve o input quando a resposta chega, descartando o que foi digitado
+  durante o voo.
+- **`Enter` sem resultados submete o formulário** (KUX-14): falta `preventDefault` no
+  ramo de lista vazia do `SearchableSelect`.
+- **KUX-10 ainda cobra duas rodadas no caminho de projeto:** o `superRefine` só valida
+  os obrigatórios quando `type === AD_HOC`; para `PROJECT` eles continuam caindo em
+  `requireInheritedFields`, que roda depois do schema.
+- **`SearchableSelect` mostra UUID cru** quando um id selecionado não está nas opções
+  (participante herdado que ficou inativo) — é o sintoma que KUX-15 queria eliminar.

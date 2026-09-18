@@ -17,26 +17,26 @@ exigida pelo aceite de T18.
 
 ## Escopo
 
-- [ ] Ocultar visualmente o bloco "Mover para" no estado de repouso do card.
-- [ ] Revelar em `:hover`, em `:focus-within` e enquanto o card estiver com foco de
+- [x] Ocultar visualmente o bloco "Mover para" no estado de repouso do card.
+- [x] Revelar em `:hover`, em `:focus-within` e enquanto o card estiver com foco de
       teclado — mantendo o `<select>` sempre no DOM (`sr-only`, não `display:none`,
       não `hidden`) para leitor de tela e navegação por Tab.
-- [ ] Garantir que revelar o controle não altere a altura do card a ponto de deslocar
+- [x] Garantir que revelar o controle não altere a altura do card a ponto de deslocar
       os cards vizinhos (reservar espaço ou sobrepor).
-- [ ] Manter `aria-label` atual (`Mover <título> para`) e a `key` que reseta o select
+- [x] Manter `aria-label` atual (`Mover <título> para`) e a `key` que reseta o select
       após cada movimentação.
-- [ ] Não aplicar aos cards da lista de canceladas (que já não têm o controle).
+- [x] Não aplicar aos cards da lista de canceladas (que já não têm o controle).
 
 ## Aceite
 
-- [ ] Em repouso, o card não exibe o rótulo "Mover para" nem a caixa de seleção.
-- [ ] Navegando só por teclado, é possível alcançar e operar o "Mover para" de qualquer
+- [x] Em repouso, o card não exibe o rótulo "Mover para" nem a caixa de seleção.
+- [x] Navegando só por teclado, é possível alcançar e operar o "Mover para" de qualquer
       card, e ele fica visível quando recebe foco.
-- [ ] Leitor de tela continua anunciando o controle e suas opções.
-- [ ] Mover por esse controle continua persistindo o status, com o mesmo tratamento de
+- [x] Leitor de tela continua anunciando o controle e suas opções.
+- [x] Mover por esse controle continua persistindo o status, com o mesmo tratamento de
       erro e rollback de hoje.
 - [ ] A altura média do card cai de forma perceptível (mais cards por dobra).
-- [ ] Em dispositivo sem hover (toque), existe um caminho explícito para o controle —
+- [x] Em dispositivo sem hover (toque), existe um caminho explícito para o controle —
       toque no card/afordância dedicada, nunca um controle inalcançável.
 
 ## Como validar

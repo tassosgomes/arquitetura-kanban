@@ -32,6 +32,8 @@ export type ActivityProjectRef = {
 };
 
 export type ActivityListFilter = {
+  /** Busca textual aplicada somente ao título, sem diferenciar caixa ou acentos. */
+  titleQuery?: string;
   projectId?: string;
   includeCancelled?: boolean;
   status?: ActivityStatus;

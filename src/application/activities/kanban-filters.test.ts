@@ -58,6 +58,23 @@ describe("kanban filters (T20)", () => {
     expect(toActivityListFilter(values, ACTOR_ID).includeCancelled).toBe(false);
   });
 
+  it("parses the title query and combines it with the other filters", () => {
+    const { values } = parseKanbanSearchParams({
+      title: "  relatorio  ",
+      mine: "1",
+      priority: Priority.HIGH,
+    });
+
+    expect(values.titleQuery).toBe("relatorio");
+    expect(hasActiveKanbanFilters(values)).toBe(true);
+    expect(activeKanbanShortcut(values)).toBeNull();
+    expect(toActivityListFilter(values, ACTOR_ID)).toMatchObject({
+      titleQuery: "relatorio",
+      involvedUserId: ACTOR_ID,
+      priority: Priority.HIGH,
+    });
+  });
+
   it("keeps responsável and participante as distinct dimensions", () => {
     const { values } = parseKanbanSearchParams({
       owner: OWNER_ID,

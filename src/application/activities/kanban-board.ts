@@ -1,3 +1,10 @@
+import { Temporal } from "@js-temporal/polyfill";
+import {
+  classifyDeadlineStatus,
+  DEADLINE_STATUS_LABELS,
+  DeadlineStatus,
+  type DeadlineStatus as DeadlineStatusValue,
+} from "@/application/reports/deadline-status";
 import {
   ACTIVITY_STATUS_LABELS,
   ActivityStatus,
@@ -9,6 +16,8 @@ import {
   EFFORT_LABELS,
   PRIORITY_LABELS,
 } from "@/domain/catalog/classifications";
+import type { CivilDate } from "@/domain/calendar/civil-date";
+import { APP_TIME_ZONE } from "@/infrastructure/calendar/time-zone";
 import type { ActivityListItem, ActivityUserRef } from "@/application/activities/types";
 
 /** RN-01: um único board da equipe. Período e pessoa são filtros (T19/T20), não boards. */
@@ -33,7 +42,41 @@ export type KanbanCardData = {
   roleLabel: string;
   checklistLabel: string | null;
   expectedEndDate: string | null;
+  deadlineStatus: DeadlineStatusValue;
+  deadlineStatusLabel: string;
+  deadlineDaysLate: number | null;
+  deadlineIsDueToday: boolean;
 };
+
+/** Returns the current civil day in the project's calendar, never the browser's local day. */
+export function todayInProjectTimeZone(now?: Date): CivilDate {
+  const instant = now
+    ? Temporal.Instant.fromEpochMilliseconds(now.getTime())
+    : Temporal.Now.instant();
+  return instant.toZonedDateTimeISO(APP_TIME_ZONE).toPlainDate().toString();
+}
+
+function daysLate(expectedEndDate: CivilDate, today: CivilDate): number {
+  return Temporal.PlainDate.from(today).since(Temporal.PlainDate.from(expectedEndDate), {
+    largestUnit: "days",
+  }).days;
+}
+
+function formatDeadlineStatusLabel(
+  status: DeadlineStatusValue,
+  deadlineIsDueToday: boolean,
+  deadlineDaysLate: number | null,
+): string {
+  if (deadlineIsDueToday) {
+    return "Vence hoje";
+  }
+
+  if (status === DeadlineStatus.OVERDUE && deadlineDaysLate !== null) {
+    return `Atrasado há ${deadlineDaysLate} ${deadlineDaysLate === 1 ? "dia" : "dias"}`;
+  }
+
+  return DEADLINE_STATUS_LABELS[status];
+}
 
 function ownerLabel(owner: ActivityUserRef): string {
   const name = owner.displayName ?? owner.email ?? "Sem identificação";
@@ -41,8 +84,26 @@ function ownerLabel(owner: ActivityUserRef): string {
 }
 
 /** RN-02: um card = uma atividade, com os campos essenciais do PRD §13.2. */
-export function toKanbanCard(activity: ActivityListItem): KanbanCardData {
+export function toKanbanCard(
+  activity: ActivityListItem,
+  today: CivilDate = todayInProjectTimeZone(),
+): KanbanCardData {
   const areaName = activity.requestingArea.name;
+  const deadlineStatus = classifyDeadlineStatus({
+    status: activity.status,
+    expectedEndDate: activity.expectedEndDate,
+    completedDate: activity.completedDate,
+    today,
+  });
+  const deadlineIsDueToday =
+    activity.expectedEndDate === today &&
+    activity.status !== ActivityStatus.DONE &&
+    activity.status !== ActivityStatus.CANCELLED;
+  const deadlineDaysLate =
+    deadlineStatus === DeadlineStatus.OVERDUE && activity.expectedEndDate !== null
+      ? daysLate(activity.expectedEndDate, today)
+      : null;
+
   return {
     activityId: activity.id,
     title: activity.title,
@@ -57,6 +118,14 @@ export function toKanbanCard(activity: ActivityListItem): KanbanCardData {
         ? `${activity.checklistDoneCount}/${activity.checklistTotalCount}`
         : null,
     expectedEndDate: activity.expectedEndDate,
+    deadlineStatus,
+    deadlineStatusLabel: formatDeadlineStatusLabel(
+      deadlineStatus,
+      deadlineIsDueToday,
+      deadlineDaysLate,
+    ),
+    deadlineDaysLate,
+    deadlineIsDueToday,
   };
 }
 

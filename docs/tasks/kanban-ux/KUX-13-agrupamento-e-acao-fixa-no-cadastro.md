@@ -23,34 +23,34 @@ aparece antes de "Categoria", e "Responsável" fica a 900px de distância de
 
 ## Escopo
 
-- [ ] Agrupar os campos em três blocos com títulos legíveis, na ordem em que a demanda
+- [x] Agrupar os campos em três blocos com títulos legíveis, na ordem em que a demanda
       é pensada:
       1. **O que é** — título, descrição, tipo (e projeto, quando aplicável);
       2. **Classificação** — categoria, natureza, papel da Arquitetura, prioridade,
          esforço;
       3. **Pessoas e prazos** — área solicitante, áreas envolvidas, responsável,
          participantes, status, datas, observações.
-- [ ] Blocos 2 e 3 colapsáveis, com indicador de preenchimento no cabeçalho
+- [x] Blocos 2 e 3 colapsáveis, com indicador de preenchimento no cabeçalho
       (ex.: `3 de 4`), abertos por padrão em `create` enquanto houver obrigatório vazio.
-- [ ] Rodapé de ação fixo (`sticky`) com o botão primário sempre visível, inclusive
+- [x] Rodapé de ação fixo (`sticky`) com o botão primário sempre visível, inclusive
       durante a rolagem.
-- [ ] `Cmd/Ctrl+Enter` submete de qualquer campo.
-- [ ] Usar duas colunas para os campos curtos de classificação em viewport larga,
+- [x] `Cmd/Ctrl+Enter` submete de qualquer campo.
+- [x] Usar duas colunas para os campos curtos de classificação em viewport larga,
       mantendo coluna única abaixo de `md`.
-- [ ] Um bloco colapsado que contenha campo inválido abre automaticamente quando o
+- [x] Um bloco colapsado que contenha campo inválido abre automaticamente quando o
       resumo de erros de KUX-10 aponta para ele.
-- [ ] Não alterar nomes de campo, ordem de tabulação lógica nem o contrato do
+- [x] Não alterar nomes de campo, ordem de tabulação lógica nem o contrato do
       `FormData` enviado à action.
 
 ## Aceite
 
 - [ ] A altura do formulário em viewport de 1.080px cai para no máximo duas rolagens.
-- [ ] O botão primário está visível em qualquer ponto da rolagem.
-- [ ] A ordem de Tab continua seguindo a ordem visual, inclusive com blocos colapsados.
-- [ ] Colapsar/expandir é operável por teclado e anunciado (`aria-expanded`).
-- [ ] O modo `edit` também se beneficia do agrupamento, sem regressão nos campos que
+- [x] O botão primário está visível em qualquer ponto da rolagem.
+- [x] A ordem de Tab continua seguindo a ordem visual, inclusive com blocos colapsados.
+- [x] Colapsar/expandir é operável por teclado e anunciado (`aria-expanded`).
+- [x] O modo `edit` também se beneficia do agrupamento, sem regressão nos campos que
       ele desabilita (status, data de conclusão).
-- [ ] Nenhum teste existente de submissão do formulário quebra.
+- [x] Nenhum teste existente de submissão do formulário quebra.
 
 ## Como validar
 

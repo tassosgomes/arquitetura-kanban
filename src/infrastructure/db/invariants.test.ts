@@ -1,11 +1,97 @@
-import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import "dotenv/config";
 import type { PrismaClient } from "@/generated/prisma/client";
-import { connectPostgresForTests } from "@/infrastructure/db/connect-postgres-for-tests";
+import { createPrismaClient } from "@/infrastructure/db/create-prisma-client";
 import { seedArchitectureDomains } from "@/infrastructure/db/seed-architecture-domains";
 import { ARCHITECTURE_DOMAIN_NAMES } from "@/domain/catalog/architecture-domains";
 import { normalizeCatalogName } from "@/domain/catalog/normalize-catalog-name";
+
+const INVARIANTS_TEST_ISSUER = "https://integration-tests.invalid/kux-15/invariants";
+const UNIQUE_IDENTITY_ISSUER = `${INVARIANTS_TEST_ISSUER}/unique-identity`;
+const CHECK_FIXTURE_ISSUER = `${INVARIANTS_TEST_ISSUER}/activity-check`;
+const CHECK_AREA_NAME = "vitest fixture integration check area";
+const CHECK_DOMAIN_NAME = "vitest fixture integration check domain";
+const CHECK_PROJECT_NAME = "vitest fixture integration check project";
+const CHECK_ACTIVITY_TITLE = "vitest fixture integration check activity";
+const CHECK_AD_HOC_TITLE = "vitest fixture integration ad hoc activity";
+const REUSABLE_AREA_NAME = "vitest fixture integration reusable area";
+
+function isCiEnv(): boolean {
+  return process.env.CI === "true" || process.env.CI === "1";
+}
+
+/**
+ * Local integration tests must use a disposable database. CI already provides
+ * one through DATABASE_URL, so only CI may use that fallback.
+ */
+async function connectIntegrationDatabase(): Promise<PrismaClient | undefined> {
+  const url = process.env.TEST_DATABASE_URL?.trim() || (isCiEnv() ? process.env.DATABASE_URL : undefined);
+  if (!url) {
+    if (isCiEnv()) {
+      throw new Error("CI requires DATABASE_URL and a reachable PostgreSQL for integration tests.");
+    }
+    return undefined;
+  }
+
+  const client = createPrismaClient(url);
+  try {
+    await client.$queryRaw`SELECT 1`;
+    return client;
+  } catch {
+    await client.$disconnect().catch(() => undefined);
+    if (isCiEnv()) {
+      throw new Error("CI requires a reachable PostgreSQL for integration tests.");
+    }
+    return undefined;
+  }
+}
+
+async function deleteCheckFixture(prisma: PrismaClient): Promise<void> {
+  const [users, areas, domains, projects, activities] = await Promise.all([
+    prisma.user.findMany({ where: { oidcIssuer: CHECK_FIXTURE_ISSUER }, select: { id: true } }),
+    prisma.area.findMany({
+      where: { nameNormalized: normalizeCatalogName(CHECK_AREA_NAME) },
+      select: { id: true },
+    }),
+    prisma.architectureDomain.findMany({
+      where: { nameNormalized: normalizeCatalogName(CHECK_DOMAIN_NAME) },
+      select: { id: true },
+    }),
+    prisma.project.findMany({
+      where: { nameNormalized: normalizeCatalogName(CHECK_PROJECT_NAME) },
+      select: { id: true },
+    }),
+    prisma.activity.findMany({
+      where: { title: { in: [CHECK_ACTIVITY_TITLE, CHECK_AD_HOC_TITLE] } },
+      select: { id: true },
+    }),
+  ]);
+  const userIds = users.map(({ id }) => id);
+  const areaIds = areas.map(({ id }) => id);
+  const domainIds = domains.map(({ id }) => id);
+  const projectIds = projects.map(({ id }) => id);
+  const activityIds = activities.map(({ id }) => id);
+
+  await prisma.activityParticipant.deleteMany({ where: { activityId: { in: activityIds } } });
+  await prisma.activityInvolvedArea.deleteMany({ where: { activityId: { in: activityIds } } });
+  await prisma.activityTask.deleteMany({ where: { activityId: { in: activityIds } } });
+  await prisma.projectParticipant.deleteMany({ where: { projectId: { in: projectIds } } });
+  await prisma.valueDelivery.deleteMany({ where: { projectId: { in: projectIds } } });
+  await prisma.auditEvent.deleteMany({
+    where: {
+      OR: [
+        { activityId: { in: activityIds } },
+        { projectId: { in: projectIds } },
+        { actorUserId: { in: userIds } },
+      ],
+    },
+  });
+  await prisma.activity.deleteMany({ where: { id: { in: activityIds } } });
+  await prisma.project.deleteMany({ where: { id: { in: projectIds } } });
+  await prisma.architectureDomain.deleteMany({ where: { id: { in: domainIds } } });
+  await prisma.area.deleteMany({ where: { id: { in: areaIds } } });
+  await prisma.user.deleteMany({ where: { id: { in: userIds } } });
+}
 
 /**
  * Invariantes que exigem PostgreSQL. Sem banco alcançável, os casos são ignorados
@@ -16,7 +102,7 @@ describe("relational invariants (postgres)", () => {
   let prisma: PrismaClient | undefined;
 
   beforeAll(async () => {
-    prisma = await connectPostgresForTests();
+    prisma = await connectIntegrationDatabase();
   });
 
   afterAll(async () => {
@@ -45,18 +131,18 @@ describe("relational invariants (postgres)", () => {
       skip();
       return;
     }
-    const suffix = randomUUID();
-    const issuer = `https://t06.test/${suffix}`;
-    const email = `t06-${suffix}@example.test`;
+    const issuer = UNIQUE_IDENTITY_ISSUER;
+    const email = "kux-15-unique@example.test";
     const createdIds: string[] = [];
 
     try {
+      await prisma.user.deleteMany({ where: { oidcIssuer: issuer } });
       const first = await prisma.user.create({
         data: {
           oidcIssuer: issuer,
-          oidcSubject: `sub-a-${suffix}`,
+          oidcSubject: "subject-a",
           email,
-          displayName: "T06 fixture A",
+          displayName: "vitest fixture integration identity A",
         },
       });
       createdIds.push(first.id);
@@ -64,9 +150,9 @@ describe("relational invariants (postgres)", () => {
       const second = await prisma.user.create({
         data: {
           oidcIssuer: issuer,
-          oidcSubject: `sub-b-${suffix}`,
+          oidcSubject: "subject-b",
           email,
-          displayName: "T06 fixture B",
+          displayName: "vitest fixture integration identity B",
         },
       });
       createdIds.push(second.id);
@@ -75,8 +161,8 @@ describe("relational invariants (postgres)", () => {
         prisma.user.create({
           data: {
             oidcIssuer: issuer,
-            oidcSubject: `sub-a-${suffix}`,
-            email: `other-${suffix}@example.test`,
+            oidcSubject: "subject-a",
+            email: "kux-15-other@example.test",
           },
         }),
       ).rejects.toMatchObject({ code: "P2002" });
@@ -90,30 +176,30 @@ describe("relational invariants (postgres)", () => {
       skip();
       return;
     }
-    const suffix = randomUUID();
+    await deleteCheckFixture(prisma);
     const user = await prisma.user.create({
       data: {
-        oidcIssuer: `https://t06.test/${suffix}`,
-        oidcSubject: `sub-${suffix}`,
-        displayName: "T06 activity fixture",
+        oidcIssuer: CHECK_FIXTURE_ISSUER,
+        oidcSubject: "activity-check",
+        displayName: "vitest fixture integration activity actor",
       },
     });
     const area = await prisma.area.create({
       data: {
-        name: `T06 Área ${suffix}`,
-        nameNormalized: normalizeCatalogName(`T06 Área ${suffix}`),
+        name: CHECK_AREA_NAME,
+        nameNormalized: normalizeCatalogName(CHECK_AREA_NAME),
       },
     });
     const domain = await prisma.architectureDomain.create({
       data: {
-        name: `T06 Domínio ${suffix}`,
-        nameNormalized: normalizeCatalogName(`T06 Domínio ${suffix}`),
+        name: CHECK_DOMAIN_NAME,
+        nameNormalized: normalizeCatalogName(CHECK_DOMAIN_NAME),
       },
     });
     const project = await prisma.project.create({
       data: {
-        name: `T06 Projeto ${suffix}`,
-        nameNormalized: normalizeCatalogName(`T06 Projeto ${suffix}`),
+        name: CHECK_PROJECT_NAME,
+        nameNormalized: normalizeCatalogName(CHECK_PROJECT_NAME),
         responsibleAreaId: area.id,
         nature: "STRATEGIC",
         architectureRole: "RESPONSIBLE",
@@ -122,11 +208,9 @@ describe("relational invariants (postgres)", () => {
         updatedById: user.id,
       },
     });
-    const activityIds: string[] = [];
-
     try {
       const baseActivity = {
-        title: `T06 atividade ${suffix}`,
+        title: CHECK_ACTIVITY_TITLE,
         requestingAreaId: area.id,
         nature: "OPERATIONAL" as const,
         domainId: domain.id,
@@ -150,25 +234,19 @@ describe("relational invariants (postgres)", () => {
         }),
       ).rejects.toThrow();
 
-      const projectActivity = await prisma.activity.create({
+      await prisma.activity.create({
         data: { ...baseActivity, type: "PROJECT", projectId: project.id },
       });
-      activityIds.push(projectActivity.id);
-      const adHoc = await prisma.activity.create({
+      await prisma.activity.create({
         data: {
           ...baseActivity,
-          title: `T06 ad hoc ${suffix}`,
+          title: CHECK_AD_HOC_TITLE,
           type: "AD_HOC",
           projectId: null,
         },
       });
-      activityIds.push(adHoc.id);
     } finally {
-      await prisma.activity.deleteMany({ where: { id: { in: activityIds } } });
-      await prisma.project.delete({ where: { id: project.id } });
-      await prisma.architectureDomain.delete({ where: { id: domain.id } });
-      await prisma.area.delete({ where: { id: area.id } });
-      await prisma.user.delete({ where: { id: user.id } });
+      await deleteCheckFixture(prisma);
     }
   });
 
@@ -177,12 +255,12 @@ describe("relational invariants (postgres)", () => {
       skip();
       return;
     }
-    const suffix = randomUUID();
-    const name = `T06 Área única ${suffix}`;
+    const name = REUSABLE_AREA_NAME;
     const nameNormalized = normalizeCatalogName(name);
     const ids: string[] = [];
 
     try {
+      await prisma.area.deleteMany({ where: { nameNormalized } });
       const first = await prisma.area.create({
         data: { name, nameNormalized },
       });

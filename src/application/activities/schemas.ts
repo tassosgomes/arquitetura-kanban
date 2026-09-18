@@ -10,6 +10,13 @@ import { isCivilDateString } from "@/domain/calendar/civil-date";
 import { isActivityProjectLinkValid } from "@/domain/activity/activity-project-link";
 import { catalogIdSchema } from "@/application/catalogs/schemas";
 
+export const REQUIRED_ACTIVITY_FIELD_MESSAGES = {
+  requestingAreaId: "Selecione a área solicitante.",
+  nature: "Selecione a natureza.",
+  architectureRole: "Selecione o papel da Arquitetura.",
+  ownerId: "Selecione exatamente um responsável.",
+} as const;
+
 const optionalTextSchema = z
   .string()
   .optional()
@@ -27,16 +34,36 @@ const civilDateSchema = z
   })
   .transform((value) => (value === "" ? null : value));
 
-const optionalUuidSchema = z
-  .string()
-  .optional()
-  .transform((value) => {
-    const trimmed = (value ?? "").trim();
+const uuidSchema = z.string().uuid("Identificador inválido.");
+
+const optionalUuidSchema = z.preprocess(
+  (value) => {
+    if (typeof value !== "string") {
+      return value;
+    }
+    const trimmed = value.trim();
     return trimmed === "" ? undefined : trimmed;
-  })
-  .refine((value) => value === undefined || z.string().uuid().safeParse(value).success, {
-    error: "Identificador inválido.",
-  });
+  },
+  uuidSchema.optional(),
+);
+
+const requiredCatalogIdSchema = z
+  .string({ error: "Selecione uma categoria." })
+  .trim()
+  .min(1, "Selecione uma categoria.")
+  .pipe(catalogIdSchema);
+
+const requiredRequestingAreaIdSchema = z
+  .string({ error: REQUIRED_ACTIVITY_FIELD_MESSAGES.requestingAreaId })
+  .trim()
+  .min(1, REQUIRED_ACTIVITY_FIELD_MESSAGES.requestingAreaId)
+  .pipe(catalogIdSchema);
+
+const requiredOwnerIdSchema = z
+  .string({ error: REQUIRED_ACTIVITY_FIELD_MESSAGES.ownerId })
+  .trim()
+  .min(1, REQUIRED_ACTIVITY_FIELD_MESSAGES.ownerId)
+  .pipe(catalogIdSchema);
 
 const optionalIdListSchema = z
   .array(catalogIdSchema)
@@ -48,22 +75,23 @@ const requiredIdListSchema = z
   .optional()
   .transform((ids) => [...new Set(ids ?? [])]);
 
-const natureSchema = z.enum([Nature.STRATEGIC, Nature.OPERATIONAL], "Selecione a natureza.");
-const optionalNatureSchema = z
-  .enum([Nature.STRATEGIC, Nature.OPERATIONAL])
-  .optional()
-  .or(z.literal(""))
-  .transform((value) => (value === "" || value === undefined ? undefined : value));
+const natureSchema = z.enum(
+  [Nature.STRATEGIC, Nature.OPERATIONAL],
+  REQUIRED_ACTIVITY_FIELD_MESSAGES.nature,
+);
+const optionalNatureSchema = z.preprocess(
+  (value) => (value === "" || value === undefined ? undefined : value),
+  natureSchema.optional(),
+);
 
 const architectureRoleSchema = z.enum(
   [ArchitectureRole.RESPONSIBLE, ArchitectureRole.CONTRIBUTOR],
-  "Selecione o papel da Arquitetura.",
+  REQUIRED_ACTIVITY_FIELD_MESSAGES.architectureRole,
 );
-const optionalArchitectureRoleSchema = z
-  .enum([ArchitectureRole.RESPONSIBLE, ArchitectureRole.CONTRIBUTOR])
-  .optional()
-  .or(z.literal(""))
-  .transform((value) => (value === "" || value === undefined ? undefined : value));
+const optionalArchitectureRoleSchema = z.preprocess(
+  (value) => (value === "" || value === undefined ? undefined : value),
+  architectureRoleSchema.optional(),
+);
 
 const boardStatusSchema = z.enum(
   [
@@ -155,26 +183,65 @@ function withProjectLink<
   });
 }
 
-const createActivityObject = z.object({
-  title: titleSchema,
-  description: optionalTextSchema,
-  observations: optionalTextSchema,
-  type: typeSchema,
-  projectId: projectIdSchema,
-  requestingAreaId: optionalUuidSchema,
-  domainId: catalogIdSchema,
-  nature: optionalNatureSchema,
-  architectureRole: optionalArchitectureRoleSchema,
-  ownerId: optionalUuidSchema,
-  participantIds: optionalIdListSchema,
-  involvedAreaIds: requiredIdListSchema,
-  priority: prioritySchema,
-  effort: effortSchema,
-  status: boardStatusSchema,
-  startDate: civilDateSchema,
-  expectedEndDate: civilDateSchema,
-  completedDate: civilDateSchema,
-});
+const createActivityObject = z
+  .object({
+    title: titleSchema,
+    description: optionalTextSchema,
+    observations: optionalTextSchema,
+    type: typeSchema,
+    projectId: projectIdSchema,
+    requestingAreaId: optionalUuidSchema,
+    domainId: requiredCatalogIdSchema,
+    nature: optionalNatureSchema,
+    architectureRole: optionalArchitectureRoleSchema,
+    ownerId: optionalUuidSchema,
+    participantIds: optionalIdListSchema,
+    involvedAreaIds: requiredIdListSchema,
+    priority: prioritySchema,
+    effort: effortSchema,
+    status: boardStatusSchema,
+    startDate: civilDateSchema,
+    expectedEndDate: civilDateSchema,
+    completedDate: civilDateSchema,
+  })
+  .superRefine((data, ctx) => {
+    if (data.type !== ActivityType.AD_HOC) {
+      return;
+    }
+
+    const requiredFields = [
+      {
+        path: ["requestingAreaId"],
+        schema: requiredRequestingAreaIdSchema,
+        value: data.requestingAreaId,
+      },
+      {
+        path: ["ownerId"],
+        schema: requiredOwnerIdSchema,
+        value: data.ownerId,
+      },
+      { path: ["nature"], schema: natureSchema, value: data.nature },
+      {
+        path: ["architectureRole"],
+        schema: architectureRoleSchema,
+        value: data.architectureRole,
+      },
+    ] as const;
+
+    for (const { path, schema, value } of requiredFields) {
+      if (value !== undefined) {
+        continue;
+      }
+      const parsed = schema.safeParse(value);
+      if (!parsed.success && parsed.error.issues[0]) {
+        ctx.addIssue({
+          code: "custom",
+          path: [...path],
+          message: parsed.error.issues[0].message,
+        });
+      }
+    }
+  });
 
 export const createActivitySchema = withProjectLink(withDateOrder(createActivityObject));
 

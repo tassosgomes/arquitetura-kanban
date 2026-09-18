@@ -22,35 +22,35 @@ a informação está espalhada entre checkboxes marcados no meio da grade.
 
 ## Escopo
 
-- [ ] Substituir as grades de checkbox por um controle de busca com seleção múltipla:
+- [x] Substituir as grades de checkbox por um controle de busca com seleção múltipla:
       campo de texto que filtra a lista e chips removíveis para o que já foi escolhido.
-- [ ] Mesmo padrão para "Responsável", em seleção única.
-- [ ] Busca insensível a caixa e a acento, casando nome e e-mail.
-- [ ] Chips mostram o rótulo legível (`formatUserLabel`) e removem com clique e com
+- [x] Mesmo padrão para "Responsável", em seleção única.
+- [x] Busca insensível a caixa e a acento, casando nome e e-mail.
+- [x] Chips mostram o rótulo legível (`formatUserLabel`) e removem com clique e com
       `Backspace`/`Delete` quando focados.
-- [ ] Preservar o comportamento atual de itens inativos: não oferecer inativos para
+- [x] Preservar o comportamento atual de itens inativos: não oferecer inativos para
       nova seleção, manter e sinalizar os já vinculados (`ownerInactive`, `areaInactive`,
       `domainInactive` já existem no componente).
-- [ ] Preservar o prefill vindo do projeto (`applyPrefill`) — participantes herdados
+- [x] Preservar o prefill vindo do projeto (`applyPrefill`) — participantes herdados
       entram como chips já selecionados.
-- [ ] Manter o contrato do `FormData`: os mesmos nomes de campo e a mesma forma de lista.
-- [ ] Componente acessível: `combobox` com `aria-expanded`, navegação por setas,
+- [x] Manter o contrato do `FormData`: os mesmos nomes de campo e a mesma forma de lista.
+- [x] Componente acessível: `combobox` com `aria-expanded`, navegação por setas,
       `Enter` seleciona, `Esc` fecha, e a contagem de selecionados anunciada.
-- [ ] Deixar o componente genérico o bastante para reuso nos demais cadastros que hoje
+- [x] Deixar o componente genérico o bastante para reuso nos demais cadastros que hoje
       repetem a grade de checkbox.
 
 ## Aceite
 
-- [ ] Cada um dos dois campos ocupa altura constante independentemente do tamanho do
+- [x] Cada um dos dois campos ocupa altura constante independentemente do tamanho do
       catálogo.
-- [ ] Digitar "bru" encontra "Bruno Dias"; "IRA" encontra "Ira Lee".
-- [ ] Os selecionados são visíveis de relance, sem rolar a lista.
-- [ ] Operável inteiramente por teclado, com leitor de tela anunciando seleção e
+- [x] Digitar "bru" encontra "Bruno Dias"; "IRA" encontra "Ira Lee".
+- [x] Os selecionados são visíveis de relance, sem rolar a lista.
+- [x] Operável inteiramente por teclado, com leitor de tela anunciando seleção e
       remoção.
-- [ ] Herança de projeto continua preenchendo participantes na criação.
-- [ ] Usuário inativo já vinculado continua aparecendo e sinalizado; não aparece como
+- [x] Herança de projeto continua preenchendo participantes na criação.
+- [x] Usuário inativo já vinculado continua aparecendo e sinalizado; não aparece como
       opção nova.
-- [ ] Os testes existentes do formulário continuam passando sem mudança de contrato.
+- [x] Os testes existentes do formulário continuam passando sem mudança de contrato.
 
 ## Como validar
 

@@ -18,21 +18,21 @@ Em telas de toque, o ícone fica opaco por padrão, mas nada comunica que aquilo
 
 - [ ] Tornar o card inteiro arrastável, iniciando o drag em qualquer área que não seja
       link, botão ou o select de mover.
-- [ ] Manter a alça como indicação visual, com opacidade maior em repouso e área de
+- [x] Manter a alça como indicação visual, com opacidade maior em repouso e área de
       toque de ao menos 44×44px.
-- [ ] Preservar a `activationConstraint` de 8px, para clique no card continuar abrindo
+- [x] Preservar a `activationConstraint` de 8px, para clique no card continuar abrindo
       o detalhe sem disparar arraste acidental.
-- [ ] `cursor: grab` / `grabbing` sobre toda a superfície arrastável.
-- [ ] Conferir que arrastar não entra em conflito com o scroll vertical da coluna em
+- [x] `cursor: grab` / `grabbing` sobre toda a superfície arrastável.
+- [x] Conferir que arrastar não entra em conflito com o scroll vertical da coluna em
       toque (`touch-action`).
 
 ## Aceite
 
-- [ ] Arrastar pelo corpo do card move a atividade entre colunas.
-- [ ] Clicar (sem mover) no card continua abrindo o detalhe da atividade.
-- [ ] O alvo de toque da alça atinge 44×44px.
-- [ ] Em dispositivo de toque, rolar a coluna verticalmente não inicia um arraste.
-- [ ] A rota por teclado (foco na alça + Espaço) permanece intacta.
+- [x] Arrastar pelo corpo do card move a atividade entre colunas.
+- [x] Clicar (sem mover) no card continua abrindo o detalhe da atividade.
+- [x] O alvo de toque da alça atinge 44×44px.
+- [x] Em dispositivo de toque, rolar a coluna verticalmente não inicia um arraste.
+- [x] A rota por teclado (foco na alça + Espaço) permanece intacta.
 
 ## Como validar
 

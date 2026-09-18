@@ -16,18 +16,18 @@ Mesma lógica de KUX-02: reservar saturação para a exceção.
 
 ## Escopo
 
-- [ ] Exibir o badge com destaque apenas para `HIGH` e `CRITICAL`.
-- [ ] Representar `MEDIUM` e `LOW` de forma discreta (marcador neutro) ou omitir do card.
-- [ ] Se omitido, garantir que a prioridade continue acessível — no detalhe da atividade
+- [x] Exibir o badge com destaque apenas para `HIGH` e `CRITICAL`.
+- [x] Representar `MEDIUM` e `LOW` de forma discreta (marcador neutro) ou omitir do card.
+- [x] Se omitido, garantir que a prioridade continue acessível — no detalhe da atividade
       e como texto para leitor de tela no card.
-- [ ] Revisar os tons em `PRIORITY_TONE` para que `CRITICAL` se distinga de `HIGH` nos
+- [x] Revisar os tons em `PRIORITY_TONE` para que `CRITICAL` se distinga de `HIGH` nos
       dois temas.
-- [ ] Não usar somente cor para distinguir prioridade (rótulo ou ícone presente).
+- [x] Não usar somente cor para distinguir prioridade (rótulo ou ícone presente).
 
 ## Aceite
 
 - [ ] Num board majoritariamente "Média", os cards Alta/Crítica saltam à vista.
-- [ ] A informação de prioridade não é perdida para quem usa leitor de tela.
+- [x] A informação de prioridade não é perdida para quem usa leitor de tela.
 - [ ] Contraste AA mantido em tema claro e escuro.
 - [ ] A mudança não conflita com o sinal de prazo de KUX-02 (dois destaques no mesmo
       card devem continuar legíveis, não competir).

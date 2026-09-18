@@ -19,29 +19,29 @@ com classificação, participantes e datas **sem perder o board de vista**.
 
 ## Escopo
 
-- [ ] Abrir `/activities/new` como painel lateral sobre `/kanban`, mantendo o board
+- [x] Abrir `/activities/new` como painel lateral sobre `/kanban`, mantendo o board
       visível e legível ao lado.
 - [ ] Manter `/activities/new` funcionando como página cheia em acesso direto, recarga
       e compartilhamento de URL — o painel é a apresentação, não a única rota.
 - [ ] Preservar o parâmetro `?projectId=` e o prefill de projeto nas duas formas.
-- [ ] Gestão de foco: foco entra no painel ao abrir, fica preso enquanto aberto, e
+- [x] Gestão de foco: foco entra no painel ao abrir, fica preso enquanto aberto, e
       volta ao elemento de origem ao fechar. `Esc` fecha.
 - [ ] Confirmação antes de descartar um formulário com alterações — integrar com
       `useMarkFormDirty`, que o `ActivityForm` já usa.
-- [ ] Botão/rodapé de ação fixo dentro do painel (herda KUX-13).
-- [ ] Abaixo de `md`, o painel ocupa a tela inteira; não tentar board + painel lado a
+- [x] Botão/rodapé de ação fixo dentro do painel (herda KUX-13).
+- [x] Abaixo de `md`, o painel ocupa a tela inteira; não tentar board + painel lado a
       lado em viewport estreita.
-- [ ] O board atrás do painel fica inerte (`inert`/`aria-hidden`) enquanto ele está
+- [x] O board atrás do painel fica inerte (`inert`/`aria-hidden`) enquanto ele está
       aberto.
 
 ## Aceite
 
-- [ ] Clicar "Nova atividade" no board abre o painel sem trocar de página.
+- [x] Clicar "Nova atividade" no board abre o painel sem trocar de página.
 - [ ] Colar `http://localhost:3000/activities/new` numa aba nova abre a página cheia.
 - [ ] Voltar no histórico fecha o painel e devolve o board com os filtros intactos.
 - [ ] `Esc` com formulário sujo pede confirmação; com formulário limpo fecha direto.
-- [ ] Leitor de tela não alcança o board enquanto o painel está aberto.
-- [ ] Em 390×844 o painel ocupa a tela toda e continua utilizável.
+- [x] Leitor de tela não alcança o board enquanto o painel está aberto.
+- [x] Em 390×844 o painel ocupa a tela toda e continua utilizável.
 - [ ] Nenhuma regressão no fluxo de criação a partir de `/projects/:id/activities`.
 
 ## Como validar

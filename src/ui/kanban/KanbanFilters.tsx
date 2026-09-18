@@ -1,7 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import Link from "next/link";
 import {
   ACTIVITY_NATURE_LABELS,
@@ -20,11 +27,10 @@ import {
   KANBAN_PERIOD_OPTIONS,
   KANBAN_SHORTCUTS,
   KanbanPeriodOption,
-  hasActiveKanbanFilters,
   type KanbanFilterValues,
 } from "@/application/activities/kanban-filters";
 import { EFFORT_FILTER_UNSET } from "@/application/activities/types";
-import { CONTROL_CLASS_NAME } from "@/ui/projects/project-types";
+import { CONTROL_CLASS_NAME, formatCivilDatePtBr } from "@/ui/projects/project-types";
 
 export type KanbanFilterOption = {
   id: string;
@@ -37,6 +43,8 @@ type KanbanFiltersProps = {
   projects: KanbanFilterOption[];
   users: KanbanFilterOption[];
   domains: KanbanFilterOption[];
+  hasFilterWarning: boolean;
+  periodError: boolean;
 };
 
 function appendIfPresent(params: URLSearchParams, key: string, value: FormDataEntryValue | null) {
@@ -45,15 +53,126 @@ function appendIfPresent(params: URLSearchParams, key: string, value: FormDataEn
   }
 }
 
+export type ActiveFilterChip = {
+  id: string;
+  label: string;
+  removeKeys: readonly string[];
+};
+
+type FilterOptions = {
+  areas: KanbanFilterOption[];
+  projects: KanbanFilterOption[];
+  users: KanbanFilterOption[];
+  domains: KanbanFilterOption[];
+};
+
+function optionLabel(options: KanbanFilterOption[], id: string): string {
+  return options.find((option) => option.id === id)?.label ?? id;
+}
+
+function periodLabel(values: KanbanFilterValues): string {
+  if (values.period === KanbanPeriodOption.CUSTOM && values.from && values.to) {
+    return `${formatCivilDatePtBr(values.from)} a ${formatCivilDatePtBr(values.to)}`;
+  }
+  return KANBAN_PERIOD_LABELS[values.period];
+}
+
+export function buildActiveFilterChips(
+  values: KanbanFilterValues,
+  options: FilterOptions,
+  { includePeriod = true }: { includePeriod?: boolean } = {},
+): ActiveFilterChip[] {
+  const chips: ActiveFilterChip[] = [];
+
+  function add(id: string, label: string, removeKeys: readonly string[] = [id]) {
+    chips.push({ id, label, removeKeys });
+  }
+
+  if (includePeriod && values.period !== KanbanPeriodOption.ALL) {
+    add("period", `Período: ${periodLabel(values)}`, ["period", "from", "to"]);
+  }
+  if (values.titleQuery) {
+    add("title", `Título: ${values.titleQuery}`);
+  }
+  if (values.areaId) {
+    add("area", `Área: ${optionLabel(options.areas, values.areaId)}`);
+  }
+  if (values.projectId) {
+    add("project", `Projeto: ${optionLabel(options.projects, values.projectId)}`);
+  }
+  if (values.ownerId) {
+    add("owner", `Responsável: ${optionLabel(options.users, values.ownerId)}`);
+  }
+  if (values.participantId) {
+    add("participant", `Participante: ${optionLabel(options.users, values.participantId)}`);
+  }
+  if (values.domainId) {
+    add("domain", `Categoria: ${optionLabel(options.domains, values.domainId)}`);
+  }
+  if (values.nature) {
+    add("nature", `Natureza: ${ACTIVITY_NATURE_LABELS[values.nature]}`);
+  }
+  if (values.priority) {
+    add("priority", `Prioridade: ${PRIORITY_LABELS[values.priority]}`);
+  }
+  if (values.architectureRole) {
+    add("role", `Papel da arquitetura: ${ARCHITECTURE_ROLE_LABELS[values.architectureRole]}`);
+  }
+  if (values.effort) {
+    const label =
+      values.effort === EFFORT_FILTER_UNSET ? "Não informado" : EFFORT_LABELS[values.effort];
+    add("effort", `Esforço: ${label}`);
+  }
+  if (values.status) {
+    add("status", `Status: ${ACTIVITY_STATUS_LABELS[values.status]}`);
+  }
+  if (values.includeCancelled) {
+    add("includeCancelled", "Incluir cancelados");
+  }
+  if (values.mine) {
+    add("mine", "Somente minhas");
+  }
+
+  return chips;
+}
+
 const FILTERS_EXPANDED_STORAGE_KEY = "kanban-filters-expanded";
 
-export function KanbanFilters({ values, areas, projects, users, domains }: KanbanFiltersProps) {
+export function KanbanFilters({
+  values,
+  areas,
+  projects,
+  users,
+  domains,
+  hasFilterWarning,
+  periodError,
+}: KanbanFiltersProps) {
   const router = useRouter();
   const [period, setPeriod] = useState<KanbanPeriodOption>(values.period);
+  const [titleQuery, setTitleQuery] = useState(values.titleQuery ?? "");
   const [expanded, setExpanded] = useState(false);
+  const titleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeShortcut = activeKanbanShortcut(values);
-  const canClear = hasActiveKanbanFilters(values);
+  const activeFilterChips = buildActiveFilterChips(
+    values,
+    { areas, projects, users, domains },
+    { includePeriod: !periodError },
+  );
+  const canClear = activeFilterChips.length > 0 || hasFilterWarning;
   const bodyId = useId();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTitleQuery(values.titleQuery ?? "");
+  }, [values.titleQuery]);
+
+  useEffect(() => {
+    return () => {
+      if (titleDebounceRef.current !== null) {
+        clearTimeout(titleDebounceRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -79,17 +198,21 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
     });
   }
 
-  function submitFilters(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  function navigateToFilters(
+    form: HTMLFormElement,
+    includePendingCustomPeriod: boolean,
+    periodOverride?: KanbanPeriodOption,
+  ) {
+    const data = new FormData(form);
     const params = new URLSearchParams();
-    const selectedPeriod = String(data.get("period") ?? "");
+    const selectedPeriod = periodOverride ?? String(data.get("period") ?? "");
 
     appendIfPresent(params, "period", selectedPeriod === KanbanPeriodOption.ALL ? "" : selectedPeriod);
     if (selectedPeriod === KanbanPeriodOption.CUSTOM) {
-      appendIfPresent(params, "from", data.get("from"));
-      appendIfPresent(params, "to", data.get("to"));
+      appendIfPresent(params, "from", includePendingCustomPeriod ? data.get("from") : values.from);
+      appendIfPresent(params, "to", includePendingCustomPeriod ? data.get("to") : values.to);
     }
+    appendIfPresent(params, "title", titleQuery);
     appendIfPresent(params, "area", data.get("area"));
     appendIfPresent(params, "project", data.get("project"));
     appendIfPresent(params, "owner", data.get("owner"));
@@ -107,6 +230,69 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
       params.set("mine", "1");
     }
 
+    const query = params.toString();
+    router.push(query ? `/kanban?${query}` : "/kanban");
+  }
+
+  function navigateToTitleQuery(nextValue: string) {
+    const params = new URLSearchParams(window.location.search);
+    const trimmed = nextValue.trim();
+    if (trimmed) {
+      params.set("title", trimmed);
+    } else {
+      params.delete("title");
+    }
+    const query = params.toString();
+    router.replace(query ? `/kanban?${query}` : "/kanban", { scroll: false });
+  }
+
+  function handleTitleQueryChange(event: ChangeEvent<HTMLInputElement>) {
+    const nextValue = event.currentTarget.value;
+    setTitleQuery(nextValue);
+    if (titleDebounceRef.current !== null) {
+      clearTimeout(titleDebounceRef.current);
+    }
+    titleDebounceRef.current = setTimeout(() => {
+      navigateToTitleQuery(nextValue);
+    }, 300);
+  }
+
+  function submitFilters(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    navigateToFilters(event.currentTarget, true);
+  }
+
+  function handleControlChange(event: ChangeEvent<HTMLSelectElement | HTMLInputElement>) {
+    if (event.currentTarget.name === "period") {
+      const selectedPeriod = event.currentTarget.value as KanbanPeriodOption;
+      setPeriod(selectedPeriod);
+      if (selectedPeriod === KanbanPeriodOption.CUSTOM) {
+        return;
+      }
+    }
+
+    if (event.currentTarget.form) {
+      const periodOverride =
+        event.currentTarget.name !== "period" &&
+        period === KanbanPeriodOption.CUSTOM &&
+        values.period !== KanbanPeriodOption.CUSTOM
+          ? values.period
+          : undefined;
+      navigateToFilters(event.currentTarget.form, false, periodOverride);
+    }
+  }
+
+  function removeFilter(removeKeys: readonly string[]) {
+    if (removeKeys.includes("title")) {
+      setTitleQuery("");
+      if (titleDebounceRef.current !== null) {
+        clearTimeout(titleDebounceRef.current);
+      }
+    }
+    const params = new URLSearchParams(window.location.search);
+    for (const key of removeKeys) {
+      params.delete(key);
+    }
     const query = params.toString();
     router.push(query ? `/kanban?${query}` : "/kanban");
   }
@@ -145,7 +331,9 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
               href="/kanban"
               className="text-label-sm font-semibold text-primary underline hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              Limpar filtros
+              {activeFilterChips.length > 0
+                ? `Limpar tudo (${activeFilterChips.length})`
+                : "Limpar filtros"}
             </Link>
           ) : null}
           <button
@@ -163,6 +351,43 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
         </div>
       </div>
 
+      <label className="flex max-w-xl flex-col gap-1.5">
+        <span className="text-label-sm text-on-surface-variant">Buscar por título</span>
+        <input
+          id="kanban-title-search"
+          name="title"
+          type="search"
+          value={titleQuery}
+          onChange={handleTitleQueryChange}
+          placeholder="Ex.: MFA, dashboard ou relatório"
+          className={CONTROL_CLASS_NAME}
+          aria-describedby="kanban-title-search-help"
+        />
+        <span id="kanban-title-search-help" className="text-body-sm text-on-surface-variant">
+          Busca somente no título da atividade; ignora caixa e acentos.
+        </span>
+      </label>
+
+      {activeFilterChips.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filtros ativos">
+          <span className="text-label-sm font-semibold text-on-surface-variant">Aplicados:</span>
+          {activeFilterChips.map((chip) => (
+            <button
+              key={chip.id}
+              type="button"
+              onClick={() => removeFilter(chip.removeKeys)}
+              aria-label={`Remover filtro: ${chip.label}`}
+              className="inline-flex max-w-full items-center gap-1 rounded-full border border-secondary/30 bg-secondary/10 px-2.5 py-1 text-left text-label-sm font-semibold text-on-surface transition-colors hover:bg-secondary/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <span className="truncate">{chip.label}</span>
+              <span className="material-symbols-outlined shrink-0 text-[15px]" aria-hidden="true">
+                close
+              </span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+
       {expanded ? (
         <form id={bodyId} className="flex flex-col gap-space-md" onSubmit={submitFilters}>
           <div className="grid gap-space-sm sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -172,7 +397,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
                 name="period"
                 className={CONTROL_CLASS_NAME}
                 value={period}
-                onChange={(event) => setPeriod(event.target.value as KanbanPeriodOption)}
+                onChange={handleControlChange}
               >
                 {KANBAN_PERIOD_OPTIONS.map((option) => (
                   <option key={option} value={option}>
@@ -209,7 +434,12 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
 
             <label className="flex flex-col gap-1.5">
               <span className="text-label-sm text-on-surface-variant">Área</span>
-              <select name="area" className={CONTROL_CLASS_NAME} defaultValue={values.areaId ?? ""}>
+              <select
+                name="area"
+                className={CONTROL_CLASS_NAME}
+                defaultValue={values.areaId ?? ""}
+                onChange={handleControlChange}
+              >
                 <option value="">Todas</option>
                 {areas.map((area) => (
                   <option key={area.id} value={area.id}>
@@ -225,6 +455,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
                 name="project"
                 className={CONTROL_CLASS_NAME}
                 defaultValue={values.projectId ?? ""}
+                onChange={handleControlChange}
               >
                 <option value="">Todos</option>
                 {projects.map((project) => (
@@ -237,7 +468,12 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
 
             <label className="flex flex-col gap-1.5">
               <span className="text-label-sm text-on-surface-variant">Responsável</span>
-              <select name="owner" className={CONTROL_CLASS_NAME} defaultValue={values.ownerId ?? ""}>
+              <select
+                name="owner"
+                className={CONTROL_CLASS_NAME}
+                defaultValue={values.ownerId ?? ""}
+                onChange={handleControlChange}
+              >
                 <option value="">Todos</option>
                 {users.map((user) => (
                   <option key={user.id} value={user.id}>
@@ -253,6 +489,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
                 name="participant"
                 className={CONTROL_CLASS_NAME}
                 defaultValue={values.participantId ?? ""}
+                onChange={handleControlChange}
               >
                 <option value="">Todos</option>
                 {users.map((user) => (
@@ -269,6 +506,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
                 name="domain"
                 className={CONTROL_CLASS_NAME}
                 defaultValue={values.domainId ?? ""}
+                onChange={handleControlChange}
               >
                 <option value="">Todos</option>
                 {domains.map((domain) => (
@@ -281,7 +519,12 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
 
             <label className="flex flex-col gap-1.5">
               <span className="text-label-sm text-on-surface-variant">Natureza</span>
-              <select name="nature" className={CONTROL_CLASS_NAME} defaultValue={values.nature ?? ""}>
+              <select
+                name="nature"
+                className={CONTROL_CLASS_NAME}
+                defaultValue={values.nature ?? ""}
+                onChange={handleControlChange}
+              >
                 <option value="">Todas</option>
                 {Object.values(Nature).map((nature) => (
                   <option key={nature} value={nature}>
@@ -297,6 +540,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
                 name="priority"
                 className={CONTROL_CLASS_NAME}
                 defaultValue={values.priority ?? ""}
+                onChange={handleControlChange}
               >
                 <option value="">Todas</option>
                 {Object.values(Priority).map((priority) => (
@@ -313,6 +557,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
                 name="role"
                 className={CONTROL_CLASS_NAME}
                 defaultValue={values.architectureRole ?? ""}
+                onChange={handleControlChange}
               >
                 <option value="">Todos</option>
                 {Object.values(ArchitectureRole).map((role) => (
@@ -325,7 +570,12 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
 
             <label className="flex flex-col gap-1.5">
               <span className="text-label-sm text-on-surface-variant">Esforço</span>
-              <select name="effort" className={CONTROL_CLASS_NAME} defaultValue={values.effort ?? ""}>
+              <select
+                name="effort"
+                className={CONTROL_CLASS_NAME}
+                defaultValue={values.effort ?? ""}
+                onChange={handleControlChange}
+              >
                 <option value="">Todos</option>
                 {Object.values(Effort).map((effort) => (
                   <option key={effort} value={effort}>
@@ -338,7 +588,12 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
 
             <label className="flex flex-col gap-1.5">
               <span className="text-label-sm text-on-surface-variant">Status</span>
-              <select name="status" className={CONTROL_CLASS_NAME} defaultValue={values.status ?? ""}>
+              <select
+                name="status"
+                className={CONTROL_CLASS_NAME}
+                defaultValue={values.status ?? ""}
+                onChange={handleControlChange}
+              >
                 <option value="">Todos</option>
                 {Object.values(ActivityStatus).map((status) => (
                   <option key={status} value={status}>
@@ -357,6 +612,7 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
                   name="includeCancelled"
                   value="1"
                   defaultChecked={values.includeCancelled}
+                  onChange={handleControlChange}
                   className="size-3.5 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 />
                 Incluir cancelados
@@ -367,20 +623,28 @@ export function KanbanFilters({ values, areas, projects, users, domains }: Kanba
                   name="mine"
                   value="1"
                   defaultChecked={values.mine}
+                  onChange={handleControlChange}
                   className="size-3.5 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 />
                 Somente minhas
               </label>
             </div>
-            <button
-              type="submit"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-label-sm font-semibold text-on-primary shadow-sm transition-all hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
-                filter_alt
-              </span>
-              Aplicar filtros
-            </button>
+            {period === KanbanPeriodOption.CUSTOM ? (
+              <div className="flex flex-col gap-2 sm:items-end">
+                <p className="text-body-sm text-on-surface-variant">
+                  Somente as datas do período personalizado exigem confirmação.
+                </p>
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-label-sm font-semibold text-on-primary shadow-sm transition-all hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
+                    filter_alt
+                  </span>
+                  Aplicar período personalizado
+                </button>
+              </div>
+            ) : null}
           </div>
         </form>
       ) : null}

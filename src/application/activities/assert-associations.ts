@@ -5,6 +5,7 @@ import type { ArchitectureRole, Nature } from "@/domain/catalog/classifications"
 import type { CatalogTx, CatalogUserRepository, AreaRepository, DomainRepository } from "@/application/ports/catalog-repositories";
 import type { ProjectRepository } from "@/application/ports/project-repository";
 import type { ProjectRecord } from "@/application/projects/types";
+import { REQUIRED_ACTIVITY_FIELD_MESSAGES } from "@/application/activities/schemas";
 
 export async function assertUsableRequestingArea(
   areaId: string,
@@ -184,16 +185,16 @@ export function requireInheritedFields<T extends {
 } {
   const fields: Record<string, string[]> = {};
   if (!input.ownerId) {
-    fields.ownerId = ["Selecione exatamente um responsável."];
+    fields.ownerId = [REQUIRED_ACTIVITY_FIELD_MESSAGES.ownerId];
   }
   if (!input.requestingAreaId) {
-    fields.requestingAreaId = ["Selecione a área solicitante."];
+    fields.requestingAreaId = [REQUIRED_ACTIVITY_FIELD_MESSAGES.requestingAreaId];
   }
   if (!input.nature) {
-    fields.nature = ["Selecione a natureza."];
+    fields.nature = [REQUIRED_ACTIVITY_FIELD_MESSAGES.nature];
   }
   if (!input.architectureRole) {
-    fields.architectureRole = ["Selecione o papel da Arquitetura."];
+    fields.architectureRole = [REQUIRED_ACTIVITY_FIELD_MESSAGES.architectureRole];
   }
   if (Object.keys(fields).length > 0) {
     throw new ValidationError("Preencha os campos obrigatórios.", fields);

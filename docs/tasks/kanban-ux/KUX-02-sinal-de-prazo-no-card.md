@@ -18,25 +18,25 @@ A regra de negócio para isso já está pronta e não precisa ser reescrita.
 
 ## Escopo
 
-- [ ] Incluir o estado de prazo no `toKanbanCard()`, derivado de
+- [x] Incluir o estado de prazo no `toKanbanCard()`, derivado de
       `classifyDeadlineStatus({ status, expectedEndDate, completedDate, today })`.
-- [ ] Definir "hoje" pelo calendário civil do projeto (America/Sao_Paulo), conforme
+- [x] Definir "hoje" pelo calendário civil do projeto (America/Sao_Paulo), conforme
       a decisão 2 de `docs/tasks.md`; não usar `new Date()` do cliente direto.
-- [ ] Renderizar o estado no card com cor e rótulo:
+- [x] Renderizar o estado no card com cor e rótulo:
       `OVERDUE` (destaque negativo, com dias de atraso), `vence hoje` (atenção),
       `NO_FORECAST` (neutro, "sem previsão"), demais estados no tom neutro atual.
-- [ ] Marcador de borda esquerda no card para `OVERDUE`, para leitura do board inteiro
+- [x] Marcador de borda esquerda no card para `OVERDUE`, para leitura do board inteiro
       num relance.
-- [ ] Não depender só de cor: manter texto/ícone junto do sinal (contraste AA).
+- [x] Não depender só de cor: manter texto/ícone junto do sinal (contraste AA).
 
 ## Aceite
 
-- [ ] Card com previsão anterior a hoje e não concluído exibe atraso com os dias.
-- [ ] Card com previsão futura mantém a exibição neutra atual.
-- [ ] Card sem previsão exibe "sem previsão" e não é tratado como atrasado.
-- [ ] Card concluído não aparece como atrasado no board, mesmo com previsão vencida.
-- [ ] O cálculo respeita o fuso do projeto na virada do dia (testar 23:30 e 00:30).
-- [ ] A distinção é perceptível sem depender de cor (texto/ícone presentes).
+- [x] Card com previsão anterior a hoje e não concluído exibe atraso com os dias.
+- [x] Card com previsão futura mantém a exibição neutra atual.
+- [x] Card sem previsão exibe "sem previsão" e não é tratado como atrasado.
+- [x] Card concluído não aparece como atrasado no board, mesmo com previsão vencida.
+- [x] O cálculo respeita o fuso do projeto na virada do dia (testar 23:30 e 00:30).
+- [x] A distinção é perceptível sem depender de cor (texto/ícone presentes).
 
 ## Como validar
 

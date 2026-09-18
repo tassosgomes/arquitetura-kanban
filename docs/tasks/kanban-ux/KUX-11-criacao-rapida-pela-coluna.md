@@ -24,32 +24,32 @@ o `status`, o usuário logado é o responsável provável, e o tipo default é A
 
 ## Escopo
 
-- [ ] Afordância de criação no header de cada coluna do board (ex.: `⊕`), com rótulo
+- [x] Afordância de criação no header de cada coluna do board (ex.: `⊕`), com rótulo
       acessível indicando a coluna (`"Nova atividade em Backlog"`).
-- [ ] Formulário inline no topo da coluna, com o mínimo para um registro válido:
+- [x] Formulário inline no topo da coluna, com o mínimo para um registro válido:
       título, responsável, área solicitante e categoria.
-- [ ] `status` vem da coluna acionada; `type = AD_HOC`; `priority = MEDIUM`;
+- [x] `status` vem da coluna acionada; `type = AD_HOC`; `priority = MEDIUM`;
       responsável pré-preenchido com o usuário logado — todos alteráveis.
-- [ ] `Enter` cria; `Esc` cancela e devolve o foco à afordância que abriu.
-- [ ] Segunda ação "Criar e detalhar", que cria e leva ao formulário completo da
+- [x] `Enter` cria; `Esc` cancela e devolve o foco à afordância que abriu.
+- [x] Segunda ação "Criar e detalhar", que cria e leva ao formulário completo da
       atividade recém-criada.
-- [ ] Reusar `createActivityAction` e as mesmas regras de auditoria — sem caminho
+- [x] Reusar `createActivityAction` e as mesmas regras de auditoria — sem caminho
       paralelo de escrita, sem contornar validação.
-- [ ] Card criado aparece na coluna sem recarregar a página, com o mesmo tratamento
+- [x] Card criado aparece na coluna sem recarregar a página, com o mesmo tratamento
       otimista/rollback já usado em `persistMove`.
-- [ ] Deixar explícito no formulário que os campos de classificação ficam pendentes e
+- [x] Deixar explícito no formulário que os campos de classificação ficam pendentes e
       onde completá-los.
 
 ## Aceite
 
-- [ ] Criar uma atividade a partir do board não navega para fora de `/kanban`.
-- [ ] A atividade criada nasce na coluna em que o `⊕` foi acionado.
-- [ ] Erro de servidor no envio mantém o que o usuário digitou, sem perder o texto.
-- [ ] Todo o fluxo é operável só com teclado, do `⊕` ao card criado.
-- [ ] Atividade criada por esse caminho é indistinguível, no banco e na auditoria, de
+- [x] Criar uma atividade a partir do board não navega para fora de `/kanban`.
+- [x] A atividade criada nasce na coluna em que o `⊕` foi acionado.
+- [x] Erro de servidor no envio mantém o que o usuário digitou, sem perder o texto.
+- [x] Todo o fluxo é operável só com teclado, do `⊕` ao card criado.
+- [x] Atividade criada por esse caminho é indistinguível, no banco e na auditoria, de
       uma criada por `/activities/new`.
-- [ ] Filtros ativos no board não são perdidos ao criar.
-- [ ] Se a atividade criada não corresponder ao filtro vigente, o usuário é avisado em
+- [x] Filtros ativos no board não são perdidos ao criar.
+- [x] Se a atividade criada não corresponder ao filtro vigente, o usuário é avisado em
       vez de o card sumir em silêncio.
 
 ## Como validar

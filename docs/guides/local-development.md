@@ -44,6 +44,7 @@ cp .env.example .env
 | `POSTGRES_DB` | Compose | `arquitetura` |
 | `POSTGRES_PORT` | Compose | `5432` no host |
 | `DATABASE_URL` | sim | no host: `postgresql://<user>:<senha>@localhost:5432/<db>`. O serviço `app` do Compose **substitui o host por `postgres`**. |
+| `TEST_DATABASE_URL` | testes de integração locais | URL de um banco PostgreSQL descartável e separado do banco da aplicação; não usar `DATABASE_URL` como fallback local. |
 | `DATABASE_URL_LISTEN` | não (cai em `DATABASE_URL`) | sessão `LISTEN` do hub SSE. Localmente pode repetir `DATABASE_URL`. Homologação Vercel: URL **unpooled**. |
 | `OIDC_ISSUER` | sim | campo `issuer` do well-known Logto — [oidc.md §2.2](oidc.md#22-copiar-identificadores-sem-colar-no-git) |
 | `OIDC_CLIENT_ID` | sim | App ID Logto (app Local) |
@@ -105,6 +106,43 @@ npm run db:seed
 Checkout que já aplicou só a T05: `db:migrate` aplica apenas a T06. UNIQUE parciais e CHECKs vivem no SQL da T06; se `migrate diff` sugerir dropá-los, **não** aceite.
 
 Não use `prisma db push` como fluxo padrão. Ignore o aviso da CLI para `prisma@latest` (8 RC); o MVP permanece em **7.10.x**.
+
+### 4.1 Banco dos testes de integração
+
+Os testes PostgreSQL de `src/infrastructure/db/invariants.test.ts` e
+`src/infrastructure/db/audited-transaction.test.ts` usam `TEST_DATABASE_URL` quando
+executados localmente. Eles não usam `DATABASE_URL`, porque essa URL é o banco que a
+aplicação de desenvolvimento lê. Na CI, `DATABASE_URL` aponta para o PostgreSQL
+efêmero do job e é o único fallback permitido.
+
+Crie um banco separado no PostgreSQL do Compose, aplique as migrations nele e execute a
+suíte com a URL de teste:
+
+```bash
+docker compose exec -T postgres psql -U "${POSTGRES_USER:-arquitetura}" -d postgres \
+  -c 'CREATE DATABASE arquitetura_test;'
+DATABASE_URL='postgresql://<user>:<senha>@localhost:5432/arquitetura_test' npm run db:migrate
+TEST_DATABASE_URL='postgresql://<user>:<senha>@localhost:5432/arquitetura_test' npm test
+```
+
+Se `TEST_DATABASE_URL` não estiver configurada localmente, esses dois blocos de testes
+de integração são ignorados; a suíte não passa a escrever no banco da aplicação. Os
+nomes das fixtures são fixos por cenário e a limpeza roda ao final de cada caso, então
+duas execuções consecutivas não acumulam usuários, áreas, projetos ou categorias.
+
+Para restaurar somente o banco de teste, pare a suíte e recrie `arquitetura_test`:
+
+```bash
+docker compose exec -T postgres psql -U "${POSTGRES_USER:-arquitetura}" -d postgres \
+  -c 'DROP DATABASE IF EXISTS arquitetura_test;'
+docker compose exec -T postgres psql -U "${POSTGRES_USER:-arquitetura}" -d postgres \
+  -c 'CREATE DATABASE arquitetura_test;'
+DATABASE_URL='postgresql://<user>:<senha>@localhost:5432/arquitetura_test' npm run db:migrate
+```
+
+Esse procedimento não toca no banco `POSTGRES_DB` usado pela aplicação. Não use
+`docker compose down -v` para essa restauração: o volume também contém os dados de
+desenvolvimento.
 
 ---
 

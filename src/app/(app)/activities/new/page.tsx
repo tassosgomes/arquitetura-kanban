@@ -15,8 +15,9 @@ import { EmptyState } from "@/ui/feedback/EmptyState";
 import { ActivityForm } from "@/ui/activities/ActivityForm";
 import type { ActivityFormValues, ActivityProjectOption } from "@/ui/activities/activity-types";
 
-type NewActivityPageProps = {
+export type NewActivityPageProps = {
   searchParams: Promise<{ projectId?: string }>;
+  presentation?: "page" | "panel";
 };
 
 function snapshotToOption(snapshot: {
@@ -40,7 +41,10 @@ function snapshotToOption(snapshot: {
   };
 }
 
-export default async function NewActivityPage({ searchParams }: NewActivityPageProps) {
+export default async function NewActivityPage({
+  searchParams,
+  presentation = "page",
+}: NewActivityPageProps) {
   const { projectId: projectIdParam } = await searchParams;
   const actor = await requireActiveUser();
   const [areas, domains, users, prefills] = await Promise.all([
@@ -116,19 +120,27 @@ export default async function NewActivityPage({ searchParams }: NewActivityPageP
   };
 
   return (
-    <div className="flex flex-col gap-space-lg">
-      <header className="flex flex-col gap-2">
-        <p className="font-mono text-code-sm">
-          <Link href="/kanban" className="font-semibold text-primary hover:underline">
-            Kanban
-          </Link>
-        </p>
-        <h1 className="text-headline-lg text-on-surface">Nova atividade</h1>
-        <p className="max-w-2xl text-body-md leading-6 text-on-surface-variant">
-          Cadastre uma demanda ad hoc ou vinculada a um projeto. Valores herdados do projeto podem
-          ser alterados e não são sincronizados depois de salvar.
-        </p>
-      </header>
+    <div
+      className={
+        presentation === "panel"
+          ? "flex flex-col gap-space-lg p-space-md lg:p-gutter-lg"
+          : "flex flex-col gap-space-lg"
+      }
+    >
+      {presentation === "page" ? (
+        <header className="flex flex-col gap-2">
+          <p className="font-mono text-code-sm">
+            <Link href="/kanban" className="font-semibold text-primary hover:underline">
+              Kanban
+            </Link>
+          </p>
+          <h1 className="text-headline-lg text-on-surface">Nova atividade</h1>
+          <p className="max-w-2xl text-body-md leading-6 text-on-surface-variant">
+            Cadastre uma demanda ad hoc ou vinculada a um projeto. Valores herdados do projeto podem
+            ser alterados e não são sincronizados depois de salvar.
+          </p>
+        </header>
+      ) : null}
       <ActivityForm
         mode="create"
         action={createActivityAction}

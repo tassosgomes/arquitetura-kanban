@@ -73,6 +73,7 @@ export type KanbanFilterValues = {
   period: KanbanPeriodOption;
   from: string;
   to: string;
+  titleQuery?: string;
   areaId?: string;
   projectId?: string;
   ownerId?: string;
@@ -174,6 +175,7 @@ export function parseKanbanSearchParams(params: KanbanSearchParams): ParsedKanba
     period,
     from,
     to,
+    titleQuery: firstParam(params, "title"),
     areaId: optionalUuid(params, "area"),
     projectId: optionalUuid(params, "project"),
     ownerId: optionalUuid(params, "owner"),
@@ -201,6 +203,7 @@ export function parseKanbanSearchParams(params: KanbanSearchParams): ParsedKanba
 export function hasActiveKanbanFilters(values: KanbanFilterValues): boolean {
   return (
     values.period !== KanbanPeriodOption.ALL ||
+    Boolean(values.titleQuery) ||
     Boolean(values.areaId) ||
     Boolean(values.projectId) ||
     Boolean(values.ownerId) ||
@@ -218,7 +221,8 @@ export function hasActiveKanbanFilters(values: KanbanFilterValues): boolean {
 
 function hasDimensionFilters(values: KanbanFilterValues): boolean {
   return Boolean(
-    values.areaId ||
+    values.titleQuery ||
+      values.areaId ||
       values.projectId ||
       values.ownerId ||
       values.participantId ||
@@ -291,6 +295,7 @@ export function toActivityListFilter(
 ): ActivityListFilter {
   const statusCancelled = values.status === ActivityStatus.CANCELLED;
   return {
+    titleQuery: values.titleQuery,
     projectId: values.projectId,
     includeCancelled: values.includeCancelled || statusCancelled,
     status: values.status,

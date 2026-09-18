@@ -6,6 +6,13 @@ export type CatalogOption = {
   isActive: boolean;
 };
 
+export type ActivitySelectionOption = {
+  id: string;
+  label: string;
+  searchText?: string;
+  isActive: boolean;
+};
+
 export type ActivityUserOption = {
   id: string;
   displayName: string | null;

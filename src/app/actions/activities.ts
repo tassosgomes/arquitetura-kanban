@@ -21,6 +21,7 @@ import {
   updateActivityTaskSchema,
   listActivityHistory,
 } from "@/application/activities";
+import { listActiveAreas, listActiveDomains, listActiveUsers } from "@/application/catalogs";
 import type {
   ActivityChecklistResult,
   ActivityHistoryPage,
@@ -94,6 +95,43 @@ function zodFailure(error: ZodError): ActionResult<never> {
       fields,
     },
   };
+}
+
+export type QuickActivityCreateContext = {
+  actorId: string;
+  areas: Array<{ id: string; name: string; isActive: boolean }>;
+  domains: Array<{ id: string; name: string; isActive: boolean }>;
+  users: Array<{
+    id: string;
+    displayName: string | null;
+    email: string | null;
+    isActive: boolean;
+  }>;
+};
+
+export async function loadQuickActivityCreateContextAction(): Promise<
+  ActionResult<QuickActivityCreateContext>
+> {
+  return runAction(async () => {
+    const actor = await requireActiveUser();
+    const [areas, domains, users] = await Promise.all([
+      listActiveAreas(actor, areaRepository),
+      listActiveDomains(actor, domainRepository),
+      listActiveUsers(actor, catalogUserRepository),
+    ]);
+
+    return {
+      actorId: actor.id,
+      areas: areas.map(({ id, name, isActive }) => ({ id, name, isActive })),
+      domains: domains.map(({ id, name, isActive }) => ({ id, name, isActive })),
+      users: users.map(({ id, displayName, email, isActive }) => ({
+        id,
+        displayName,
+        email,
+        isActive,
+      })),
+    };
+  });
 }
 
 export async function createActivityAction(input: unknown): Promise<ActionResult<ActivityRecord>> {

@@ -18,6 +18,7 @@ src/generated/
 
 # tests / coverage
 coverage/
+.vitest/
 *.tsbuildinfo
 /test-results/
 /playwright-report/

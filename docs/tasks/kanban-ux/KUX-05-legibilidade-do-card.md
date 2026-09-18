@@ -27,20 +27,20 @@ por isso não diferencia nada na leitura do board.
 
 ## Escopo
 
-- [ ] Título com até 3 linhas e `title={card.title}` para leitura completa no hover.
-- [ ] Chip de projeto truncado por CSS numa linha, com `title` para o nome completo.
-- [ ] Remover o chip de papel da arquitetura do card, ou reduzi-lo a um marcador
+- [x] Título com até 3 linhas e `title={card.title}` para leitura completa no hover.
+- [x] Chip de projeto truncado por CSS numa linha, com `title` para o nome completo.
+- [x] Remover o chip de papel da arquitetura do card, ou reduzi-lo a um marcador
       discreto com rótulo acessível — a informação continua no detalhe da atividade.
-- [ ] Revisar a hierarquia: título > responsável/prazo > projeto/área > checklist.
-- [ ] Reduzir o uso de `font-mono` nos chips de conteúdo (nome de projeto e área não
+- [x] Revisar a hierarquia: título > responsável/prazo > projeto/área > checklist.
+- [x] Reduzir o uso de `font-mono` nos chips de conteúdo (nome de projeto e área não
       são código e ficam menos legíveis em mono no tamanho atual).
 
 ## Aceite
 
 - [ ] Duas atividades com prefixo de título igual são distinguíveis sem abrir o card.
-- [ ] Nome longo de projeto não empurra o título nem quebra em duas linhas.
-- [ ] O nome completo do título e do projeto é acessível no hover e ao leitor de tela.
-- [ ] O card não perde nenhuma informação hoje exibida sem que a remoção esteja
+- [x] Nome longo de projeto não empurra o título nem quebra em duas linhas.
+- [x] O nome completo do título e do projeto é acessível no hover e ao leitor de tela.
+- [x] O card não perde nenhuma informação hoje exibida sem que a remoção esteja
       registrada nesta task.
 - [ ] Contraste do texto secundário permanece AA nos dois temas.
 

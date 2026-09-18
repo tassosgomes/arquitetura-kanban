@@ -190,6 +190,17 @@ function mapListItem(row: {
   };
 }
 
+function normalizeTitleSearch(value: string): string {
+  return value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+}
+
+function matchesTitleQuery(title: string, titleQuery: string | undefined): boolean {
+  if (!titleQuery) {
+    return true;
+  }
+  return normalizeTitleSearch(title).includes(normalizeTitleSearch(titleQuery.trim()));
+}
+
 function listWhere(filter: ActivityListFilter): Prisma.ActivityWhereInput {
   const and: Prisma.ActivityWhereInput[] = [];
 
@@ -312,7 +323,9 @@ export function createPrismaActivityRepository(prisma: PrismaClient): ActivityRe
           },
           orderBy: [{ updatedAt: "desc" }, { title: "asc" }],
         })
-        .then((rows) => rows.map(mapListItem));
+        .then((rows) =>
+          rows.filter((row) => matchesTitleQuery(row.title, filter.titleQuery)).map(mapListItem),
+        );
     },
 
     create(data, actorId, tx) {
