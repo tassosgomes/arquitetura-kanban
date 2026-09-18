@@ -22,7 +22,7 @@ import {
   ActivityType,
   KANBAN_COLUMN_STATUSES,
 } from "@/domain/activity/enums";
-import { FormField } from "@/ui/forms/FormField";
+import { FormField, getFormFieldAriaProps } from "@/ui/forms/FormField";
 import { PrimaryButton } from "@/ui/forms/PrimaryButton";
 import { FieldError } from "@/ui/forms/FieldError";
 import { CONTROL_CLASS_NAME, formatUserLabel } from "@/ui/projects/project-types";
@@ -53,6 +53,34 @@ function fieldError(state: FormState, field: string): string | undefined {
     return undefined;
   }
   return state.error.fields?.[field]?.[0];
+}
+
+const ACTIVITY_ERROR_TARGETS = [
+  { field: "title", id: "activity-title", label: "Título" },
+  { field: "description", id: "activity-description", label: "Descrição" },
+  { field: "type", id: "activity-type", label: "Tipo" },
+  { field: "projectId", id: "activity-project", label: "Projeto" },
+  { field: "requestingAreaId", id: "activity-area", label: "Área solicitante" },
+  { field: "involvedAreaIds", id: "activity-involved", label: "Áreas envolvidas" },
+  { field: "domainId", id: "activity-domain", label: "Categoria" },
+  { field: "nature", id: "activity-nature", label: "Natureza" },
+  { field: "architectureRole", id: "activity-role", label: "Papel da Arquitetura" },
+  { field: "ownerId", id: "activity-owner", label: "Responsável" },
+  { field: "participantIds", id: "activity-participants", label: "Participantes" },
+  { field: "priority", id: "activity-priority", label: "Prioridade" },
+  { field: "effort", id: "activity-effort", label: "Esforço" },
+  { field: "status", id: "activity-status", label: "Status" },
+  { field: "startDate", id: "activity-start", label: "Data de início" },
+  { field: "expectedEndDate", id: "activity-end", label: "Previsão de término" },
+  { field: "completedDate", id: "activity-completed", label: "Data de conclusão" },
+  { field: "observations", id: "activity-observations", label: "Observações" },
+] as const;
+
+function activityErrorEntries(state: FormState) {
+  return ACTIVITY_ERROR_TARGETS.flatMap((target) => {
+    const message = fieldError(state, target.field);
+    return message ? [{ ...target, message }] : [];
+  });
 }
 
 function applyPrefill(
@@ -159,7 +187,29 @@ export function ActivityForm({
     }
   }, [state, router]);
 
+  useEffect(() => {
+    if (!state || state.ok) {
+      return;
+    }
+
+    const firstError = ACTIVITY_ERROR_TARGETS.find((target) =>
+      Boolean(fieldError(state, target.field)),
+    );
+    if (!firstError) {
+      return;
+    }
+
+    const control = document.getElementById(firstError.id);
+    if (!(control instanceof HTMLElement)) {
+      return;
+    }
+
+    control.scrollIntoView({ behavior: "smooth", block: "center" });
+    control.focus({ preventScroll: true });
+  }, [state]);
+
   const conflict = Boolean(state && !state.ok && state.error.code === "CONFLICT");
+  const errorEntries = activityErrorEntries(state);
   const globalError =
     state && !state.ok && !conflict && !state.error.fields
       ? state.error.message
@@ -226,6 +276,26 @@ export function ActivityForm({
         </p>
       ) : null}
 
+      {errorEntries.length > 0 ? (
+        <div
+          id="activity-form-errors"
+          className="rounded-xl border border-error/40 bg-error-container p-space-md text-body-sm text-on-error-container"
+          role="alert"
+          aria-live="assertive"
+        >
+          <h2 className="font-semibold">Revise os campos destacados:</h2>
+          <ul className="mt-1 list-disc space-y-0.5 pl-5">
+            {errorEntries.map((entry) => (
+              <li key={entry.field}>
+                <a href={`#${entry.id}`} className="underline hover:no-underline">
+                  {entry.label}: {entry.message}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       <FormField id="activity-title" label="Título" required error={fieldError(state, "title")}>
         <input
           id="activity-title"
@@ -233,7 +303,7 @@ export function ActivityForm({
           type="text"
           required
           defaultValue={initial.title}
-          aria-invalid={Boolean(fieldError(state, "title"))}
+          {...getFormFieldAriaProps("activity-title", fieldError(state, "title"))}
           className={CONTROL_CLASS_NAME}
         />
       </FormField>
@@ -244,6 +314,7 @@ export function ActivityForm({
           name="description"
           rows={4}
           defaultValue={initial.description}
+          {...getFormFieldAriaProps("activity-description", fieldError(state, "description"))}
           className={CONTROL_CLASS_NAME}
         />
       </FormField>
@@ -255,6 +326,7 @@ export function ActivityForm({
           required
           value={type}
           onChange={(event) => onTypeChange(event.target.value)}
+          {...getFormFieldAriaProps("activity-type", fieldError(state, "type"))}
           className={CONTROL_CLASS_NAME}
         >
           {Object.values(ActivityType).map((value) => (
@@ -279,6 +351,11 @@ export function ActivityForm({
             required
             value={projectId}
             onChange={(event) => onProjectChange(event.target.value)}
+            {...getFormFieldAriaProps(
+              "activity-project",
+              fieldError(state, "projectId"),
+              true,
+            )}
             className={CONTROL_CLASS_NAME}
           >
             <option value="">Selecione um projeto</option>
@@ -310,6 +387,11 @@ export function ActivityForm({
           required
           value={requestingAreaId}
           onChange={(event) => setRequestingAreaId(event.target.value)}
+          {...getFormFieldAriaProps(
+            "activity-area",
+            fieldError(state, "requestingAreaId"),
+            Boolean(areaInactive),
+          )}
           className={CONTROL_CLASS_NAME}
         >
           <option value="">Selecione uma área</option>
@@ -321,7 +403,12 @@ export function ActivityForm({
         </select>
       </FormField>
 
-      <fieldset className="flex flex-col gap-1.5">
+      <fieldset
+        id="activity-involved"
+        tabIndex={-1}
+        {...getFormFieldAriaProps("activity-involved", fieldError(state, "involvedAreaIds"))}
+        className="flex flex-col gap-1.5"
+      >
         <legend className="text-label-md font-semibold text-on-surface">Áreas envolvidas</legend>
         <p className="text-body-sm leading-5 text-on-surface-variant">
           Opcional. Áreas inativas não entram em novas associações; as já vinculadas podem ser
@@ -344,6 +431,10 @@ export function ActivityForm({
                     value={area.id}
                     defaultChecked={initial.involvedAreaIds.includes(area.id)}
                     disabled={!area.isActive && !initial.involvedAreaIds.includes(area.id)}
+                    {...getFormFieldAriaProps(
+                      "activity-involved",
+                      fieldError(state, "involvedAreaIds"),
+                    )}
                     className="mt-0.5 size-3.5 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   />
                   {area.name}
@@ -375,6 +466,11 @@ export function ActivityForm({
           name="domainId"
           required
           defaultValue={initial.domainId}
+          {...getFormFieldAriaProps(
+            "activity-domain",
+            fieldError(state, "domainId"),
+            Boolean(domainInactive),
+          )}
           className={CONTROL_CLASS_NAME}
         >
           <option value="">Selecione uma categoria</option>
@@ -393,6 +489,7 @@ export function ActivityForm({
           required
           value={nature}
           onChange={(event) => setNature(event.target.value)}
+          {...getFormFieldAriaProps("activity-nature", fieldError(state, "nature"))}
           className={CONTROL_CLASS_NAME}
         >
           <option value="">Selecione a natureza</option>
@@ -416,6 +513,7 @@ export function ActivityForm({
           required
           value={architectureRole}
           onChange={(event) => setArchitectureRole(event.target.value)}
+          {...getFormFieldAriaProps("activity-role", fieldError(state, "architectureRole"))}
           className={CONTROL_CLASS_NAME}
         >
           <option value="">Selecione o papel</option>
@@ -447,6 +545,7 @@ export function ActivityForm({
             setOwnerWasEdited(true);
             setOwnerId(event.target.value);
           }}
+          {...getFormFieldAriaProps("activity-owner", fieldError(state, "ownerId"), true)}
           className={CONTROL_CLASS_NAME}
         >
           <option value="">Selecione um responsável</option>
@@ -460,7 +559,12 @@ export function ActivityForm({
         </select>
       </FormField>
 
-      <fieldset className="flex flex-col gap-1.5">
+      <fieldset
+        id="activity-participants"
+        tabIndex={-1}
+        {...getFormFieldAriaProps("activity-participants", fieldError(state, "participantIds"))}
+        className="flex flex-col gap-1.5"
+      >
         <legend className="text-label-md font-semibold text-on-surface">Participantes</legend>
         <p className="text-body-sm leading-5 text-on-surface-variant">
           Opcional. Não precisam incluir o responsável. Usuários inativos não entram em novas
@@ -484,6 +588,10 @@ export function ActivityForm({
                     checked={participantIds.includes(user.id)}
                     onChange={(event) => toggleParticipant(user.id, event.target.checked)}
                     disabled={!user.isActive && !initial.participantIds.includes(user.id)}
+                    {...getFormFieldAriaProps(
+                      "activity-participants",
+                      fieldError(state, "participantIds"),
+                    )}
                     className="mt-0.5 size-3.5 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   />
                   {formatUserLabel(user)}
@@ -510,6 +618,7 @@ export function ActivityForm({
           name="priority"
           required
           defaultValue={initial.priority}
+          {...getFormFieldAriaProps("activity-priority", fieldError(state, "priority"))}
           className={CONTROL_CLASS_NAME}
         >
           {Object.values(Priority).map((value) => (
@@ -525,6 +634,7 @@ export function ActivityForm({
           id="activity-effort"
           name="effort"
           defaultValue={initial.effort}
+          {...getFormFieldAriaProps("activity-effort", fieldError(state, "effort"))}
           className={CONTROL_CLASS_NAME}
         >
           <option value="">Não informado</option>
@@ -554,6 +664,11 @@ export function ActivityForm({
           required={mode === "create"}
           defaultValue={initial.status}
           disabled={mode === "edit"}
+          {...getFormFieldAriaProps(
+            "activity-status",
+            fieldError(state, "status"),
+            mode === "edit",
+          )}
           className={CONTROL_CLASS_NAME}
         >
           {KANBAN_COLUMN_STATUSES.map((status) => (
@@ -571,6 +686,7 @@ export function ActivityForm({
             name="startDate"
             type="date"
             defaultValue={initial.startDate}
+            {...getFormFieldAriaProps("activity-start", fieldError(state, "startDate"))}
             className={CONTROL_CLASS_NAME}
           />
         </FormField>
@@ -584,6 +700,7 @@ export function ActivityForm({
             name="expectedEndDate"
             type="date"
             defaultValue={initial.expectedEndDate}
+            {...getFormFieldAriaProps("activity-end", fieldError(state, "expectedEndDate"))}
             className={CONTROL_CLASS_NAME}
           />
         </FormField>
@@ -597,10 +714,11 @@ export function ActivityForm({
         >
           <input
             id="activity-completed"
-            name="completedDate"
-            type="date"
-            defaultValue={initial.completedDate}
-            className={CONTROL_CLASS_NAME}
+          name="completedDate"
+          type="date"
+          defaultValue={initial.completedDate}
+          {...getFormFieldAriaProps("activity-completed", fieldError(state, "completedDate"))}
+          className={CONTROL_CLASS_NAME}
           />
         </FormField>
       ) : null}
@@ -615,6 +733,7 @@ export function ActivityForm({
           name="observations"
           rows={3}
           defaultValue={initial.observations}
+          {...getFormFieldAriaProps("activity-observations", fieldError(state, "observations"))}
           className={CONTROL_CLASS_NAME}
         />
       </FormField>

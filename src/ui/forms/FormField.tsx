@@ -10,9 +10,29 @@ type FormFieldProps = {
   children: ReactNode;
 };
 
+export function getFormFieldAriaProps(
+  id: string,
+  error?: string,
+  hasDescription = false,
+): {
+  "aria-invalid": boolean;
+  "aria-describedby": string | undefined;
+} {
+  const describedBy = [
+    hasDescription ? `${id}-description` : undefined,
+    error ? `${id}-error` : undefined,
+  ].filter(Boolean);
+
+  return {
+    "aria-invalid": Boolean(error),
+    "aria-describedby": describedBy.length > 0 ? describedBy.join(" ") : undefined,
+  };
+}
+
 /**
  * Padrão de campo de formulário: label associado, descrição opcional, controle
  * filho e `FieldError` abaixo do controle quando `error` estiver definido.
+ * Use `getFormFieldAriaProps` no controle filho para associar descrição e erro.
  *
  * @example
  * <FormField id="nome" label="Nome" error={errors.nome} required>
