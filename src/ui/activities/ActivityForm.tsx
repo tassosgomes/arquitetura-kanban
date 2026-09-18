@@ -26,11 +26,13 @@ import {
 import { FormField, getFormFieldAriaProps } from "@/ui/forms/FormField";
 import { PrimaryButton } from "@/ui/forms/PrimaryButton";
 import { FieldError } from "@/ui/forms/FieldError";
+import { SearchableSelect } from "@/ui/forms/SearchableSelect";
 import { CONTROL_CLASS_NAME, formatUserLabel } from "@/ui/projects/project-types";
 import { useMarkFormDirty } from "@/ui/realtime/useProtectOpenEdit";
 import type {
   ActivityFormValues,
   ActivityProjectOption,
+  ActivitySelectionOption,
   ActivityUserOption,
   CatalogOption,
 } from "@/ui/activities/activity-types";
@@ -239,6 +241,7 @@ export function ActivityForm({
   const [ownerId, setOwnerId] = useState(initial.ownerId);
   const [ownerWasEdited, setOwnerWasEdited] = useState(false);
   const [participantIds, setParticipantIds] = useState(initial.participantIds);
+  const [involvedAreaIds, setInvolvedAreaIds] = useState(initial.involvedAreaIds);
   const [nature, setNature] = useState(initial.nature);
   const [architectureRole, setArchitectureRole] = useState(initial.architectureRole);
   const [requestingAreaId, setRequestingAreaId] = useState(initial.requestingAreaId);
@@ -430,10 +433,34 @@ export function ActivityForm({
     }
   }
 
-  function toggleParticipant(userId: string, checked: boolean) {
-    setParticipantIds((current) =>
-      checked ? [...new Set([...current, userId])] : current.filter((id) => id !== userId),
-    );
+  const areaSelectionOptions: ActivitySelectionOption[] = areas.map((area) => ({
+    id: area.id,
+    label: area.name,
+    isActive: area.isActive,
+  }));
+  const userSelectionOptions: ActivitySelectionOption[] = users.map((user) => ({
+    id: user.id,
+    label: formatUserLabel(user),
+    searchText: [user.displayName, user.email].filter(Boolean).join(" "),
+    isActive: user.isActive,
+  }));
+
+  function onParticipantSelectionChange(nextIds: string[]) {
+    formProps.onChange();
+    setParticipantIds(nextIds);
+  }
+
+  function onInvolvedAreaSelectionChange(nextIds: string[]) {
+    formProps.onChange();
+    setInvolvedAreaIds(nextIds);
+  }
+
+  function onOwnerSelectionChange(nextIds: string[]) {
+    formProps.onChange();
+    const nextOwnerId = nextIds[0] ?? "";
+    setOwnerWasEdited(true);
+    setOwnerId(nextOwnerId);
+    setRequiredFieldFilled("ownerId", nextOwnerId);
   }
 
   const classificationCompleted = CLASSIFICATION_REQUIRED_FIELDS.filter(
@@ -776,49 +803,33 @@ export function ActivityForm({
           </select>
         </FormField>
 
-        <fieldset
-          id="activity-involved"
-          tabIndex={-1}
-          {...getFormFieldAriaProps("activity-involved", fieldError(state, "involvedAreaIds"))}
-          className="flex flex-col gap-1.5"
-        >
-          <legend className="text-label-md font-semibold text-on-surface">
+        <fieldset className="flex flex-col gap-1.5">
+          <legend
+            id="activity-involved-label"
+            className="text-label-md font-semibold text-on-surface"
+          >
             Áreas envolvidas
           </legend>
           <p className="text-body-sm leading-5 text-on-surface-variant">
             Opcional. Áreas inativas não entram em novas associações; as já vinculadas podem ser
             mantidas.
           </p>
-          {areas.length === 0 ? (
-            <p className="text-body-sm text-on-surface-variant">Nenhuma área disponível.</p>
-          ) : (
-            <ul className="grid max-h-56 grid-cols-1 gap-1 overflow-y-auto rounded-xl bg-surface-container-low p-space-sm sm:grid-cols-2">
-              {areas.map((area) => (
-                <li key={area.id}>
-                  <label
-                    htmlFor={`involved-${area.id}`}
-                    className="flex cursor-pointer items-start gap-2 rounded-lg p-1.5 text-body-sm text-on-surface hover:bg-surface-container"
-                  >
-                    <input
-                      id={`involved-${area.id}`}
-                      name="involvedAreaIds"
-                      type="checkbox"
-                      value={area.id}
-                      defaultChecked={initial.involvedAreaIds.includes(area.id)}
-                      disabled={!area.isActive && !initial.involvedAreaIds.includes(area.id)}
-                      {...getFormFieldAriaProps(
-                        "activity-involved",
-                        fieldError(state, "involvedAreaIds"),
-                      )}
-                      className="mt-0.5 size-3.5 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    />
-                    {area.name}
-                    {area.isActive ? null : " (inativa)"}
-                  </label>
-                </li>
-              ))}
-            </ul>
-          )}
+          <SearchableSelect
+            id="activity-involved"
+            name="involvedAreaIds"
+            options={areaSelectionOptions}
+            selectedIds={involvedAreaIds}
+            onSelectionChange={onInvolvedAreaSelectionChange}
+            selectionLabel="áreas envolvidas"
+            selectionNoun="área envolvida"
+            selectionNounPlural="áreas envolvidas"
+            emptySelectionMessage="Nenhuma área envolvida selecionada"
+            placeholder="Buscar área"
+            noOptionsMessage="Nenhuma área ativa disponível."
+            multiple
+            aria-labelledby="activity-involved-label"
+            {...getFormFieldAriaProps("activity-involved", fieldError(state, "involvedAreaIds"))}
+          />
           <FieldError
             id={fieldError(state, "involvedAreaIds") ? "activity-involved-error" : undefined}
             message={fieldError(state, "involvedAreaIds")}
@@ -836,71 +847,50 @@ export function ActivityForm({
             : "Exatamente um responsável principal."
         }
       >
-        <select
+        <SearchableSelect
           id="activity-owner"
           name="ownerId"
-          required
-          value={ownerId}
-          onChange={(event) => {
-            setOwnerWasEdited(true);
-            setOwnerId(event.target.value);
-          }}
+          options={userSelectionOptions}
+          selectedIds={ownerId ? [ownerId] : []}
+          onSelectionChange={onOwnerSelectionChange}
+          selectionLabel="responsável"
+          selectionNoun="responsável"
+          selectionNounPlural="responsáveis"
+          emptySelectionMessage="Nenhum responsável selecionado"
+          placeholder="Buscar responsável"
+          noOptionsMessage="Nenhum usuário ativo disponível."
           {...getFormFieldAriaProps("activity-owner", fieldError(state, "ownerId"), true)}
-          className={CONTROL_CLASS_NAME}
-        >
-          <option value="">Selecione um responsável</option>
-          {users
-            .filter((user) => user.isActive || user.id === ownerId)
-            .map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.isActive ? formatUserLabel(user) : `${formatUserLabel(user)} (inativo)`}
-              </option>
-            ))}
-        </select>
+          required
+        />
       </FormField>
 
-      <fieldset
-        id="activity-participants"
-        tabIndex={-1}
-        {...getFormFieldAriaProps("activity-participants", fieldError(state, "participantIds"))}
-        className="flex flex-col gap-1.5"
-      >
-        <legend className="text-label-md font-semibold text-on-surface">Participantes</legend>
+      <fieldset className="flex flex-col gap-1.5">
+        <legend
+          id="activity-participants-label"
+          className="text-label-md font-semibold text-on-surface"
+        >
+          Participantes
+        </legend>
         <p className="text-body-sm leading-5 text-on-surface-variant">
           Opcional. Não precisam incluir o responsável. Usuários inativos não entram em novas
           associações.
         </p>
-        {users.length === 0 ? (
-          <p className="text-body-sm text-on-surface-variant">Nenhum usuário disponível.</p>
-        ) : (
-          <ul className="grid max-h-56 grid-cols-1 gap-1 overflow-y-auto rounded-xl bg-surface-container-low p-space-sm sm:grid-cols-2">
-            {users.map((user) => (
-              <li key={user.id}>
-                <label
-                  htmlFor={`participant-${user.id}`}
-                  className="flex cursor-pointer items-start gap-2 rounded-lg p-1.5 text-body-sm text-on-surface hover:bg-surface-container"
-                >
-                  <input
-                    id={`participant-${user.id}`}
-                    name="participantIds"
-                    type="checkbox"
-                    value={user.id}
-                    checked={participantIds.includes(user.id)}
-                    onChange={(event) => toggleParticipant(user.id, event.target.checked)}
-                    disabled={!user.isActive && !initial.participantIds.includes(user.id)}
-                    {...getFormFieldAriaProps(
-                      "activity-participants",
-                      fieldError(state, "participantIds"),
-                    )}
-                    className="mt-0.5 size-3.5 rounded border-outline-variant text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  />
-                  {formatUserLabel(user)}
-                  {user.isActive ? null : " (inativo)"}
-                </label>
-              </li>
-            ))}
-          </ul>
-        )}
+        <SearchableSelect
+          id="activity-participants"
+          name="participantIds"
+          options={userSelectionOptions}
+          selectedIds={participantIds}
+          onSelectionChange={onParticipantSelectionChange}
+          selectionLabel="participantes"
+          selectionNoun="participante"
+          selectionNounPlural="participantes"
+          emptySelectionMessage="Nenhum participante selecionado"
+          placeholder="Buscar por nome ou e-mail"
+          noOptionsMessage="Nenhum usuário ativo disponível."
+          multiple
+          aria-labelledby="activity-participants-label"
+          {...getFormFieldAriaProps("activity-participants", fieldError(state, "participantIds"))}
+        />
         <FieldError
           id={fieldError(state, "participantIds") ? "activity-participants-error" : undefined}
           message={fieldError(state, "participantIds")}
